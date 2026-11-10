@@ -41,7 +41,9 @@ class OpenAIProvider:
         if not api_key:
             raise RuntimeError(f"Missing API key env var: {self.api_key_env}")
 
-        client = OpenAI(api_key=api_key, base_url=self.base_url)
+        timeout_seconds = float(os.getenv("MODEL_TIMEOUT_SECONDS", "60"))
+        if timeout_seconds <= 0:
+            raise ValueError("MODEL_TIMEOUT_SECONDS must be positive")
         kwargs: dict[str, Any] = {
             "model": model or self.default_model,
             "messages": messages,
@@ -52,7 +54,10 @@ class OpenAIProvider:
         if tool_choice is not None:
             kwargs["tool_choice"] = tool_choice
 
-        resp = client.chat.completions.create(**kwargs)
+        # Explicit deadline, no hidden retries; always close the per-call client.
+        with OpenAI(api_key=api_key, base_url=self.base_url,
+                    timeout=timeout_seconds, max_retries=0) as client:
+            resp = client.chat.completions.create(**kwargs)
         msg = resp.choices[0].message
         calls: list[ToolCall] = []
         for call in msg.tool_calls or []:

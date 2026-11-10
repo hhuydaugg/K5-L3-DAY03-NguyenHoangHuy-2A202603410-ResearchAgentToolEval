@@ -1,0 +1,10 @@
+turn,status,model_calls,registered_tools,assistant_text
+1,waiting_for_user,clarify,clarify,Bạn muốn tóm tắt tweet của tài khoản nào?
+2,waiting_for_user,clarify,clarify,Bạn có muốn chuẩn bị một bản tin để đăng lên Telegram không?
+3,waiting_for_user,clarify,clarify,Bạn có thể cung cấp nội dung cho bản tin mà bạn muốn đăng lên Telegram không?
+4,waiting_for_user,"clarify,clarify","clarify,clarify","Nội dung:
+Đây là bản tin kiểm tra của nhóm.
+
+Đích gửi: kênh Telegram đã cấu hình.
+Bạn xác nhận gửi đúng nội dung này đến kênh đã cấu hình không?"
+5,answered,finish_response,,Yêu cầu đã bị hủy. Không có gì được gửi đi.

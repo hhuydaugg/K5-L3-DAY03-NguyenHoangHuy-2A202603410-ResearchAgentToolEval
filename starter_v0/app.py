@@ -7,10 +7,12 @@ from datetime import datetime
 import streamlit as st
 
 # chat.py prints emoji; Windows server stdout defaults to cp1252 and would raise UnicodeEncodeError.
-sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from chat import ARTIFACTS_DIR, ROOT, now_iso, run_model_tool_loop, safe_slug, trim_history, write_transcript
 from providers import make_provider
+from live_protocol import protocol_metadata
 from tools import load_tool_declarations, to_openai_tools
 from versioning import artifact_version_dict, build_artifact_version
 
@@ -20,29 +22,39 @@ TOOLS_PATH = ARTIFACTS_DIR / "tools.yaml"
 st.set_page_config(page_title="Research Agent", page_icon="🔎")
 
 with st.sidebar:
-    provider_name = st.selectbox("Provider", ["openai", "openrouter", "gemini", "anthropic", "ollama"])
+    provider_name = st.selectbox("Provider", ["openrouter", "openai", "gemini", "anthropic", "ollama"])
     model = st.text_input("Model (để trống = mặc định của provider)").strip() or None
-    version = st.text_input("Version label", "v0").strip() or "v0"
+    version = st.text_input("Version label", "v3").strip() or "v3"
     history_window = st.number_input("History window (cặp lượt)", 0, 20, 5)
     max_tool_rounds = st.number_input("Max tool rounds", 1, 8, 4)
     if st.button("Cuộc chat mới"):
         st.session_state.clear()
         st.rerun()
 
+# A transcript must use one provider/model/artifact configuration throughout.
+artifact_version = build_artifact_version(version, PROMPT_PATH, TOOLS_PATH)
+live_metadata = protocol_metadata(to_openai_tools(load_tool_declarations(TOOLS_PATH)))
+configuration = (provider_name, model, artifact_version.artifact_version, live_metadata["runtime_hash"], int(history_window), int(max_tool_rounds))
+if st.session_state.get("configuration") != configuration:
+    for key in ("turns", "history", "transcript", "transcript_path", "configuration", "system_prompt", "openai_tools", "delivery_state"):
+        st.session_state.pop(key, None)
+
 if "turns" not in st.session_state:
     artifact_version = build_artifact_version(version, PROMPT_PATH, TOOLS_PATH)
     provider = make_provider(provider_name)
     transcript_id = "_".join(["ui", safe_slug(version), safe_slug(provider_name), datetime.now().strftime("%Y%m%dT%H%M%S%f")])
-    # Load prompt/tools once per session (like chat.py) so transcript hashes match what the model actually saw.
     st.session_state.update(
+        configuration=configuration,
         system_prompt=PROMPT_PATH.read_text(encoding="utf-8"),
-        tools=to_openai_tools(load_tool_declarations(TOOLS_PATH)),
+        openai_tools=to_openai_tools(load_tool_declarations(TOOLS_PATH)),
+        delivery_state={},
         turns=[],
         history=[],
         transcript_path=ROOT / "transcripts" / f"{transcript_id}.transcript.json",
         transcript={
             "transcript_id": transcript_id,
             **artifact_version_dict(artifact_version),
+            **live_metadata,
             "provider": provider_name,
             "model": model or getattr(provider, "default_model", None),
             "system_prompt": str(PROMPT_PATH),
@@ -86,9 +98,10 @@ if user_text:
                     *trim_history(st.session_state.history, int(history_window)),
                     {"role": "user", "content": user_text},
                 ],
-                tools=st.session_state.tools,
-                model=model,
+                tools=st.session_state.openai_tools,
+                model=transcript["model"],
                 max_tool_rounds=int(max_tool_rounds),
+                delivery_state=st.session_state.delivery_state,
             )
             turn.update(result)
             st.session_state.history += [

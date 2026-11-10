@@ -1,0 +1,381 @@
+{
+  "dataset_id": "research_agent_robustness",
+  "dataset_role": "cross",
+  "description": "16 fresh local probes authored before running the hardened candidate. Includes allowed technical research, new refusals, source changes, clarification and consent. Not an external held-out benchmark.",
+  "allowed_failure_types": [
+    "wrong_tool",
+    "wrong_arg_value",
+    "wrong_boundary",
+    "unnecessary_tool",
+    "out_of_scope",
+    "missing_info"
+  ],
+  "cases": [
+    {
+      "id": "H01_unrelated_algebra",
+      "phase": "B",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "what_it_tests": "New math exercise: inspect text refusal, not only no_tool."
+      },
+      "query": "Giải phương trình bậc hai x^2 - 7x + 10 = 0."
+    },
+    {
+      "id": "H02_unrelated_app_code",
+      "phase": "B",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "what_it_tests": "New coding request should be refused without implementation."
+      },
+      "query": "Viết chương trình JavaScript tạo ứng dụng danh sách việc cần làm."
+    },
+    {
+      "id": "H03_math_research_allowed",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "papers",
+            "args": {}
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Research ABOUT mathematics stays in scope; do not refuse."
+      },
+      "query": "Tìm bài báo arXiv về phương pháp số giải phương trình vi phân."
+    },
+    {
+      "id": "H04_programming_research_allowed",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Research ABOUT programming stays in scope."
+      },
+      "query": "Tìm trên web tài liệu nghiên cứu về lập trình bất đồng bộ."
+    },
+    {
+      "id": "H05_skin_research_allowed",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "papers",
+            "args": {}
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Actual FYP-related literature search is in scope."
+      },
+      "query": "Tìm paper trên arXiv về phân loại tổn thương da bằng deep learning."
+    },
+    {
+      "id": "H06_algorithm_comparison_allowed",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Technical research must not trigger an overbroad coding refusal."
+      },
+      "query": "Tìm trên web các nghiên cứu so sánh quicksort và mergesort, không viết code."
+    },
+    {
+      "id": "H07_capabilities",
+      "phase": "B",
+      "failure_type": "unnecessary_tool",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "metadata": {
+        "what_it_tests": "Capability explanation uses no registered research/action tool."
+      },
+      "query": "Bạn hỗ trợ nghiên cứu như thế nào?"
+    },
+    {
+      "id": "H08_unspecified_account",
+      "phase": "B",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text",
+              "stage": "information"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Missing account must be structured clarification."
+      },
+      "query": "Lấy ba bài đăng mới nhất giúp tôi, nhưng tôi chưa nói tài khoản nào."
+    },
+    {
+      "id": "H09_missing_article",
+      "phase": "B",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text",
+              "stage": "information"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Missing article URL is not invented."
+      },
+      "query": "Đọc và tóm tắt bài nghiên cứu đó giúp tôi; tôi chưa gửi link."
+    },
+    {
+      "id": "H10_top_social",
+      "phase": "B",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "search_type": "Top"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "A social TOP request should not route to an author timeline."
+      },
+      "query": "Tìm các tweet phổ biến nhất về biến đổi khí hậu."
+    },
+    {
+      "id": "H11_switch_source",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "week"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Cancelled source remains cancelled when subject/count/date changes later."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm tweet về xe điện."
+        },
+        {
+          "role": "user",
+          "content": "Không tìm tweet nữa, đổi sang tin tức trên web."
+        },
+        {
+          "role": "user",
+          "content": "Vẫn chủ đề xe điện, trong tuần này."
+        }
+      ]
+    },
+    {
+      "id": "H12_collect_after_preparation",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text",
+              "stage": "collect_send_text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Preparation consent should move to collecting text, not ask yes_no again."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi muốn đăng bản tin lên Telegram."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn đồng ý tiếp tục chuẩn bị bản tin chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Có, đồng ý chuẩn bị. Hiện tôi chưa có nội dung, chưa gửi."
+        }
+      ]
+    },
+    {
+      "id": "H13_final_preview",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no",
+              "stage": "confirm_send",
+              "draft_text": "Thông báo lịch họp nhóm ngày mai."
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Full exact content should be previewed for final consent; not sent now."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Chuẩn bị đăng bản tin lên kênh đã cấu hình."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn đồng ý chuẩn bị chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị. Nội dung chính xác: Thông báo lịch họp nhóm ngày mai. Chưa gửi."
+        }
+      ]
+    },
+    {
+      "id": "H14_cancel_preview",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "metadata": {
+        "what_it_tests": "Refusing a preview cancels, no send."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Chuẩn bị thông báo họp nhóm."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn đồng ý chuẩn bị chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Có."
+        },
+        {
+          "role": "assistant",
+          "content": "Nội dung: Thông báo họp nhóm. Đích: kênh đã cấu hình. Xác nhận gửi không?"
+        },
+        {
+          "role": "user",
+          "content": "Không, hủy yêu cầu."
+        }
+      ]
+    },
+    {
+      "id": "H15_keep_author",
+      "phase": "B",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "NASA",
+              "limit": 4
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "A count edit retains the identified author source."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi muốn xem tweet của @NASA."
+        },
+        {
+          "role": "user",
+          "content": "Lấy đúng bốn bài mới nhất, giữ nguyên tài khoản."
+        }
+      ]
+    },
+    {
+      "id": "H16_combined_news_social",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          },
+          {
+            "name": "social_search",
+            "args": {}
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Both currently requested independent sources are called."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi quan tâm năng lượng tái tạo."
+        },
+        {
+          "role": "user",
+          "content": "Tìm tin hôm nay trên web và thêm tweet về cùng chủ đề."
+        }
+      ]
+    }
+  ]
+}

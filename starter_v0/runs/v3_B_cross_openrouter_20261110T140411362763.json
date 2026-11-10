@@ -1,0 +1,1094 @@
+{
+  "run_id": "v3_B_cross_openrouter_20261110T140411362763",
+  "version": "v3",
+  "artifact_version": "v3+pc413bdb53768+t43f5a0217618",
+  "prompt_hash": "c413bdb53768172d36071c06ff57073b4258dff4b3d66891d3d94cb2bb69c9ab",
+  "tools_hash": "43f5a02176189e06bf5358ba76824b1d287dd48a1bbc6a74c998654fab1505f9",
+  "phase": "B",
+  "suite": "cross",
+  "action_execution": "disabled; proposed calls remain graded",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "artifacts/system_prompt.md",
+  "tools": "artifacts/tools.yaml",
+  "eval_cases": "data/eval_robustness.json",
+  "dataset_id": "research_agent_robustness",
+  "dataset_role": "cross",
+  "description": "16 fresh local probes authored before running the hardened candidate. Includes allowed technical research, new refusals, source changes, clarification and consent. Not an external held-out benchmark.",
+  "generated_at": "2026-11-10T14:04:11",
+  "summary": {
+    "total_cases": 16,
+    "measured_cases": 16,
+    "provider_error_cases": 0,
+    "passed_cases": 16,
+    "case_accuracy": 1.0,
+    "tool_routing_accuracy": 1.0,
+    "argument_accuracy": 1.0,
+    "multiturn_accuracy": 1.0,
+    "failure_counts": {},
+    "observed_mismatch_counts": {}
+  },
+  "results": [
+    {
+      "id": "H01_unrelated_algebra",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "New math exercise: inspect text refusal, not only no_tool."
+      },
+      "input": "Giải phương trình bậc hai x^2 - 7x + 10 = 0.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi không thể giải bài toán toán học này, nhưng tôi có thể giúp bạn tìm hiểu về phương trình bậc hai hoặc cung cấp tài liệu liên quan. Bạn có muốn tìm hiểu thêm không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "H02_unrelated_app_code",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "New coding request should be refused without implementation."
+      },
+      "input": "Viết chương trình JavaScript tạo ứng dụng danh sách việc cần làm.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi không thể viết mã cho bạn, nhưng tôi có thể giúp bạn tìm tài liệu hoặc hướng dẫn về cách tạo ứng dụng danh sách việc cần làm bằng JavaScript. Bạn có muốn tôi tìm kiếm thông tin hoặc hướng dẫn cụ thể nào không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "H03_math_research_allowed",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Research ABOUT mathematics stays in scope; do not refuse."
+      },
+      "input": "Tìm bài báo arXiv về phương pháp số giải phương trình vi phân.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "papers",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "query": "numerical methods for solving differential equations",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "papers",
+          "args": {
+            "query": "numerical methods for solving differential equations",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "arxiv_search",
+            "query": "numerical methods for solving differential equations",
+            "api_query": "all:numerical AND all:methods AND all:for AND all:solving AND all:differential AND all:equations",
+            "total_results": 0,
+            "items": [],
+            "rate_limit_note": "arXiv may return 429 if called too frequently; this tool waits at least 3 seconds between requests in-process."
+          }
+        }
+      ]
+    },
+    {
+      "id": "H04_programming_research_allowed",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Research ABOUT programming stays in scope."
+      },
+      "input": "Tìm trên web tài liệu nghiên cứu về lập trình bất đồng bộ.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "lập trình bất đồng bộ",
+              "topic": "general"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "lập trình bất đồng bộ",
+            "topic": "general"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "lập trình bất đồng bộ",
+            "topic": "general",
+            "timeframe": "week",
+            "items": [
+              {
+                "title": "Thành thạo Giao tiếp Bất đồng bộ: Hướng dẫn và Lợi ích | Lark",
+                "url": "https://www.larksuite.com/vi_vn/blog/asynchronous-communication-definition-benefit-tips",
+                "source": "larksuite.com",
+                "summary": "Giao tiếp không đồng bộ là nền tảng cho việc làm việc từ xa, nơi mà việc có mặt cùng một lúc có thể gặp khó khăn. Nó cho phép chúng ta giao tiếp theo nhịp độ của riêng mình, thay vì cảm thấy áp lực phải trả lời mọi thứ ngay khi chúng đến.​ [...] ​​\n\nGiao tiếp không đồng bộ là việc chia sẻ thông điệp, cập nhật và thông tin mà không cần phản hồi ngay lập tức. Điều này có nghĩa là những người bạn đang giao tiếp không cần phải \"có mặt\" theo thời gian thực, và cả hai bên đều có thể hoàn thành và chia sẻ nhiều việc trong thời gian và không gian riêng của họ.​ [...] Giao tiếp không đồng bộ là phương thức hợp tác cho các đội ngũ phn tán ngày nay, đặc biệt là khi họ làm việc qua các múi giờ khác nhau hoặc thích nghi với các lịch trình làm việc khác nhau. Hơn nữa, nó còn được nhiều người hiểu là một tín hiệu, một thái độ và một tư duy. Bằng cách cho phép và khuyến khích giao tiếp không đồng bộ tại nơi làm việc, bạn cũng mang lại cho mọi người trong đội ngũ sự bình tm. Các đội ngũ qua các múi giờ biết rằng họ không cần phải túc trực 24/7 để trả lời mọi thứ",
+                "score": 0.64182705
+              },
+              {
+                "title": "JavaScript, event loop và bất đồng bộ | Phỏng vấn dạo – Bài 8",
+                "url": "https://www.youtube.com/watch?v=CQcWcQMRd1U",
+                "source": "youtube.com",
+                "summary": "[5:15] có phép tính đồng bộ mất nửa giây, luồng chính cũng có thể bị chiếm trong nửa giây tiếp theo. Từ khóa bất đồng bộ không di chuyển phép tính ấy sang luồng khác. Một ngộ nhận tương tự xuất hiện\n[5:24] khi tạo promis. Hàm thực thi được truyền vào khi tạo promise chạy đồng bộ, đưa một vòng tính toán nặng vào đó không biến nó thành công việc nền.\n[5:31] Vậy bản thân Promise không phải một công nhân đang làm việc. [...] [4:52] Đúng, hàm bất đồng bộ vẫn bắt đầu thực thi đồng bộ khi được gọi và chạy đến điểm tạm dừng đầu tiên. Sau đó phần tiếp tục được lên lịch thông qua cơ chế\n[5:00] Promise. Ngay cả khi Promise đang chờ đã hoàn thành, phần sau điểm chờ trong ví dụ này vẫn không chạy nối liền trước thông báo cuối script. Kết quả là như\n[5:08] sau. Nếu trước điểm chờ có một phép tính mất nửa giây, người dùng vẫn phải chịu nửa giây đó. Đúng. Và nếu sau điểm chờ [...] Học xong, bạn có thể sắp xếp dòng thời gian thực thi, giải thích việc nào đang chạy, đang chờ hoặc chưa được bắt đầu, đồng thời hiểu vì sao bất đồng bộ không đồng nghĩa với chạy song song. Bài học rèn cách lập luận khi phỏng vấn frontend, không hướng dẫn viết code cho một ứng dụng cụ thể.\n\n#phongvan #kienthuclaptrinh #JavaScript",
+                "score": 0.5073975
+              },
+              {
+                "title": "Cách Xây Dựng Super-Agent Như DeepSeek: Giải Mã Router, Worker và Trigger - DEV Community",
+                "url": "https://dev.to/sebbasstian/cach-xay-dung-super-agent-nhu-deepseek-giai-ma-router-worker-va-trigger-177g",
+                "source": "dev.to",
+                "summary": "Tiếp theo, hãy chuyển sang cơ chế song công toàn phần (full-duplex). Thay thế công cụ `run()` mang tính đồng bộ/chặn (blocking) bằng các lệnh bất đồng bộ `start()` và `stop()`. Lệnh `start()` sẽ trả về trạng thái \"Started\" ngay lập tức, và kết quả sẽ được gửi đến sau dưới dạng một sự kiện mới. Điều này cho phép agent tiếp nhận chỉ dẫn tiếp theo của bạn ngay cả khi tác vụ trước đó vẫn đang chạy. Bài viết cho biết DeepSeek Harness đã hiện thực hóa cơ chế này nhưng chưa kích hoạt mặc định. [...] ## Bước 4: Xem ngữ cảnh như bộ nhớ đệm và chuyển đổi công cụ sang bất đồng bộ\nRouter không thể lưu trữ toàn bộ dữ liệu, do đó bài viết coi ngữ cảnh như một bộ nhớ đệm (cache):\n- Lưu trực tiếp (Inline) những thông tin có khả năng cần đến: ID, bản tóm tắt ngắn, các tin nhắn lân cận.\n- Đẩy ra ngoài (Spill) phần còn lại: cắt ngắn dữ liệu và để lại một con trỏ (pointer) để agent có thể truy xuất khi cần. [...] Router là một phiên làm việc tồn tại lâu dài. Nó xử lý toàn bộ hoạt động tương tác với con người cùng việc điều phối, và không bao giờ tự mình thực thi tác vụ. Router có thể vận hành mà không cần đến công cụ Bash, đồng thời chỉ cần một mô hình nhẹ hơn, tiết kiệm chi phí hơn là đủ. Khi có nhiều Trigger cùng gửi đến trong một lượt xử lý của Router, chúng sẽ được gom thành một đợt (batch) cho lần gọi tiếp theo: đầu vào hoặc hoạt động như một nhóm agent hoàn chỉnh.",
+                "score": 0.3290795
+              },
+              {
+                "title": "Hà Nội phê duyệt 6 quy trình điện tử về bất động sản - VnEconomy",
+                "url": "https://vneconomy.vn/ha-noi-phe-duyet-6-quy-trinh-dien-tu-ve-bat-dong-san.htm",
+                "source": "vneconomy.vn",
+                "summary": "Theo đó, có 6 quy trình nội bộ, quy trình điện tử giải quyết thủ tục hành chính lĩnh vực Kinh doanh bất động sản và lĩnh vực nhà ở thuộc phạm vi chức năng quản lý của Sở Xy dựng Thành phố. Cụ thể, lĩnh vực kinh doanh bất động sản có Thủ tục cho phép chuyển nhượng toàn bộ hoặc một phần dự án bất động sản. [...] Cùng với dn cư hiện hữu, đô thị Hòa Lạc đang hình thành cộng đồng cư dn mới, ước tính lên tới 60 vạn người vào năm 2030, kéo theo cầu rất lớn về không gian sống chất lượng, tiện ích all-in-one và kết nối hạ tầng đồng bộ, nhanh chóng, thuận tiện.\n\n### Hà Nội công khai dự án cải tạo chung cư thuộc diện phá dỡ [...] Cùng với việc phê duyệt quy trình mới, Quyết định số 1284/QĐ-TTPVHCC ngày 31/3/2026; các quy trình nội bộ, quy trình điện tử QT-138, QT-140, QT-142 tại Quyết định số 671/QĐ-TTPVHCC ngày 28/4/2025 được ban hành sẽ hết hiệu lực.",
+                "score": 0.11699609
+              },
+              {
+                "title": "Lớp dữ liệu  |  Tag Platform  |  Google for Developers",
+                "url": "https://developers.google.com/tag-platform/devguides/datalayer?hl=vi",
+                "source": "developers.google.com",
+                "summary": "```\ndataLayer. push({new - variable:  'value'});  // Bad - no quote marks dataLayer. push({'new-variable':  'value'});  // Good - proper quote marks\n```\n\nGiữ tên biến nhất quán trên các trang: Nếu bạn sử dụng tên biến khác nhau cho cùng một khái niệm trên các trang khác nhau, thì thẻ của bạn sẽ không thể kích hoạt một cách nhất quán ở tất cả các vị trí dự kiến.\n\nKém: [...] across pages by using consistent naming, and one can use custom data layer methods through functions pushed to the layer.\\n\"]]",
+                "score": 0.06513363
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "H05_skin_research_allowed",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Actual FYP-related literature search is in scope."
+      },
+      "input": "Tìm paper trên arXiv về phân loại tổn thương da bằng deep learning.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "papers",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "query": "phân loại tổn thương da deep learning",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "papers",
+          "args": {
+            "query": "phân loại tổn thương da deep learning",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "arxiv_search",
+            "query": "phân loại tổn thương da deep learning",
+            "api_query": "all:ph AND all:lo AND all:th AND all:ng AND all:da AND all:deep AND all:learning",
+            "total_results": 0,
+            "items": [],
+            "rate_limit_note": "arXiv may return 429 if called too frequently; this tool waits at least 3 seconds between requests in-process."
+          }
+        }
+      ]
+    },
+    {
+      "id": "H06_algorithm_comparison_allowed",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Technical research must not trigger an overbroad coding refusal."
+      },
+      "input": "Tìm trên web các nghiên cứu so sánh quicksort và mergesort, không viết code.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "so sánh quicksort và mergesort",
+              "topic": "general"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "so sánh quicksort và mergesort",
+            "topic": "general"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "so sánh quicksort và mergesort",
+            "topic": "general",
+            "timeframe": "week",
+            "items": [
+              {
+                "title": "Các thuật toán sắp xếp: giải thích, code C++, Python | Big-O Coding",
+                "url": "https://bigocoding.com/bai-viet/thuat-toan-sap-xep",
+                "source": "bigocoding.com",
+                "summary": "Vì mảng bị chia đôi liên tiếp nên cy đệ quy chỉ cao log2 n tầng; ở mỗi tầng, việc trộn tất cả các đoạn tốn tổng cộng O(n) phép so sánh. Nhn lại, độ phức tạp thời gian của Merge Sort luôn luôn là O(n log n) trong mọi trường hợp (tốt nhất, trung bình lẫn xấu nhất), đổi lại nó cần thêm O(n) bộ nhớ cho mảng tạm lúc trộn.\n\n### 2. Sắp xếp nhanh (Quick Sort)\n\nThay vì trộn ở bước cuối như Merge Sort, Quick Sort làm việc nặng ngay ở bước chia (gọi là phn hoạch — partition): [...] (Nếu bạn tò mò về những thuật toán sắp xếp hài hước kiểu \"tung xúc xắc tới khi mảng tự tăng dần\", hãy đọc thêm bài Bogosort: những thuật toán sắp xếp “pha ke”).\n\n## Cách dùng hàm sort có sẵn và viết tiêu chí so sánh tùy chỉnh\n\nKhi giải bài tập thuật toán hay đi phỏng vấn, bạn không cần tự viết lại Merge Sort hay Quick Sort từ đầu mà dùng thẳng hàm được tối ưu cực tốt trong thư viện chuẩn: [...] Big-O Coding\n\nBIG-O CODING\n\nNhập môn\n\n# Các thuật toán sắp xếp cơ bản: từ O(n²) đến O(n log n), code C++ và Python\n\nThuật toán sắp xếp (sorting algorithm) đặt lại các phần tử của mảng theo thứ tự tăng dần hoặc giảm dần để giúp việc tìm kiếm, gom nhóm và chọn lựa tối ưu trở nên dễ dàng. Người học cần nắm 2 nhóm chính: nhóm cơ bản O(n²) (Selection, Insertion, Bubble Sort) để hiểu cơ chế hoán đổi, và nhóm chia để trị O(n log n) (Merge Sort, Quick Sort) cùng hàm sort có sẵn trong thư viện.",
+                "score": 0.7610953
+              },
+              {
+                "title": "Merge Sort: hiểu trọn trong 15 phút | Chia để trị, xem code Python chạy từng bước",
+                "url": "https://www.youtube.com/watch?v=x4edLVEUxF8",
+                "source": "youtube.com",
+                "summary": "[10:56] So với Qu Sort có thời gian tệ nhất tốt hơn vì Qu chậm tới ON bình phương khi chọn P kém. Tuy vậy, trên thực tế Quọc\n[11:05] thường nhanh hơn một chút với mãng trong bộ nhớ nhờ sắp xếp tại chỗ và tận dụng bộ nhớ đệm tốt. Mớt sọc lại tỏa sáng ở những chỗ khác.\n[11:15] Với danh sách liên kết, việc trộn chỉ là nối lại các con trỏ, không cần mãn phụ. Nền mất sọc là lựa chọn tự nhiên. [...] Trong video này, bạn sẽ:\n✅ Hiểu vì sao các thuật toán O(n²) như Bubble Sort, Selection Sort, Insertion Sort chậm với dữ liệu lớn\n✅ Nắm ý tưởng trộn hai \"chồng bài\" đã xếp và ý tưởng chia đôi đệ quy\n✅ Đọc từng dòng code Python của `merge_sort` và `merge`\n✅ Xem code chạy từng bước trên mảng [7, 2, 9, 4, 1, 8, 3, 6], kèm cây đệ quy\n✅ Chứng minh trực quan độ phức tạp O(n log n) qua các tầng của cây đệ quy\n✅ Biết bộ nhớ phụ O(n), tính ổn định, so sánh với Quicksort, Timsort của Python [...] ⏱️ Mục lục\n00:00 Giới thiệu\n00:25 Vì sao cần Merge Sort?\n01:16 Ý tưởng: trộn hai đoạn đã sắp xếp\n02:14 Ý tưởng: chia đôi đến khi còn một phần tử\n02:59 Code hàm merge_sort\n03:51 Code hàm merge\n05:04 Chạy thử: một lần trộn nhỏ\n05:55 Chạy thử: lần trộn cuối cùng\n07:03 Cây đệ quy chạy từng bước\n08:37 Phân tích theo từng tầng của cây\n09:29 Độ phức tạp thời gian O(n log n)\n10:01 Bộ nhớ và tính ổn định\n10:56 So sánh với Quicksort và ứng dụng thực tế\n11:46 Biến thể và tối ưu",
+                "score": 0.75831425
+              },
+              {
+                "title": "Radix Sort là gì? Sắp xếp không cần so sánh, xem code Python chạy từng bước",
+                "url": "https://www.youtube.com/watch?v=lPci5H-mJ64",
+                "source": "youtube.com",
+                "summary": "# Radix Sort là gì? Sắp xếp không cần so sánh, xem code Python chạy từng bước\n## Channel: MikiTech\n6 subscribers\n1 likes\n\n### Description\n12 views\nPosted: 2026-11-04\nMọi thuật toán sắp xếp dựa trên so sánh như Merge Sort hay Quicksort đều cần ít nhất khoảng n log n phép so sánh. Radix Sort (sắp xếp theo cơ số) vượt qua giới hạn đó bằng cách không so sánh gì cả: nó phân loại các số theo từng chữ số, từ hàng đơn vị lên hàng chục, hàng trăm.",
+                "score": 0.6821721
+              },
+              {
+                "title": "Yêu Cầu Tiểu Luận: Xây Dựng Hệ Thống Thương Mại Điện Tử - 22222 - Studocu",
+                "url": "https://www.studocu.vn/vn/document/truong-dai-hoc-gia-dinh/mang-may-tinh/yeu-cau-tieu-luan-xay-dung-he-thong-thuong-mai-dien-tu-22222/177593300",
+                "source": "studocu.vn",
+                "summary": "O\n\n(\n\nn2\n\n)\n\nnhư Selection Sort/Bubble Sort/Insertion\n\nSort) và ít nhất 1 giải thuật nng cao (\n\nO\n\n(\n\nnlog n\n\n)\n\nnhư QuickSort hoặc MergeSort ứng dụng\n\nđệ quy).\n\nThực hiện module so sánh trực quan thời gian chạy thực tế giữa hai thuật toán trên cùng\n\ntập dữ liệu\n\n≥100.000\n\nphần tử.\n\nModule 5: Công cụ tìm kiếm tức thời & Lịch sử tìm kiếm (Search Engine)\n\nBảng băm (Hash Table): Thiết kế hàm băm (Hash Function) trên chuỗi Tên sản phẩm và [...] ##  Triển khai ít nhất 1 giải thuật cơ bản (O ( n 2 ) như Selection Sort/Bubble Sort/Insertion\n\n### Sort) và ít nhất 1 giải thuật nng cao (O ( n log n ) như QuickSort hoặc MergeSort ứng dụng\n\n### đệ quy).\n\n###  Thực hiện module so sánh trực quan thời gian chạy thực tế giữa hai thuật toán trên cùng\n\n### tập dữ liệu ≥ 100 phần tử.\n\n### Module 5: Công cụ tìm kiếm tức thời & Lịch sử tìm kiếm (Search Engine)\n\n###  Bảng băm (Hash Table): Thiết kế hàm băm (Hash Function) trên chuỗi Tên sản phẩm và [...] Hệ thống thương mại điện tử: \n  Ứng dụng quản lý sản phẩm và đơn hàng trực tuyến.\n Cấu trúc dữ liệu: \n  Sử dụng danh sách liên kết, ngăn xếp, hàng đợi và cy nhị phn tìm kiếm.\n Độ phức tạp thuật toán: \n  Phn tích và chứng minh hiệu suất của các thuật toán.\n Giỏ hàng: \n  Quản lý đơn hàng với tính năng hoàn tác và hàng đợi thanh toán.\n Thuật toán sắp xếp: \n  Triển khai các thuật toán như QuickSort và MergeSort cho việc lọc sản phẩm.\n Kiểm thử và đánh giá:",
+                "score": 0.6659544
+              },
+              {
+                "title": "Merge Sort: loạt bài về DSA | Coddy",
+                "url": "https://coddy.tech/landing/vi/courses/merge_sort__dsa_series",
+                "source": "coddy.tech",
+                "summary": "Nắm vững thuật toán sắp xếp nhanh (Quick Sort), một trong những thuật toán sắp xếp nhanh nhất trong thực tế. Xy dựng bước phn hoạch, viết thuật toán sắp xếp đệ quy hoàn chỉnh bằng ngôn ngữ bạn chọn, phn tích độ phức tạp và luyện tập qua các thử thách lập trình.\n\nCấu trúc dữ liệu\n\ncertificate icon\n\nChứng nhận khi hoàn thành\n\n 9\n 4\n 1\n 52Sắp xếp chèn, chuỗi DSA [...] ### Thuật toán\n\nDự án5 bài học\n\n 01Cách hoạt động?Trắc nghiệm\n 02Mã giảTrắc nghiệm\n 03Triển khai (phần 1)Thử tháchTrắc nghiệm\n 04Triển khai (phần 2)Thử tháchTrắc nghiệm\n 05Độ phức tạp thời gian và không gianTrắc nghiệm\n\n### Các thử thách cuối cùng\n\n2 bài học\n\n 01Thử thách cuối cùng #1Thử thách\n 02Thử thách cuối cùng #2Thử thách\n\n## Khóa học tương tự\n\nSắp xếp nhanh: chuỗi DSA [...] Nắm vững thuật toán sắp xếp đếm (Counting Sort), một thuật toán không dựa trên phép so sánh, sắp xếp số nguyên không m trong thời gian tuyến tính bằng cách đếm số lần xuất hiện của từng giá trị. Xy dựng bước đếm, viết thuật toán sắp xếp hoàn chỉnh bằng ngôn ngữ bạn chọn, phn tích độ phức tạp O(n + k) và luyện tập qua các thử thách viết code.\n\nCấu trúc dữ liệu\n\ncertificate icon\n\nChứng nhận khi hoàn thành\n\n 9\n 4\n 1\n 52\n\n## Cu hỏi thường gặp\n\n### Merge Sort: loạt bài về DSA có bao nhiêu bài học?",
+                "score": 0.4431913
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "H07_capabilities",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Capability explanation uses no registered research/action tool."
+      },
+      "input": "Bạn hỗ trợ nghiên cứu như thế nào?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi có thể hỗ trợ bạn trong nhiều lĩnh vực nghiên cứu khác nhau, bao gồm:\n\n1. **Tìm kiếm thông tin**: Tôi có thể tìm kiếm và cung cấp thông tin từ các nguồn đáng tin cậy về một chủ đề cụ thể.\n\n2. **Tóm tắt tài liệu**: Nếu bạn có một bài báo hoặc tài liệu cụ thể, tôi có thể giúp tóm tắt nội dung của nó.\n\n3. **So sánh và phân tích**: Tôi có thể giúp bạn so sánh các nghiên cứu hoặc tài liệu khác nhau để tìm ra điểm tương đồng và khác biệt.\n\n4. **Tìm kiếm tài liệu nghiên cứu**: Tôi có thể tìm kiếm các bài báo khoa học, tài liệu nghiên cứu trên arXiv hoặc các nguồn khác.\n\n5. **Hỗ trợ trong việc hiểu các khái niệm phức tạp**: Nếu bạn gặp khó khăn trong việc hiểu một khái niệm hoặc lý thuyết nào đó, tôi có thể giải thích và cung cấp thêm thông tin.\n\nNếu bạn có một yêu cầu cụ thể nào, hãy cho tôi biết để tôi có thể hỗ trợ bạn tốt hơn!",
+        "case_failure_type": "unnecessary_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "H08_unspecified_account",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Missing account must be structured clarification."
+      },
+      "input": "Lấy ba bài đăng mới nhất giúp tôi, nhưng tôi chưa nói tài khoản nào.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text",
+              "stage": "information"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn muốn lấy bài đăng mới nhất từ tài khoản nào?",
+              "response_type": "text",
+              "options": [],
+              "stage": "information",
+              "draft_text": ""
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn muốn lấy bài đăng mới nhất từ tài khoản nào?",
+            "response_type": "text",
+            "options": [],
+            "stage": "information",
+            "draft_text": ""
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn muốn lấy bài đăng mới nhất từ tài khoản nào?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true,
+            "stage": "information"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H09_missing_article",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Missing article URL is not invented."
+      },
+      "input": "Đọc và tóm tắt bài nghiên cứu đó giúp tôi; tôi chưa gửi link.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text",
+              "stage": "information"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn vui lòng cung cấp link đến bài nghiên cứu mà bạn muốn tôi đọc và tóm tắt?",
+              "response_type": "text",
+              "options": [],
+              "stage": "information",
+              "draft_text": ""
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn vui lòng cung cấp link đến bài nghiên cứu mà bạn muốn tôi đọc và tóm tắt?",
+            "response_type": "text",
+            "options": [],
+            "stage": "information",
+            "draft_text": ""
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn vui lòng cung cấp link đến bài nghiên cứu mà bạn muốn tôi đọc và tóm tắt?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true,
+            "stage": "information"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H10_top_social",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "A social TOP request should not route to an author timeline."
+      },
+      "input": "Tìm các tweet phổ biến nhất về biến đổi khí hậu.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "search_type": "Top"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "biến đổi khí hậu",
+              "search_type": "Top"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "biến đổi khí hậu",
+            "search_type": "Top"
+          },
+          "result": {
+            "tool": "search_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/search.php?query=bi%E1%BA%BFn+%C4%91%E1%BB%95i+kh%C3%AD+h%E1%BA%ADu&search_type=Top",
+            "status_code": 403,
+            "retryable": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "H11_switch_source",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Cancelled source remains cancelled when subject/count/date changes later."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm tweet về xe điện."
+        },
+        {
+          "role": "user",
+          "content": "Không tìm tweet nữa, đổi sang tin tức trên web."
+        },
+        {
+          "role": "user",
+          "content": "Vẫn chủ đề xe điện, trong tuần này."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "week"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "xe điện",
+              "topic": "news",
+              "timeframe": "week"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "xe điện",
+            "topic": "news",
+            "timeframe": "week"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "xe điện",
+            "topic": "news",
+            "timeframe": "week",
+            "items": [
+              {
+                "title": "Xe điện có thể vừa chạy vừa sạc nhờ công nghệ mới của Honda",
+                "url": "https://www.24h.com.vn/o-to/xe-dien-co-the-vua-chay-vua-sac-nho-cong-nghe-moi-cua-honda-c747a1808369.html",
+                "source": "24h.com.vn",
+                "summary": "Hệ thống này dựa trên công nghệ Truyền tải điện không dy động (Dynamic Wireless Power Transfer - DWPT), bao gồm ba thành phần chính: một nguồn điện một chiều (DC) đặt trên mặt đất, một cơ sở hạ tầng máy phát tích hợp dưới mặt đường, và một mô-đun máy thu lắp dưới gầm xe. Khi xe di chuyển qua các đoạn đường được trang bị công nghệ này, một trường điện từ sẽ được tạo ra cho phép truyền điện không dy đến pin mà không cần tiếp xúc vật lý. [...] Một trong những thách thức lớn nhất trong việc phổ biến xe điện là thời gian dừng sạc tại các trạm sạc truyền thống. Mặc dù cơ sở hạ tầng sạc công cộng và hiệu suất pin đã được cải thiện đáng kể trong những năm qua, thời gian sạc vẫn là một rào cản lớn cho những chuyến đi dài. Để khắc phục vấn đề này, Honda đã hợp tác với các tập đoàn Nhật Bản Taisei và Taisei Rotec nhằm phát triển một hệ thống sạc không dy cho phép xe điện được sạc khi đang di chuyển. [...] Khác với các hệ thống vận tải đường sắt hoặc đường ray truyền thống, giải pháp sạc không dy của Honda có thể cung cấp năng lượng cho nhiều loại phương tiện, từ xe hơi đến xe tải hạng nặng. Trong giai đoạn đầu, Honda sẽ tập trung vào lĩnh vực logistics và thương mại, nơi việc giảm kích thước và trọng lượng của pin, cũng như giảm thời gian dừng đỗ trên các tuyến đường liên tỉnh, từ đó mang lại lợi thế kinh tế đáng kể.",
+                "score": 0.69399214
+              },
+              {
+                "title": "Xe điện bùng nổ khắp thế giới",
+                "url": "https://thanhnien.vn/xe-dien-bung-no-khap-the-gioi-185261104101836957.htm",
+                "source": "thanhnien.vn",
+                "summary": "Theo các tính toán chuyên su từ OLACDE, quy mô đội xe điện hóa hiện hữu không chỉ đơn thuần giảm tải lượng phát thải khí nhà kính mà còn trực tiếp giúp các nền kinh tế trong khu vực tiết kiệm tới 1,519 tỉ USD chi phí năng lượng mỗi năm nhờ chênh lệch lớn giữa giá điện và nhiên liệu hóa thạch. Đặc biệt, hiệu quả kinh tế từ phương tiện xanh thể hiện rất rõ ở dòng xe vận tải công cộng khi mỗi chiếc xe buýt điện vận hành liên tục ước tính giúp tiết kiệm tới 26.210 USD ngn sách năng lượng hằng năm. [...] Ở chiều ngược lại, tỷ lệ người tiêu dùng hoàn toàn loại trừ phương tiện chạy điện khỏi danh sách cn nhắc đã giảm su. Điều này phản ánh thực tế rằng xe điện không còn là một giải pháp thử nghiệm hay lựa chọn thứ yếu, mà đã trở thành sự lựa chọn ưu tiên hàng ngày, từng bước thay thế dòng xe động cơ đốt trong truyền thống trên thị trường xe hai bánh quy mô hàng đầu thế giới. [...] ẢNH: NHẬT THỊNH\n\nTheo dữ liệu thống kê từ MotorcyclesData, thị trường Việt Nam đã tiêu thụ tới 973.247 xe máy điện chỉ trong 9 tháng đầu năm, đánh dấu mức tăng trưởng nhảy vọt 90,5% so với cùng kỳ năm ngoái. Nhờ tốc độ tăng trưởng gần như gấp đôi này, xe máy điện hiện đã chiếm tới 32,2% tổng lượng xe hai bánh bán ra trên toàn quốc - một tỷ lệ thm nhập thuộc hàng cao nhất khu vực Đông Nam Á, trong bối cảnh tổng lượng tiêu thụ toàn thị trường xe máy chung chỉ tăng 25,9%.",
+                "score": 0.6607204
+              },
+              {
+                "title": "Không bắt buộc chuyển sang xe điện, người dân phấn khởi vì được quyền lựa chọn",
+                "url": "https://vietnamnet.vn/khong-bat-buoc-chuyen-sang-xe-dien-nguoi-dan-phan-khoi-vi-duoc-quyen-lua-chon-2572156.html",
+                "source": "vietnamnet.vn",
+                "summary": "Anh Nguyễn Hữu Dũng, một người sử dụng xe máy tại Long Biên, Hà Nội cho biết, xe điện có những ưu điểm đáng ghi nhận như vận hành êm ái, không phát thải và chi phí năng lượng có thể thấp hơn trong một số điều kiện sử dụng. Dù vậy chi phí đầu tư xe ban đầu vẫn đang khá cao với nhiều người dn lao động. [...] Các chuyên gia cho rằng, việc sử dụng xe các dòng xe đời mới tiết kiệm xăng, bảo dưỡng định kỳ, thay dầu đúng khuyến cáo, kiểm tra lọc gió và duy trì áp suất lốp phù hợp cũng góp phần hạn chế nhiên liệu tiêu hao, giảm lượng khí thải phát sinh trong quá trình vận hành.\n\nNhìn rộng hơn, mục tiêu giảm phát thải giao thông cần được thực hiện bằng nhiều giải pháp đồng bộ, không chỉ dừng ở việc thay thế phương tiện chạy xăng bằng xe điện. [...] Ở phn khúc ô tô, hãng xe điện VinFast từ năm 2024 đã vươn lên dẫn đầu toàn thị trường, tiếp theo là Toyota, Hyundai, Ford, Mitsubishi, KIA, Mazda... Trong khi VinFast tập trung phát triển các dòng xe thuần điện, Toyota, Honda, Hyundai cũng đẩy mạnh những mẫu xe hybrid bên cạnh danh mục xe xăng truyền thống. Các thương hiệu Mazda, KIA, Mercedes-Benz cùng các hãng Trung Quốc như Omoda & Jaecoo, BYD, Geely, MG cũng đang cạnh tranh nhiều phn khúc khác nhau.",
+                "score": 0.65146625
+              },
+              {
+                "title": "Xe điện Trung Quốc mất giá gần một nửa sau 3 năm",
+                "url": "https://cafef.vn/xe-dien-trung-quoc-mat-gia-gan-mot-nua-sau-3-nam-188261105230601573.chn",
+                "source": "cafef.vn",
+                "summary": "Theo báo cáo Triển vọng xe điện toàn cầu của Cơ quan Năng lượng Quốc tế (IEA), khoảng 4/5 đại lý xe cũ tại Trung Quốc từ chối nhận mua xe thuần điện đã qua sử dụng hơn 5 năm. Nguyên nhn chủ yếu xuất phát từ những lo ngại về tuổi thọ pin và chi phí thay thế.\n\nHiệp hội Đại lý Ô tô Trung Quốc cho biết, một chiếc xe điện 3 năm tuổi hiện chỉ bán lại được với giá khoảng 45% giá mua ban đầu, giảm so với mức gần 55% vào năm 2023. [...] Đội xe taxi sử dụng ô tô điện của hãng Tata Motors tại UAE do ông Chaturvedi quản lý là ví dụ cho thấy pin có thể xuống cấp nhanh đến mức nào. Những chiếc xe này di chuyển tới 80.000 km/năm và liên tục sử dụng sạc nhanh.\n\nKết quả là dung lượng pin có thể giảm tới 8% mỗi năm, trong khi giá trị xe mất một nửa chỉ sau 12 tháng. Dù vậy, thị trường xe cũ không có cách dễ dàng để phn biệt những chiếc taxi này với một chiếc xe cá nhn được sử dụng và sạc đúng cách. [...] Theo ông Karl Brauer, chuyên gia phn tích điều hành tại công ty iSeeCars của Mỹ, các nhà phn tích, tổ chức cho vay và doanh nghiệp cho thuê xe thường tính toán mức khấu hao của ô tô sau 3 và 5 năm sử dụng. Đy cũng là khoảng thời gian phổ biến của các hợp đồng thuê xe và vay mua ô tô.\n\nTheo phương pháp tính này, xe điện thường mất giá nhanh hơn do người mua xe mới sẵn sàng trả thêm tiền để sở hữu công nghệ mới nhất, đồng thời thể hiện phong cách và hình ảnh cá nhn.",
+                "score": 0.5189612
+              },
+              {
+                "title": "Phó thủ tướng: Không áp đặt chuyển đổi sang xe điện - Báo VnExpress",
+                "url": "https://vnexpress.net/pho-thu-tuong-khong-ap-dat-chuyen-doi-sang-xe-dien-5141318.html",
+                "source": "vnexpress.net",
+                "summary": "Phó thủ tướng yêu cầu Bộ Xy dựng chủ trì xy dựng các giải pháp đồng bộ, khuyến khích người dn, doanh nghiệp chủ động chuyển sang phương tiện giao thông xanh, phù hợp với điều kiện kinh tế, xã hội và hạ tầng giao thông. Các chính sách không được quy định bắt buộc hoặc đưa ra lộ trình mang tính bắt buộc đối với chủ phương tiện, người dn, doanh nghiệp phải chuyển sang sử dụng xe thuần điện, phương tiện giao thông xanh, nhất là phương tiện cơ giới đường bộ. [...] Phó thủ tướng Thường trực Phạm Gia Túc yêu cầu khuyến khích người dn, doanh nghiệp chuyển sang phương tiện giao thông xanh, nhưng không áp đặt lộ trình bắt buộc sử dụng xe thuần điện.\n\nNgày 5/11, Văn phòng Chính phủ truyền đạt chỉ đạo của Phó thủ tướng Thường trực Phạm Gia Túc về hoàn thiện Chiến lược phát triển dịch vụ vận tải và Chương trình hành động chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính trong giao thông vận tải. [...] Thành phố dự kiến yêu cầu toàn bộ xe buýt nội tỉnh sử dụng năng lượng sạch, thn thiện với môi trường từ năm 2027. Ôtô, môtô và xe gắn máy của cơ quan nhà nước, đơn vị sự nghiệp công lập khi đầu tư mới hoặc đến hạn thay thế cũng phải đáp ứng yêu cầu này.\n\nTừ năm 2030, taxi và xe công nghệ hai bánh phải sử dụng năng lượng sạch. Đến năm 2045, TP HCM đặt mục tiêu toàn bộ phương tiện lưu thông trên địa bàn sử dụng năng lượng sạch, kể cả phương tiện đặc thù.\n\nVũ Tun\n\nTrở lại Thời sựTrở lại Thời sự",
+                "score": 0.4169159
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "H12_collect_after_preparation",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Preparation consent should move to collecting text, not ask yes_no again."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tôi muốn đăng bản tin lên Telegram."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn đồng ý tiếp tục chuẩn bị bản tin chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Có, đồng ý chuẩn bị. Hiện tôi chưa có nội dung, chưa gửi."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text",
+              "stage": "collect_send_text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có muốn cung cấp nội dung cho bản tin không?",
+              "response_type": "text",
+              "options": [],
+              "stage": "collect_send_text",
+              "draft_text": ""
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có muốn cung cấp nội dung cho bản tin không?",
+            "response_type": "text",
+            "options": [],
+            "stage": "collect_send_text",
+            "draft_text": ""
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn có muốn cung cấp nội dung cho bản tin không?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true,
+            "stage": "collect_send_text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H13_final_preview",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Full exact content should be previewed for final consent; not sent now."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Chuẩn bị đăng bản tin lên kênh đã cấu hình."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn đồng ý chuẩn bị chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị. Nội dung chính xác: Thông báo lịch họp nhóm ngày mai. Chưa gửi."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no",
+              "stage": "confirm_send",
+              "draft_text": "Thông báo lịch họp nhóm ngày mai."
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có muốn gửi nội dung này không?",
+              "response_type": "yes_no",
+              "options": [],
+              "stage": "confirm_send",
+              "draft_text": "Thông báo lịch họp nhóm ngày mai."
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có muốn gửi nội dung này không?",
+            "response_type": "yes_no",
+            "options": [],
+            "stage": "confirm_send",
+            "draft_text": "Thông báo lịch họp nhóm ngày mai."
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Nội dung:\nThông báo lịch họp nhóm ngày mai.\n\nĐích gửi: kênh Telegram đã cấu hình.\nBạn xác nhận gửi đúng nội dung này đến kênh đã cấu hình không?",
+            "response_type": "yes_no",
+            "options": [],
+            "awaiting_user": true,
+            "stage": "confirm_send",
+            "draft_text": "Thông báo lịch họp nhóm ngày mai."
+          }
+        }
+      ]
+    },
+    {
+      "id": "H14_cancel_preview",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Refusing a preview cancels, no send."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Chuẩn bị thông báo họp nhóm."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn đồng ý chuẩn bị chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Có."
+        },
+        {
+          "role": "assistant",
+          "content": "Nội dung: Thông báo họp nhóm. Đích: kênh đã cấu hình. Xác nhận gửi không?"
+        },
+        {
+          "role": "user",
+          "content": "Không, hủy yêu cầu."
+        }
+      ],
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Đã hiểu. Không có thông báo nào được gửi đi. Nếu bạn cần hỗ trợ gì khác, hãy cho tôi biết!",
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "H15_keep_author",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "A count edit retains the identified author source."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tôi muốn xem tweet của @NASA."
+        },
+        {
+          "role": "user",
+          "content": "Lấy đúng bốn bài mới nhất, giữ nguyên tài khoản."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "NASA",
+              "limit": 4
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "NASA",
+              "limit": 4
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "NASA",
+            "limit": 4
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=NASA",
+            "status_code": 403,
+            "retryable": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "H16_combined_news_social",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Both currently requested independent sources are called."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tôi quan tâm năng lượng tái tạo."
+        },
+        {
+          "role": "user",
+          "content": "Tìm tin hôm nay trên web và thêm tweet về cùng chủ đề."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          },
+          {
+            "name": "social_search",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "năng lượng tái tạo",
+              "topic": "news",
+              "timeframe": "day",
+              "max_results": 5
+            }
+          },
+          {
+            "name": "social_search",
+            "args": {
+              "query": "năng lượng tái tạo",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "năng lượng tái tạo",
+            "topic": "news",
+            "timeframe": "day",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "năng lượng tái tạo",
+            "topic": "news",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "Gia Lai chấp thuận dự án nhà máy điện gió Lơ Pang hơn 1.600 tỷ đồng",
+                "url": "https://voh.com.vn/xa-hoi/gia-lai-chap-thuan-du-an-nha-may-dien-gio-lo-pang-hon-1600-ty-dong-679065.html",
+                "source": "voh.com.vn",
+                "summary": "Việc triển khai dự án sẽ cung cấp nguồn điện sạch, góp phần tăng thu ngn sách, tạo việc làm cho lao động địa phương và thúc đẩy phát triển kinh tế - xã hội tỉnh Gia Lai.\n\nHiện toàn tỉnh Gia Lai đã có 85 dự án năng lượng tái tạo đi vào vận hành thương mại với tổng công suất 4.271 MW. Theo Quy hoạch điện VIII, đến năm 2035, tổng công suất các dự án năng lượng tái tạo trên địa bàn tỉnh được định hướng đạt khoảng 9.657 MW.\n\ntin hotTin nóngtin nhanhđiện năng lượng tái tạođiện gióGia Lai\n\nTin trước [...] Dự án có công suất thiết kế 42 MW, sản lượng điện năng khoảng 101 triệu kWh mỗi năm. Tổng vốn đầu tư hơn 1.600 tỷ đồng, trong đó vốn góp của nhà đầu tư chiếm 20% tương đương hơn 327 tỷ đồng, phần còn lại là vốn huy động.\n\nDự án sẽ khởi công vào tháng 5/2027 và đưa vào vận hành chính thức vào tháng 9/2028. Thời hạn hoạt động là 50 năm.\n\n \n\nToàn tỉnh Gia Lai hiện có 85 dự án năng lượng tái tạo đã đi vào vận hành thương mại với tổng công suất 4.271 MW - Ảnh: vtcnews.vn",
+                "score": 0.64826655
+              },
+              {
+                "title": "Việt Nam là một trong 13 quốc gia trên thế giới giữ ổn định an ninh năng lượng",
+                "url": "https://vtcnews.vn/viet-nam-la-1-trong-13-quoc-gia-tren-the-gioi-giu-on-dinh-an-ninh-nang-luong-ar1050363.html",
+                "source": "vtcnews.vn",
+                "summary": "Ở lĩnh vực năng lượng tái tạo, tiềm năng kỹ thuật điện gió ngoài khơi của Việt Nam được đánh giá khoảng 600.000 MW. Tuy nhiên, việc hiện thực hóa tiềm năng này đòi hỏi hoàn thiện khung pháp lý, đồng bộ nguồn điện với lưới truyền tải và phn bổ rủi ro hợp lý. [...] Đáng chú ý, TS. Cấn Văn Lực dẫn ước tính của Bộ Công Thương cho biết nhu cầu vốn đầu tư năng lượng giai đoạn 2026-2030 khoảng 77 tỷ USD. Trong khi đó, dư nợ tín dụng dành cho năng lượng tái tạo đến tháng 6/2026 mới gần 300.000 tỷ đồng, tương đương khoảng 1,5% tổng dư nợ.\n\nCác chuyên gia kiến nghị hoàn thiện cơ chế mua bán điện trực tiếp, xy dựng giá điện hợp lý, phát triển thị trường vốn và sớm hoàn thiện Luật Năng lượng tái tạo.\n\nNhận tin VTC News trên Google [...] Phát triển nhiên liệu sinh học vì môi trường và an ninh năng lượng quốc gia\n\n### Phát triển nhiên liệu sinh học vì môi trường và an ninh năng lượng quốc gia\n\nTheo chuyên gia, phát triển nhiên liệu sinh học có ý nghĩa không chỉ bởi cho môi trường mà còn vì an ninh năng lượng của mỗi quốc gia.\n\n năng lượng tái tạo\n an ninh năng lượng\n Bộ Công Thương\n khủng hoảng năng lượng toàn cầu\n nhu cầu điện Việt Nam 2027\n\n \n \n Zalo\n\n##### Bình luận\n\npaper plane\n\nvtcnews.vn\n\nCùng chuyên mục",
+                "score": 0.60917604
+              },
+              {
+                "title": "Phản biện",
+                "url": "https://nangluongvietnam.vn/nang-luong-cho-ai-va-ai-cho-nang-luong-thong-diep-cua-viet-nam-tai-hoi-thao-apec-o-singapore-36895.html",
+                "source": "nangluongvietnam.vn",
+                "summary": "Mặc dù năng lượng tái tạo, các thỏa thuận hợp tác phát điện phn tán (DPPA) và hệ thống lưu trữ năng lượng pin (BESS) rất quan trọng để thu hẹp khoảng cách năng lượng cho đến 2030, nhưng tốc độ phát triển của các trung tm dữ liệu SI đòi hỏi nguồn điện nền công suất cao, liên tục và không bị ảnh hưởng bởi sự thay đổi thời tiết. Quy hoạch điện VIII Điều chỉnh quy định việc loại bỏ hoàn toàn than đá trong sản xuất điện vào năm 2050, chuyển đổi các nhà máy hiện có sang sử dụng sinh khối, hoặc [...] Để đáp ứng các yêu cầu về môi trường, xã hội và quản trị (ESG) của các trung tm dữ liệu quy mô lớn toàn cầu và giảm sự phụ thuộc vào lưới điện đang quá tải của EVN, Chính phủ đã ban hành Nghị định 80/2024/ND-CP ngày 3 tháng 7 năm 2024, thiết lập khung pháp lý toàn diện cho các thỏa thuận mua bán điện trực tiếp (DPPA). Cơ chế này cho phép các khách hàng tiêu thụ điện năng lớn mua năng lượng tái tạo trực tiếp từ các đơn vị phát điện, thông qua đường dy truyền tải tư nhn, hoặc qua lưới điện quốc [...] Nhận thấy nhu cầu thích ứng nhanh chóng, Chính phủ đã ban hành Nghị định 243/2026/ND-CP ngày 26 tháng 6 năm 2026, sửa đổi các điều khoản quan trọng của cơ chế DPPA (Nghị định 57/2025/ND-CP) và quy định về điện mặt trời tự sản xuất trên mái nhà (Nghị định 58/2025/ND-CP).",
+                "score": 0.5596998
+              },
+              {
+                "title": "EVNNPC chung sức đưa tiềm năng năng lượng Điện Biên thành động lực tăng trưởng",
+                "url": "https://vov.vn/doanh-nghiep/evnnpc-chung-suc-dua-tiem-nang-nang-luong-dien-bien-thanh-dong-luc-tang-truong-post1348812.vov",
+                "source": "vov.vn",
+                "summary": "Là tỉnh miền núi, biên giới có vị trí chiến lược quan trọng tại khu vực Ty Bắc, Điện Biên sở hữu nhiều tiềm năng phát triển thủy điện, điện gió, điện mặt trời và các loại hình năng lượng tái tạo. Khai thác hiệu quả những lợi thế này không chỉ góp phần bổ sung nguồn điện cho hệ thống điện quốc gia mà còn tạo động lực thu hút đầu tư, phát triển công nghiệp, dịch vụ, nng cao đời sống nhn dn và bảo đảm quốc phòng, an ninh. [...] ## VOV.VN - EVNNPC đang phối hợp với tỉnh Điện Biên và các chủ đầu tư đẩy mạnh đầu tư hạ tầng điện, tháo gỡ điểm nghẽn truyền tải, khai thác hiệu quả tiềm năng thủy điện và năng lượng tái tạo, góp phần bảo đảm an ninh năng lượng, tạo động lực phát triển kinh tế - xã hội khu vực Ty Bắc.\n\n## Khơi thông điểm nghẽn hạ tầng, phát huy tiềm năng năng lượng Điện Biên [...] evnnpc chung suc dua tiem nang nang luong Dien bien thanh dong luc tang truong hinh anh 5\n\nHoạt động vận hành tại Nhà máy Thủy điện Long Tạo – một trong những nguồn điện tham gia phối hợp điều chỉnh thời gian phát điện, hỗ trợ hệ thống điện miền Bắc trong các thời điểm cao điểm phụ tải.",
+                "score": 0.4434805
+              }
+            ]
+          }
+        },
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "năng lượng tái tạo",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_tweets",
+            "error": "HTTPError",
+            "message": "429 Client Error: Too Many Requests for url: https://twitter-api45.p.rapidapi.com/search.php?query=n%C4%83ng+l%C6%B0%E1%BB%A3ng+t%C3%A1i+t%E1%BA%A1o&search_type=Latest",
+            "status_code": 429,
+            "retryable": true
+          }
+        }
+      ]
+    }
+  ]
+}

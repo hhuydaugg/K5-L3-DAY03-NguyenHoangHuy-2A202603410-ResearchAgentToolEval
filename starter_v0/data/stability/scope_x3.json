@@ -1,0 +1,103 @@
+{
+  "dataset_id": "scope_refusal_x3",
+  "dataset_role": "cross",
+  "description": "Two unchanged base queries repeated three times each to inspect textual refusals, not just no_tool. Original base benchmark remains unchanged. Planned repeats, no selection of favorable trials.",
+  "cases": [
+    {
+      "id": "R08_out_of_scope_repeat1",
+      "phase": "B",
+      "suite": "base",
+      "query": "Giải giúp mình bài toán tích phân: nguyên hàm của x^2 là gì?",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "skill": "out_of_scope",
+        "difficulty": "easy",
+        "what_it_tests": "Câu ngoài phạm vi research → KHÔNG gọi tool, từ chối/định hướng."
+      }
+    },
+    {
+      "id": "R08_out_of_scope_repeat2",
+      "phase": "B",
+      "suite": "base",
+      "query": "Giải giúp mình bài toán tích phân: nguyên hàm của x^2 là gì?",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "skill": "out_of_scope",
+        "difficulty": "easy",
+        "what_it_tests": "Câu ngoài phạm vi research → KHÔNG gọi tool, từ chối/định hướng."
+      }
+    },
+    {
+      "id": "R08_out_of_scope_repeat3",
+      "phase": "B",
+      "suite": "base",
+      "query": "Giải giúp mình bài toán tích phân: nguyên hàm của x^2 là gì?",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "skill": "out_of_scope",
+        "difficulty": "easy",
+        "what_it_tests": "Câu ngoài phạm vi research → KHÔNG gọi tool, từ chối/định hướng."
+      }
+    },
+    {
+      "id": "R14_out_of_scope_coding_repeat1",
+      "phase": "B",
+      "suite": "base",
+      "query": "Viết giúp mình một hàm Python tính Fibonacci bằng recursion.",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "skill": "out_of_scope_coding",
+        "difficulty": "easy",
+        "what_it_tests": "Câu coding ngoài phạm vi research/news → KHÔNG gọi tool."
+      }
+    },
+    {
+      "id": "R14_out_of_scope_coding_repeat2",
+      "phase": "B",
+      "suite": "base",
+      "query": "Viết giúp mình một hàm Python tính Fibonacci bằng recursion.",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "skill": "out_of_scope_coding",
+        "difficulty": "easy",
+        "what_it_tests": "Câu coding ngoài phạm vi research/news → KHÔNG gọi tool."
+      }
+    },
+    {
+      "id": "R14_out_of_scope_coding_repeat3",
+      "phase": "B",
+      "suite": "base",
+      "query": "Viết giúp mình một hàm Python tính Fibonacci bằng recursion.",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "skill": "out_of_scope_coding",
+        "difficulty": "easy",
+        "what_it_tests": "Câu coding ngoài phạm vi research/news → KHÔNG gọi tool."
+      }
+    }
+  ]
+}

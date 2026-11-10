@@ -1,7 +1,287 @@
 {
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
-  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
-  "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "description": "10 group-authored cases for v3: 5 single-turn and 5 contextual multi-turn, including new tool, news args and confirmation boundaries. No real send expected.",
+  "allowed_failure_types": [
+    "wrong_tool",
+    "wrong_arg_value",
+    "wrong_boundary",
+    "unnecessary_tool",
+    "out_of_scope",
+    "missing_info"
+  ],
+  "cases": [
+    {
+      "id": "G01_weekly_robotics_news",
+      "phase": "B",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "week"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Explicit news topic and week filter on a new subject."
+      },
+      "query": "Tìm tin tức robotics trong tuần này trên web."
+    },
+    {
+      "id": "G02_independent_web_social",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          },
+          {
+            "name": "social_search",
+            "args": {}
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Use independent web and social tools together, not timeline."
+      },
+      "query": "Tìm tin robotics hôm nay trên web và tìm tweet về robotics."
+    },
+    {
+      "id": "G03_prepare_before_missing_content",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Preparation consent precedes collection of unspecified content; never send now."
+      },
+      "query": "Tôi muốn đăng một bản tin lên Telegram."
+    },
+    {
+      "id": "G04_remove_duplicate_sources",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "deduplicate_sources",
+            "args": {
+              "items": [
+                {
+                  "url": "https://example.org/report-a",
+                  "title": "A"
+                },
+                {
+                  "url": "https://example.org/report-a",
+                  "title": "A copy"
+                },
+                {
+                  "url": "https://example.org/report-b",
+                  "title": "B"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Route to new local tool and pass all supplied items unchanged."
+      },
+      "query": "Loại các nguồn trùng URL trong danh sách này, giữ lần đầu và thứ tự. Không cần định dạng digest: [{\"url\": \"https://example.org/report-a\", \"title\": \"A\"}, {\"url\": \"https://example.org/report-a\", \"title\": \"A copy\"}, {\"url\": \"https://example.org/report-b\", \"title\": \"B\"}]"
+    },
+    {
+      "id": "G05_unrelated_code",
+      "phase": "B",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "what_it_tests": "No research tool for unrelated coding; manual review must also verify refusal."
+      },
+      "query": "Viết chương trình Python sắp xếp danh sách bằng quicksort."
+    },
+    {
+      "id": "G06_account_after_clarification",
+      "phase": "B",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "NASA",
+              "limit": 2
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Resolve account and requested count from earlier context; strip @."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi muốn xem hai tweet mới nhất."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn muốn xem tài khoản nào?"
+        },
+        {
+          "role": "user",
+          "content": "Tài khoản @NASA nhé."
+        }
+      ]
+    },
+    {
+      "id": "G07_url_after_clarification",
+      "phase": "B",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://example.org/research-update"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Read a supplied URL rather than asking again or searching."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tóm tắt bài viết này giúp tôi."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn gửi URL bài viết nhé."
+        },
+        {
+          "role": "user",
+          "content": "URL đây: https://example.org/research-update"
+        }
+      ]
+    },
+    {
+      "id": "G08_preparation_is_not_send",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "After preparation consent, collect missing content, not send."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi muốn đăng bản tin lên Telegram."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn có đồng ý tiếp tục chuẩn bị không?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị. Tôi chưa có nội dung; chưa gửi nhé."
+        }
+      ]
+    },
+    {
+      "id": "G09_cancel_after_preparation",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "metadata": {
+        "what_it_tests": "Cancellation after final preview invalidates any earlier preparation consent."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Chuẩn bị gửi nội dung: Bản tin thử nghiệm, lên kênh Telegram đã cấu hình."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn đồng ý tiếp tục chuẩn bị chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị, chưa gửi."
+        },
+        {
+          "role": "assistant",
+          "content": "Nội dung: Bản tin thử nghiệm. Đích: kênh đã cấu hình. Bạn xác nhận gửi không?"
+        },
+        {
+          "role": "user",
+          "content": "Hủy nhé, không gửi nữa."
+        }
+      ]
+    },
+    {
+      "id": "G10_switch_from_social_to_web",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Latest request overrides earlier social-search intent."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm tweet về năng lượng mặt trời."
+        },
+        {
+          "role": "assistant",
+          "content": "Tôi có thể tìm thảo luận mạng xã hội về chủ đề đó."
+        },
+        {
+          "role": "user",
+          "content": "Bỏ tweet. Chỉ tìm tin tức năng lượng mặt trời hôm nay trên web."
+        }
+      ]
+    }
+  ]
 }

@@ -1,0 +1,106 @@
+{
+  "dataset_id": "author_clarification_x3",
+  "dataset_role": "cross",
+  "description": "Three planned repeats of the account-clarification carry-over case, after adding a generic symbolic routing example. Expected answers are unchanged.",
+  "cases": [
+    {
+      "id": "G06_account_after_clarification_1",
+      "phase": "B",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "NASA",
+              "limit": 2
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Resolve account and requested count from earlier context; strip @."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi muốn xem hai tweet mới nhất."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn muốn xem tài khoản nào?"
+        },
+        {
+          "role": "user",
+          "content": "Tài khoản @NASA nhé."
+        }
+      ]
+    },
+    {
+      "id": "G06_account_after_clarification_2",
+      "phase": "B",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "NASA",
+              "limit": 2
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Resolve account and requested count from earlier context; strip @."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi muốn xem hai tweet mới nhất."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn muốn xem tài khoản nào?"
+        },
+        {
+          "role": "user",
+          "content": "Tài khoản @NASA nhé."
+        }
+      ]
+    },
+    {
+      "id": "G06_account_after_clarification_3",
+      "phase": "B",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "NASA",
+              "limit": 2
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Resolve account and requested count from earlier context; strip @."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi muốn xem hai tweet mới nhất."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn muốn xem tài khoản nào?"
+        },
+        {
+          "role": "user",
+          "content": "Tài khoản @NASA nhé."
+        }
+      ]
+    }
+  ]
+}

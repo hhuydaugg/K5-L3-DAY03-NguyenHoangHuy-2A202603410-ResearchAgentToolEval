@@ -1,0 +1,146 @@
+# starter_v0 — tool declarations (intentionally vague).
+# Names and descriptions here are a rough first draft. Routing rules, name->handle
+# mapping, arg conventions (news/timeframe/Top), and the send-confirmation boundary
+# are NOT spelled out anywhere yet. Your job is to make these declarations + the
+# system prompt good enough that the agent routes correctly on the eval.
+#
+# If you rename a tool, keep the name in sync across:
+#   this file  ->  tools/__init__.py (TOOL_FUNCTIONS)  ->  data/eval_base.json + data/eval_research_extension.json
+# `pytest tests/test_tool_contract.py` checks this sync for you.
+#
+# TODO(student):
+#   - Rewrite every description: what it does, WHEN to use it, WHEN NOT to use it.
+#   - Spell out arg conventions in parameter descriptions (handle format, topic/timeframe, search_type).
+#   - Make the `send` confirmation boundary explicit.
+#   - Declare your new tool(s) at the end of this file.
+tools:
+  # ---------------- Core tools ----------------
+  - name: clarify
+    strict: true
+    description: "Hỏi và chờ người dùng. Với yêu cầu gửi mới: yes_no + prepare_send trước khi hỏi nội dung. Sau khi đồng ý chuẩn bị: text + collect_send_text nếu thiếu nội dung (không xin đồng ý chuẩn bị lần nữa). Khi có nội dung chính xác: yes_no + confirm_send + draft_text để hiển thị preview cuối. Thông tin khác: text + information. Không dùng câu hỏi văn bản thuần thay tool này."
+    parameters:
+      type: object
+      additionalProperties: false
+      properties:
+        question: {type: string, description: "Bắt buộc có câu hỏi đầy đủ, không để rỗng."}
+        response_type: {type: string, enum: [text, yes_no, choice], description: "Bắt buộc truyền. text = hỏi thông tin thiếu; yes_no = xin xác nhận gửi/đăng; choice = chọn trong options"}
+        options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn cho response_type=choice"}
+        stage: {type: string, enum: [information, prepare_send, collect_send_text, confirm_send], description: "information cho thông tin chung; prepare_send trước consent chuẩn bị; collect_send_text sau consent chuẩn bị khi thiếu nội dung; confirm_send để preview và xin consent cuối."}
+        draft_text: {type: string, description: "Toàn văn khi confirm_send; dùng chuỗi rỗng ở các stage khác. Không tự thêm/bớt sau khi đã xác nhận."}
+      required: [question, response_type, options, stage, draft_text]
+
+  - name: timeline
+    description: "Lấy bài đăng CỦA tài khoản đã xác định; chỉ dùng timeline, không gọi thêm social_search cho cùng yêu cầu lấy bài của một tác giả. Handle không có @. Thiếu tác giả và chủ đề thì clarify text/information, không tìm query rỗng."
+    parameters:
+      type: object
+      properties:
+        screenname: {type: string, description: "Handle đã biết, không có @; không ghép họ tên để đoán. Ví dụ được xác minh từ trang cá nhân: Sam Altman = sama; Andrej Karpathy = karpathy (xem account_alias_sources.md). Tài khoản được người dùng sửa ở lượt mới nhất ghi đè tài khoản cũ."}
+        limit: {type: integer, default: 5, description: "Số lượng"}
+      required: [screenname]
+
+  - name: social_search
+    description: "Tweet VỀ chủ đề được nêu rõ. Không dùng khi thiếu cả chủ đề lẫn tài khoản; lúc đó clarify text/information. Không dùng bổ sung cho yêu cầu lấy bài CỦA tác giả, hoặc khi người dùng đã bỏ nguồn xã hội. Top phổ biến, Latest mới nhất."
+    parameters:
+      type: object
+      properties:
+        query: {type: string, default: "", description: "Từ khóa"}
+        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Cách sắp xếp"}
+        limit: {type: integer, default: 5, description: "Số lượng"}
+      required: [query]
+
+  - name: lookup
+    description: "Tìm trên WEB theo yêu cầu hiện tại, gồm tài liệu và nghiên cứu kỹ thuật trên web. Không tự gọi thêm papers hay social_search khi chỉ được yêu cầu web."
+    parameters:
+      type: object
+      properties:
+        query: {type: string, minLength: 1, description: "Chủ đề thật từ yêu cầu/lịch sử; không rỗng. Để bộ lọc tin tức/thời gian trong topic/timeframe, không thêm chúng vào chủ đề."}
+        topic: {type: string, enum: [general, news], default: "general", description: "Luôn truyền rõ news cho tin tức/thời sự, kể cả khi đồng thời tìm tweet; general cho tra cứu thông thường."}
+        timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "Khoảng thời gian"}
+        max_results: {type: integer, default: 5, description: "Số kết quả"}
+      required: [query, topic]
+
+  - name: fetch
+    description: "Đọc URL bài viết cụ thể đã cung cấp. Thiếu URL thì clarify(information), không tạo URL giả. Không coi error page hoặc nội dung rỗng là nguồn hợp lệ."
+    parameters:
+      type: object
+      properties:
+        url: {type: string, default: "", description: "Địa chỉ"}
+      required: [url]
+
+  - name: format
+    description: "Trình bày items thực sự đã có thành digest. Không tìm nguồn hoặc tự tạo dữ liệu khi nguồn lỗi/rỗng."
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          default: []
+          description: "Danh sách item"
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              url: {type: string}
+              source: {type: string}
+              summary: {type: string}
+              section: {type: string}
+        template: {type: string, enum: [brief, sections, bullets, thread, daily_ai_vn], default: "sections", description: "Khuôn"}
+        headline: {type: string, default: "", description: "Tiêu đề"}
+      required: [items, template]
+
+  # ---------------- Bonus tools ----------------
+  - name: send
+    description: "Gửi đúng nội dung trong final preview đã được người dùng xác nhận ở lượt sau, tới kênh Telegram cấu hình. Không dùng khi chỉ đồng ý chuẩn bị, đang hỏi thông tin hoặc đã hủy. Chỉ confirmed=true sau xác nhận cuối; không có tham số đổi kênh."
+    parameters:
+      type: object
+      properties:
+        text: {type: string, default: "", description: "Nội dung"}
+        confirmed: {type: boolean, default: false, description: "Cờ xác nhận"}
+      required: [text, confirmed]
+
+  - name: policy
+    description: "Tìm trong tài liệu nội bộ."
+    parameters:
+      type: object
+      properties:
+        query: {type: string, default: "", description: "Truy vấn"}
+        policy_area: {type: string, enum: [all, ai_research, source_citation, data_privacy, external_publishing, tool_usage], default: "all", description: "Nhóm"}
+        top_k: {type: integer, default: 3, description: "Số mục"}
+      required: [query]
+
+  - name: papers
+    description: "Tìm paper trên arXiv khi người dùng yêu cầu paper/arXiv. Không thay lookup nếu người dùng chỉ định tìm trên web hoặc tài liệu web, dù chủ đề kỹ thuật/nghiên cứu."
+    parameters:
+      type: object
+      properties:
+        query: {type: string, default: "", description: "Từ khóa"}
+        max_results: {type: integer, default: 5, description: "Số lượng"}
+        sort_by: {type: string, enum: [relevance, lastUpdatedDate, submittedDate], default: "relevance", description: "Sắp xếp"}
+      required: [query]
+
+  - name: paper_text
+    description: "Lấy nội dung text của một bài báo."
+    parameters:
+      type: object
+      properties:
+        arxiv_url: {type: string, default: "", description: "ID hoặc địa chỉ"}
+        max_pages: {type: integer, default: 5, description: "Số trang"}
+        max_chars: {type: integer, default: 8000, description: "Số ký tự"}
+      required: [arxiv_url]
+
+  - name: deduplicate_sources
+    description: "Loại các nguồn có URL trùng chính xác trong danh sách người dùng đã cung cấp; giữ nguồn đầu và thứ tự. Không tìm web, không tóm tắt hay định dạng digest. Không coi URL khác query/fragment là trùng. Chỉ dùng khi yêu cầu loại nguồn trùng."
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          description: "Truyền TOÀN BỘ danh sách nguồn gốc gồm cả mục trùng; không tự lọc trước. URL HTTP(S) không rỗng; giữ metadata."
+          items:
+            type: object
+            properties:
+              url: {type: string}
+              title: {type: string}
+              summary: {type: string}
+            required: [url]
+      required: [items]

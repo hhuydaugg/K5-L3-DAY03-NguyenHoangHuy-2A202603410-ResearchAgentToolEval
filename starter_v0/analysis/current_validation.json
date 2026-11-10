@@ -1,0 +1,31 @@
+{
+  "offline_tests": {
+    "command": "python -m pytest -q",
+    "passed": 151,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": [
+      "Existing LibreSSL/urllib3 environment warning"
+    ]
+  },
+  "base": "runs/v3_B_base_openrouter_20261110T140413243846.json",
+  "group": "runs/v3_B_group_openrouter_20261110T130027992623.json",
+  "robustness": "runs/v3_B_cross_openrouter_20261110T140411362763.json",
+  "stability": "runs/v3-stability_B_cross_openrouter_20261110T140348993404.json",
+  "author_stability": "runs/v3-author-stability_B_cross_openrouter_20261110T130012778338.json",
+  "live_transcript": "transcripts/v3_openrouter_20261110T140357969604.transcript.json",
+  "prompt_hash": "c413bdb53768172d36071c06ff57073b4258dff4b3d66891d3d94cb2bb69c9ab",
+  "tools_hash": "43f5a02176189e06bf5358ba76824b1d287dd48a1bbc6a74c998654fab1505f9",
+  "live_protocol": "required-tools-v1",
+  "live_tool_choice": "required",
+  "runtime_hash": "9baa3a45e17ba988f7cf7b61bc858e7e74e870d859d804481b8dafd983ee5d74",
+  "live_tools_hash": "144e7233998f772959e1932be9cd2f4c03cc1fbb6141170953017401dbede0d8",
+  "model_timeout_seconds_default": 60,
+  "sdk_max_retries": 0,
+  "one_shot_action_execution": "disabled; proposed calls still graded",
+  "live_send_execution": "guarded; actual HTTP delivery tested with mocks only",
+  "benchmark_unchanged": true,
+  "branch": "phattran",
+  "old_pr_2": "closed; not merged",
+  "old_branch_phattran_v3": "deleted after ancestry and pushed-copy checks"
+}

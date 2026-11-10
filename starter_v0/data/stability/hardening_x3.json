@@ -1,0 +1,259 @@
+{
+  "dataset_id": "hardening_fixed_probes_x3",
+  "dataset_role": "cross",
+  "description": "Three fixed probes repeated three times each; planned before results, no cherry-picking. Tests G08, source switching and allowed technical research.",
+  "cases": [
+    {
+      "id": "G08_preparation_is_not_send_repeat1",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "After preparation consent, collect missing content, not send."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi muốn đăng bản tin lên Telegram."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn có đồng ý tiếp tục chuẩn bị không?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị. Tôi chưa có nội dung; chưa gửi nhé."
+        }
+      ]
+    },
+    {
+      "id": "G08_preparation_is_not_send_repeat2",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "After preparation consent, collect missing content, not send."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi muốn đăng bản tin lên Telegram."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn có đồng ý tiếp tục chuẩn bị không?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị. Tôi chưa có nội dung; chưa gửi nhé."
+        }
+      ]
+    },
+    {
+      "id": "G08_preparation_is_not_send_repeat3",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "After preparation consent, collect missing content, not send."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tôi muốn đăng bản tin lên Telegram."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn có đồng ý tiếp tục chuẩn bị không?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị. Tôi chưa có nội dung; chưa gửi nhé."
+        }
+      ]
+    },
+    {
+      "id": "G10_switch_from_social_to_web_repeat1",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Latest request overrides earlier social-search intent."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm tweet về năng lượng mặt trời."
+        },
+        {
+          "role": "assistant",
+          "content": "Tôi có thể tìm thảo luận mạng xã hội về chủ đề đó."
+        },
+        {
+          "role": "user",
+          "content": "Bỏ tweet. Chỉ tìm tin tức năng lượng mặt trời hôm nay trên web."
+        }
+      ]
+    },
+    {
+      "id": "G10_switch_from_social_to_web_repeat2",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Latest request overrides earlier social-search intent."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm tweet về năng lượng mặt trời."
+        },
+        {
+          "role": "assistant",
+          "content": "Tôi có thể tìm thảo luận mạng xã hội về chủ đề đó."
+        },
+        {
+          "role": "user",
+          "content": "Bỏ tweet. Chỉ tìm tin tức năng lượng mặt trời hôm nay trên web."
+        }
+      ]
+    },
+    {
+      "id": "G10_switch_from_social_to_web_repeat3",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Latest request overrides earlier social-search intent."
+      },
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm tweet về năng lượng mặt trời."
+        },
+        {
+          "role": "assistant",
+          "content": "Tôi có thể tìm thảo luận mạng xã hội về chủ đề đó."
+        },
+        {
+          "role": "user",
+          "content": "Bỏ tweet. Chỉ tìm tin tức năng lượng mặt trời hôm nay trên web."
+        }
+      ]
+    },
+    {
+      "id": "H04_programming_research_allowed_repeat1",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Research ABOUT programming stays in scope."
+      },
+      "query": "Tìm trên web tài liệu nghiên cứu về lập trình bất đồng bộ."
+    },
+    {
+      "id": "H04_programming_research_allowed_repeat2",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Research ABOUT programming stays in scope."
+      },
+      "query": "Tìm trên web tài liệu nghiên cứu về lập trình bất đồng bộ."
+    },
+    {
+      "id": "H04_programming_research_allowed_repeat3",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Research ABOUT programming stays in scope."
+      },
+      "query": "Tìm trên web tài liệu nghiên cứu về lập trình bất đồng bộ."
+    }
+  ]
+}

@@ -43,6 +43,10 @@ class ResearchAgent:
             if not func:
                 results.append({"tool": call.name, "error": "unknown_tool"})
                 continue
+            if call.name == "send":
+                results.append({"tool": call.name, "args": call.args, "result": {
+                    "error": "ActionExecutionDisabled", "message": "One-shot evaluation records the proposed action but never sends messages. Use the live consent flow for authorized delivery."}})
+                continue
             try:
                 result = func(**call.args)
             except Exception as exc:  # keep eval robust; failures are evidence

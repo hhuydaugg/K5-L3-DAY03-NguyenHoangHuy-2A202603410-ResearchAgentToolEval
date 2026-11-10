@@ -1,0 +1,206 @@
+{
+  "run_id": "v3_B_cross_openrouter_20261110T121042846904",
+  "version": "v3",
+  "artifact_version": "v3+pd0565f650c82+t8f42d0b50575",
+  "prompt_hash": "d0565f650c82209d2461a7ee9324a3b5fe9a3cd548309ea9d88a264654117eab",
+  "tools_hash": "8f42d0b50575734666ad6cc5c3658511af3970966ee46cfbdb96156d9c94b8da",
+  "phase": "B",
+  "suite": "cross",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "artifacts/system_prompt.md",
+  "tools": "artifacts/tools.yaml",
+  "eval_cases": "data/stability/scope_x3.json",
+  "dataset_id": "scope_refusal_x3",
+  "dataset_role": "cross",
+  "description": "Two unchanged base queries repeated three times each to inspect textual refusals, not just no_tool. Original base benchmark remains unchanged. Planned repeats, no selection of favorable trials.",
+  "generated_at": "2026-11-10T12:10:42",
+  "summary": {
+    "total_cases": 6,
+    "measured_cases": 6,
+    "provider_error_cases": 0,
+    "passed_cases": 6,
+    "case_accuracy": 1.0,
+    "tool_routing_accuracy": 1.0,
+    "argument_accuracy": 1.0,
+    "multiturn_accuracy": null,
+    "failure_counts": {},
+    "observed_mismatch_counts": {}
+  },
+  "results": [
+    {
+      "id": "R08_out_of_scope_repeat1",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope",
+        "difficulty": "easy",
+        "what_it_tests": "Câu ngoài phạm vi research → KHÔNG gọi tool, từ chối/định hướng."
+      },
+      "input": "Giải giúp mình bài toán tích phân: nguyên hàm của x^2 là gì?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Xin lỗi, nhưng mình không thể giải bài toán tích phân hoặc các bài toán toán học cụ thể. Tuy nhiên, mình có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến tích phân hoặc nguyên hàm. Bạn có muốn mình tìm kiếm thông tin đó không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R08_out_of_scope_repeat2",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope",
+        "difficulty": "easy",
+        "what_it_tests": "Câu ngoài phạm vi research → KHÔNG gọi tool, từ chối/định hướng."
+      },
+      "input": "Giải giúp mình bài toán tích phân: nguyên hàm của x^2 là gì?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Xin lỗi, nhưng tôi không thể giải bài toán tích phân hoặc các bài toán toán học khác. Tuy nhiên, tôi có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến tích phân hoặc nguyên hàm. Bạn có muốn tôi tìm kiếm thông tin đó không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R08_out_of_scope_repeat3",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope",
+        "difficulty": "easy",
+        "what_it_tests": "Câu ngoài phạm vi research → KHÔNG gọi tool, từ chối/định hướng."
+      },
+      "input": "Giải giúp mình bài toán tích phân: nguyên hàm của x^2 là gì?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Xin lỗi, nhưng mình không thể giải bài toán tích phân hoặc các bài toán toán học cụ thể. Tuy nhiên, mình có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến tích phân hoặc nguyên hàm. Bạn có muốn mình tìm kiếm thông tin đó không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R14_out_of_scope_coding_repeat1",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope_coding",
+        "difficulty": "easy",
+        "what_it_tests": "Câu coding ngoài phạm vi research/news → KHÔNG gọi tool."
+      },
+      "input": "Viết giúp mình một hàm Python tính Fibonacci bằng recursion.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi không thể viết mã cho bạn, nhưng tôi có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến thuật toán Fibonacci hoặc lập trình Python. Bạn có muốn tôi tìm kiếm thông tin đó không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R14_out_of_scope_coding_repeat2",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope_coding",
+        "difficulty": "easy",
+        "what_it_tests": "Câu coding ngoài phạm vi research/news → KHÔNG gọi tool."
+      },
+      "input": "Viết giúp mình một hàm Python tính Fibonacci bằng recursion.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi không thể viết mã cho bạn, nhưng tôi có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến thuật toán Fibonacci hoặc lập trình Python. Bạn có muốn tôi tìm kiếm thông tin đó không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R14_out_of_scope_coding_repeat3",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope_coding",
+        "difficulty": "easy",
+        "what_it_tests": "Câu coding ngoài phạm vi research/news → KHÔNG gọi tool."
+      },
+      "input": "Viết giúp mình một hàm Python tính Fibonacci bằng recursion.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi không thể viết mã cho bạn, nhưng tôi có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến thuật toán Fibonacci hoặc lập trình Python. Bạn có muốn tôi tìm kiếm thông tin đó không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    }
+  ]
+}
