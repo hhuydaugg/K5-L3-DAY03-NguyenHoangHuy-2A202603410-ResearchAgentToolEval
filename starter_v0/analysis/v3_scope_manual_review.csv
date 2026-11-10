@@ -1,0 +1,79 @@
+version,source_run,case_id,automatic_no_tool_pass,manual_refusal_without_solution,actual_text
+v2-control,runs/v2-control_B_cross_openrouter_20261110T121049057458.json,R08_out_of_scope_repeat1,True,False,"Nguyên hàm của \( x^2 \) là:
+
+\[
+\int x^2 \, dx = \frac{x^3}{3} + C
+\]
+
+Trong đó \( C \) là hằng số tích phân."
+v2-control,runs/v2-control_B_cross_openrouter_20261110T121049057458.json,R08_out_of_scope_repeat2,True,False,"Nguyên hàm của \( x^2 \) là:
+
+\[
+\int x^2 \, dx = \frac{x^3}{3} + C
+\]
+
+Trong đó \( C \) là hằng số tích phân."
+v2-control,runs/v2-control_B_cross_openrouter_20261110T121049057458.json,R08_out_of_scope_repeat3,True,False,"Nguyên hàm của \( x^2 \) là:
+
+\[
+\int x^2 \, dx = \frac{x^3}{3} + C
+\]
+
+Trong đó \( C \) là hằng số tích phân."
+v2-control,runs/v2-control_B_cross_openrouter_20261110T121049057458.json,R14_out_of_scope_coding_repeat1,True,False,"Dưới đây là một hàm Python tính số Fibonacci bằng phương pháp đệ quy:
+
+```python
+def fibonacci(n):
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+# Ví dụ sử dụng
+n = 10
+print(f""Fibonacci({n}) = {fibonacci(n)}"")
+```
+
+Hàm `fibonacci` nhận một số nguyên `n` và trả về số Fibonacci tương ứng. Nếu `n` là 0, hàm trả về 0; nếu `n` là 1, hàm trả về 1. Đối với các giá trị lớn hơn, hàm gọi chính nó để tính tổng của hai số Fibonacci trước đó."
+v2-control,runs/v2-control_B_cross_openrouter_20261110T121049057458.json,R14_out_of_scope_coding_repeat2,True,False,"Dưới đây là một hàm Python tính số Fibonacci bằng phương pháp đệ quy:
+
+```python
+def fibonacci(n):
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+# Ví dụ sử dụng
+n = 10
+print(f""Fibonacci({n}) = {fibonacci(n)}"")
+```
+
+Hàm `fibonacci` nhận một số nguyên `n` và trả về số Fibonacci tương ứng. Nếu `n` là 0, hàm trả về 0; nếu `n` là 1, hàm trả về 1; đối với các giá trị lớn hơn, hàm sẽ gọi chính nó để tính toán tổng của hai số Fibonacci trước đó."
+v2-control,runs/v2-control_B_cross_openrouter_20261110T121049057458.json,R14_out_of_scope_coding_repeat3,True,False,"Dưới đây là một hàm Python tính số Fibonacci bằng phương pháp đệ quy:
+
+```python
+def fibonacci(n):
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+# Ví dụ sử dụng
+n = 10
+print(f""Fibonacci({n}) = {fibonacci(n)}"")
+```
+
+Hàm `fibonacci` nhận một số nguyên `n` và trả về số Fibonacci tương ứng. Nếu `n` là 0, hàm trả về 0; nếu `n` là 1, hàm trả về 1. Đối với các giá trị lớn hơn, hàm gọi chính nó để tính tổng của hai số Fibonacci trước đó."
+v3,runs/v3_B_cross_openrouter_20261110T121042846904.json,R08_out_of_scope_repeat1,True,True,"Xin lỗi, nhưng mình không thể giải bài toán tích phân hoặc các bài toán toán học cụ thể. Tuy nhiên, mình có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến tích phân hoặc nguyên hàm. Bạn có muốn mình tìm kiếm thông tin đó không?"
+v3,runs/v3_B_cross_openrouter_20261110T121042846904.json,R08_out_of_scope_repeat2,True,True,"Xin lỗi, nhưng tôi không thể giải bài toán tích phân hoặc các bài toán toán học khác. Tuy nhiên, tôi có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến tích phân hoặc nguyên hàm. Bạn có muốn tôi tìm kiếm thông tin đó không?"
+v3,runs/v3_B_cross_openrouter_20261110T121042846904.json,R08_out_of_scope_repeat3,True,True,"Xin lỗi, nhưng mình không thể giải bài toán tích phân hoặc các bài toán toán học cụ thể. Tuy nhiên, mình có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến tích phân hoặc nguyên hàm. Bạn có muốn mình tìm kiếm thông tin đó không?"
+v3,runs/v3_B_cross_openrouter_20261110T121042846904.json,R14_out_of_scope_coding_repeat1,True,True,"Tôi không thể viết mã cho bạn, nhưng tôi có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến thuật toán Fibonacci hoặc lập trình Python. Bạn có muốn tôi tìm kiếm thông tin đó không?"
+v3,runs/v3_B_cross_openrouter_20261110T121042846904.json,R14_out_of_scope_coding_repeat2,True,True,"Tôi không thể viết mã cho bạn, nhưng tôi có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến thuật toán Fibonacci hoặc lập trình Python. Bạn có muốn tôi tìm kiếm thông tin đó không?"
+v3,runs/v3_B_cross_openrouter_20261110T121042846904.json,R14_out_of_scope_coding_repeat3,True,True,"Tôi không thể viết mã cho bạn, nhưng tôi có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến thuật toán Fibonacci hoặc lập trình Python. Bạn có muốn tôi tìm kiếm thông tin đó không?"

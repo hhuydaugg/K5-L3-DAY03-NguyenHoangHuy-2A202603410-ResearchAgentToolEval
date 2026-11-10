@@ -23,7 +23,7 @@ st.set_page_config(page_title="Research Agent", page_icon="🔎")
 with st.sidebar:
     provider_name = st.selectbox("Provider", ["openrouter", "openai", "gemini", "anthropic", "ollama"])
     model = st.text_input("Model (để trống = mặc định của provider)").strip() or None
-    version = st.text_input("Version label", "v2").strip() or "v2"
+    version = st.text_input("Version label", "v3").strip() or "v3"
     history_window = st.number_input("History window (cặp lượt)", 0, 20, 5)
     max_tool_rounds = st.number_input("Max tool rounds", 1, 8, 4)
     if st.button("Cuộc chat mới"):

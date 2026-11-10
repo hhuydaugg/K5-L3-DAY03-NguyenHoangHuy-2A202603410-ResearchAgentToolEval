@@ -32,7 +32,7 @@ def test_ui_logs_clarification_and_cancellation_without_send(monkeypatch, tmp_pa
     paths = list((tmp_path / "transcripts").glob("*.json"))
     assert len(paths) == 1
     transcript = json.loads(paths[0].read_text())
-    assert transcript["version"] == "v2"
+    assert transcript["version"] == "v3"
     assert len(transcript["turns"]) == 2
     assert transcript["turns"][0]["status"] == "waiting_for_user"
     events = [e for turn in transcript["turns"] for e in turn["tool_events"]]

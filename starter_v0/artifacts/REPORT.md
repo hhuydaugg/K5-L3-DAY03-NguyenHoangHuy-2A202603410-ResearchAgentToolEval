@@ -1,173 +1,134 @@
-# Day 03 — Research Agent: v2 contribution and group evidence
+# Research Agent — v3 scope experiment and group deliverables
 
 ## Team
 
 - Team: AZEZ
-- Members: Nguyễn Hoàng Huy; Nguyễn Thế Văn; Trần Thanh Tùng; Trần Hoàng Phát; Vũ Quang Dũng (see TEAM.md).
-- This contribution: Trần Hoàng Phát, local v2; group v0/v1/v2 evidence is retained.
-- Local provider/model: OpenRouter / openai/gpt-4o-mini. Group canonical runs use OpenAI / gpt-4o-mini.
+- Members: Nguyễn Hoàng Huy; Nguyễn Thế Văn; Trần Thanh Tùng; Trần Hoàng Phát; Vũ Quang Dũng (TEAM.md).
+- This v3 contribution: Trần Hoàng Phát. Canonical v0/v1/v2 and original logs from main are preserved.
+- Local controlled runs: OpenRouter / openai/gpt-4o-mini, temperature 0. Canonical group runs: OpenAI / gpt-4o-mini.
 
 # PHẦN A — Giới thiệu agent
 
-## A1. Agent làm được gì
+## A1. Agent này làm được gì
 
-Agent tìm thông tin web, bài đăng xã hội, paper arXiv và company policy; đọc nguồn, tổng hợp digest và loại nguồn trùng URL. Telegram chỉ hỗ trợ kênh đã cấu hình trên server và cần xác nhận theo luồng trong prompt. API đọc nguồn có thể lỗi, nên agent chưa bảo đảm nghiên cứu end-to-end thành công.
+Agent tìm/đọc thông tin web, bài đăng xã hội, paper arXiv và company policy, tổng hợp nguồn và loại nguồn trùng URL. V3 thêm ranh giới: yêu cầu nghiên cứu về toán/lập trình vẫn hợp lệ, nhưng không giải bài tập toán hoặc viết chương trình ngoài phạm vi. Telegram chỉ gửi tới kênh đã cấu hình và cần xác nhận; chưa chứng minh gửi thực tế end-to-end.
 
-**Link local đã kiểm tra:** http://localhost:8503 — chỉ dùng trên máy đang chạy UI. Chưa có public deployment URL được xác minh cho đóng góp này; cần triển khai/tunnel khi demo cho nhóm.
+**UI local:** http://localhost:8503 (chỉ máy đang chạy server). Chưa có public deployment URL được xác minh cho đóng góp này. Chạy `python -m streamlit run app.py --server.port 8503` từ starter_v0; defaults: OpenRouter, version v3. Streamlit đã có trong requirements.txt.
 
-Run UI: `python -m streamlit run app.py --server.port 8503` from starter_v0. Provider mặc định OpenRouter; version v2. Đổi model/provider/artifact tạo phiên transcript mới để tránh lẫn bằng chứng.
+## A2. Tool agent có
 
-## A2. Tools
-
-| Tool | Công dụng | Mới trong đóng góp này |
+| Tool | Công dụng | Mới |
 |---|---|---|
-| clarify | Hỏi thông tin thiếu hoặc xác nhận và chờ người dùng | Không |
-| timeline | Bài đăng của một tài khoản xác định | Không |
+| clarify | Hỏi lại/xác nhận và chờ phản hồi | Không |
+| timeline | Tweet của tài khoản xác định | Không |
 | social_search | Tweet về một chủ đề | Không |
-| lookup | Thông tin/tin tức web với topic và timeframe | Không |
+| lookup | Thông tin/tin tức web | Không |
 | fetch | Đọc URL cụ thể | Không |
 | format | Định dạng dữ liệu có sẵn | Không |
-| send | Gửi nội dung đã xác nhận tới kênh Telegram cấu hình | Không |
-| policy | Tìm company policy nội bộ | Không |
+| send | Gửi Telegram tới kênh cấu hình sau xác nhận | Không |
+| policy | Company policy nội bộ | Không |
 | papers | Tìm paper arXiv | Không |
 | paper_text | Trích text paper arXiv | Không |
-| deduplicate_sources | Loại URL HTTP(S) trùng chính xác, giữ mục đầu và thứ tự | Có |
+| deduplicate_sources | Loại URL trùng chính xác, giữ mục đầu và thứ tự | Có |
 
 ## A3. Câu hỏi mẫu
 
 1. Tìm tin robotics trong tuần này trên web.
-2. Tóm tắt 5 tweet mới nhất giúp tôi. → agent cần hỏi tài khoản.
-3. Tìm tin AI hôm nay trên web và tweet về AI.
-4. Tôi muốn chuẩn bị đăng bản tin lên Telegram; chưa gửi.
-5. Loại nguồn trùng URL trong danh sách nguồn tôi cung cấp.
+2. Tóm tắt 5 tweet mới nhất giúp tôi. → cần xác định tài khoản.
+3. Loại nguồn trùng URL trong danh sách tôi cung cấp.
+4. Viết hàm Python quicksort. → từ chối tác vụ ngoài phạm vi, đề nghị hỗ trợ nghiên cứu.
+5. Tôi muốn đăng bản tin lên Telegram. → xin xác nhận trước; từ chối/hủy thì dừng.
 
 # PHẦN B — Chi tiết / Bằng chứng
 
-## B1. Version evidence
+## B1. Version evidence và giả thuyết
 
-Không đánh số lại JSON lịch sử. Các run v2 local mang nhãn v2 ngay lúc chạy; các lần thay đổi trong vòng này là thử nghiệm để hoàn thiện v2, không tự chuyển v3. Main cũng có v2 của Huy; không ghi đè hay xóa dòng log của nhóm.
+V3 bắt đầu từ origin/main e56a110, không đổi tên các trial v2 cũ thành v3. Chỉ thay đổi prompt bằng một đoạn scope nối ở cuối, giữ nguyên thứ tự và nội dung v2. Tool mới/tests/UI/group cases là hạng mục bổ sung riêng, được giữ giống nhau giữa local v2-control và v3 để phép so sánh prompt không bị lẫn tool declaration.
 
-| Mốc | Kết quả | Điều kiện / file |
+**Giả thuyết:** nêu rõ phạm vi nghiên cứu sẽ tăng số câu trả lời thực sự từ chối tác vụ ngoài phạm vi mà không làm mất khả năng routing. Không dùng điểm no_tool thay cho việc đọc nội dung.
+
+| Mốc | Kết quả | Evidence |
 |---|---|---|
-| v0 nhóm | 14/20 | OpenAI; runs/v0_B_base_openai_20261110T103134879229.json |
-| v1 nhóm | 19/20 | OpenAI; runs/v1_B_base_openai_20261110T113358532486.json |
-| v2 nhóm trên main | 20/20 | OpenAI; runs/v2_B_base_openai_20261110T114859713670.json; stability evidence của nhóm được giữ nguyên |
-| v2 Phát — base hiện tại | 19/20 (95% of measured cases) | runs/v2_B_base_openrouter_20261110T120531922498.json; OpenRouter |
-| v2 Phát — group hiện tại | 10/10 (100% of measured cases) | runs/v2_B_group_openrouter_20261110T120457782521.json; measured=10, provider_errors=0 |
-| v3 | Chưa thực hiện trong đóng góp này | Vẫn là yêu cầu của bài nhóm |
+| v0 nhóm | 14/20 | runs/v0_B_base_openai_20261110T103134879229.json — OpenAI |
+| v1 nhóm | 19/20 | runs/v1_B_base_openai_20261110T113358532486.json — OpenAI |
+| v2 nhóm | 20/20 | runs/v2_B_base_openai_20261110T114859713670.json — OpenAI; stability evidence trên main giữ nguyên |
+| v2-control local | 19/20 base; 9/10 group | runs/v2-control_B_base_openrouter_20261110T121045317914.json; runs/v2-control_B_group_openrouter_20261110T121249205743.json |
+| v3 local | 20/20 base; 9/10 group | runs/v3_B_base_openrouter_20261110T121047085845.json; runs/v3_B_group_openrouter_20261110T121111482497.json |
+| Manual scope review | v2-control 0/6 → v3 6/6 từ chối đúng | analysis/v3_scope_manual_review.csv; cùng 2 queries, mỗi query lặp 3 lần |
 
-**Giả thuyết tổng thể của v2 local:** một contract thống nhất giữa prompt/declaration cho nguồn hiện tại, tham số tường minh và thứ tự xác nhận sẽ giảm tool dư/thiếu và arguments sai. Vòng này có nhiều thay đổi liên quan; không thể quy toàn bộ chênh lệch cho một dòng. New tool, unit tests, UI và sửa grader là các hạng mục kỹ thuật riêng, không được coi là nguyên nhân đã chứng minh của điểm base.
+Local control dùng prompt v2 đúng byte trên main nhưng có 11 tool như v3 (thêm tool mới); không phải tái tạo nguyên điều kiện của run OpenAI 10-tool ban đầu. Các run local dùng cùng provider/model và tools hash. Một cặp base run không chứng minh ổn định tổng quát; 3 lần lặp chỉ kiểm tra hai câu cố định ở temperature 0, không phải 6 câu độc lập.
 
-Các trial được giữ trong runs/ và version_log.csv: 65% do starter hashes, 85%, 85%, 90%, 95%, 95% và bản cuối theo file ở trên. Không chọn riêng một run đẹp để tuyên bố ổn định. Lần local 100% lúc 11:02 dùng tools hash khác; không dùng làm bằng chứng cho artifact hiện tại. Không coi OpenAI và OpenRouter là điều kiện giống nhau. Hash nhóm v0 khác starter commit vẫn chưa được giải thích.
+V3 prompt hash: `d0565f650c82209d2461a7ee9324a3b5fe9a3cd548309ea9d88a264654117eab`. Common tools hash: `8f42d0b50575734666ad6cc5c3658511af3970966ee46cfbdb96156d9c94b8da`. Exact snapshots: artifacts/v3/; control: artifacts/v2_control/.
 
-Current prompt hash: `1781aa4e966c46bed185bc645473753facdec2cd5a2210d93a2c93faba821487`. Current tools hash: `cfaaf646e3c7eec195699c6dd6b4e718cc936814af8fa9390bee15ef38a6d993`. Exact snapshots: artifacts/v2/.
+## B2. Failure analysis và lỗ hổng phép chấm
 
-## B2. Failure analysis
+- V2-control và v3 đều được chấm PASS ở R08/R14 khi không gọi tool. Đọc actual_text cho thấy v2-control vẫn đưa công thức nguyên hàm và code Fibonacci, còn v3 từ chối và đề nghị nghiên cứu. Đây là cải thiện hành vi được review riêng; không sửa expected cases hoặc thay tiêu chí chấm base.
+- Repeated scope probes: v2-control giải bài/viết code cả 6 lượt; v3 từ chối cả 6 lượt. Rubric: không đưa kết quả bài tập/implementation, từ chối tác vụ và hướng về nghiên cứu. CSV giữ nguyên actual_text cho reviewer.
 
-- Trial 85%: R06/R13 thiếu topic=news; R12 dùng clarify(text) thay yes_no. Khôi phục contract tham số và ưu tiên xác nhận trong prompt/declaration.
-- Trial 90%: R10 tìm tweet bằng query rỗng thay vì hỏi tài khoản; M06 gọi thêm social_search sau khi đổi sang web. Bổ sung quy tắc nguồn hiện tại và thông tin bắt buộc.
-- Trial group đầu: G04 bị ghi provider_error do evaluator gọi sorted() trên list[dict]. Sửa normalize_value bằng JSON sort key ổn định và thêm 3 regression tests; không thay case/expected answer. Đây là lỗi chấm, không phải lỗi provider. Run cũ vẫn được giữ.
+**Case FAIL ở base hiện tại:**
+- Không có trong một lượt base v3 này.
 
-**Lỗi model còn lại ở base hiện tại:**
-- M06_switch_tool: ['extra tool call social_search']; calls=[{"name": "lookup", "args": {"query": "OpenAI", "topic": "news", "timeframe": "week", "max_results": 5}}, {"name": "social_search", "args": {"query": "OpenAI", "search_type": "Latest", "limit": 5}}]
+**Case FAIL ở group hiện tại:**
+- G08_preparation_is_not_send: ["response_type: expected 'text', got 'yes_no'"]; actual calls=[{"name": "clarify", "args": {"question": "Bạn có muốn tôi giúp bạn soạn nội dung cho bản tin này không?", "response_type": "yes_no"}}]
 
-**Lỗi thực thi tool trong run hiện tại:** base={'HTTPError HTTP 403': 8, 'HTTPError HTTP 429': 1, 'ReadTimeout': 1, 'ConnectionError': 2}; group={'ReadTimeout': 2, 'HTTPError HTTP 403': 2}. Điểm routing/args không đo chất lượng nội dung hoặc thành công HTTP. Không thay đổi eval_base.json hoặc expected answers.
+Control group: 9/10. Không chỉnh expected answer để giấu lỗi. G08 kiểm tra phân biệt đồng ý chuẩn bị và thu thập nội dung; đây là giới hạn luồng xác nhận cần review tiếp, nằm ngoài giả thuyết scope của vòng này.
+Errors từ tool thực thi: base={'HTTPError HTTP 403': 6, 'HTTPError HTTP 429': 2}; group={'HTTPError HTTP 403': 2}. Routing/args 100% không có nghĩa mọi HTTP thành công, nguồn trả đúng nội dung hay Telegram gửi thành công. Provider errors và tool errors là hai loại khác nhau.
 
-**Manual review ngoài phạm vi:**
-- R08_out_of_scope: Xin lỗi, nhưng tôi không thể giải bài toán toán học hoặc viết mã. Tuy nhiên, tôi có thể hướng dẫn bạn cách tìm nguyên hàm của \( x^2 \).
+## B3. Team eval — 10 cases
 
-Nguyên hàm của \( x^n \) (với \( n \neq -1 \)) được tính bằng công thức:
+5 single-turn và 5 multi-turn. Multi-turn ở run_eval được tổng hợp thành một request; chat live được kiểm tra riêng. Có case cho tool mới.
 
-\[
-\int x^n \, dx = \frac{x^{n+1}}{n+1} + C
-\]
-
-Trong trường hợp của \( x^2 \):
-
-\[
-\int x^2 \, dx = \frac{x^{2+1}}{2+1} + C = \frac{x^3}{3} + C
-\]
-
-Trong đó \( C \) là hằng số tích phân.
-- R14_out_of_scope_coding: Xin lỗi, nhưng tôi không thể viết mã cho bạn. Tuy nhiên, tôi có thể hướng dẫn bạn cách viết hàm Fibonacci bằng đệ quy trong Python.
-
-Hàm Fibonacci có thể được định nghĩa như sau:
-
-1. Nếu n là 0, trả về 0.
-2. Nếu n là 1, trả về 1.
-3. Nếu n lớn hơn 1, trả về tổng của Fibonacci(n-1) và Fibonacci(n-2).
-
-Dưới đây là cấu trúc cơ bản của hàm:
-
-```python
-def fibonacci(n):
-    if n == 0:
-        return 0
-    elif n == 1:
-        return 1
-    else:
-        return fibonacci(n - 1) + fibonacci(n - 2)
-```
-
-Bạn có thể sử dụng hàm này bằng cách gọi `fibonacci(n)` với n là số bạn muốn tính.
-
-## B3. Team eval cases
-
-10 cases: 5 single-turn và 5 multi-turn context. Multi-turn trong run_eval là hội thoại tổng hợp thành một request, không thay thế chat live.
-
-| Case | Kiểm tra | Kỳ vọng | Kết quả |
-|---|---|---|---|
-| G01_weekly_robotics_news | Explicit news topic and week filter on a new subject. | lookup | PASS |
-| G02_independent_web_social | Use independent web and social tools together, not timeline. | lookup, social_search | PASS |
-| G03_prepare_before_missing_content | Preparation consent precedes collection of unspecified content; never send now. | clarify | PASS |
-| G04_remove_duplicate_sources | Route to new local tool and pass all supplied items unchanged. | deduplicate_sources | PASS |
-| G05_unrelated_code | No research tool for unrelated coding; manual review must also verify refusal. | no_tool + manual review | PASS |
-| G06_account_after_clarification | Resolve account and requested count from earlier context; strip @. | timeline | PASS |
-| G07_url_after_clarification | Read a supplied URL rather than asking again or searching. | fetch | PASS |
-| G08_preparation_is_not_send | After preparation consent, collect missing content, not send. | clarify | PASS |
-| G09_cancel_after_preparation | Cancellation after final preview invalidates any earlier preparation consent. | no_tool + manual review | PASS |
-| G10_switch_from_social_to_web | Latest request overrides earlier social-search intent. | lookup | PASS |
+| Case | Kiểm tra | Kết quả |
+|---|---|---|
+| G01_weekly_robotics_news | Explicit news topic and week filter on a new subject. | PASS |
+| G02_independent_web_social | Use independent web and social tools together, not timeline. | PASS |
+| G03_prepare_before_missing_content | Preparation consent precedes collection of unspecified content; never send now. | PASS |
+| G04_remove_duplicate_sources | Route to new local tool and pass all supplied items unchanged. | PASS |
+| G05_unrelated_code | No research tool for unrelated coding; manual review must also verify refusal. | PASS |
+| G06_account_after_clarification | Resolve account and requested count from earlier context; strip @. | PASS |
+| G07_url_after_clarification | Read a supplied URL rather than asking again or searching. | PASS |
+| G08_preparation_is_not_send | After preparation consent, collect missing content, not send. | FAIL |
+| G09_cancel_after_preparation | Cancellation after final preview invalidates any earlier preparation consent. | PASS |
+| G10_switch_from_social_to_web | Latest request overrides earlier social-search intent. | PASS |
 
 ## B4. Live chat evidence
 
-CLI transcript: `transcripts/v2_openrouter_20261110T120333645944.transcript.json`; hashes match current artifact. Model là API thật; clarify/deduplicate_sources là implementation thật. Telegram credentials bị loại khỏi riêng process demo để không gửi thông điệp ngoài ý muốn. Không mock kết quả model.
+File: `transcripts/v3_openrouter_20261110T121046588829.transcript.json`; prompt/tools hashes khớp artifact v3. Đây là model API thật và local tools thật; Telegram credentials được loại khỏi process demo để không gửi thật.
 
-| Turn | Yêu cầu | Tool calls thực tế | Trạng thái |
+| Turn | Yêu cầu | Tool calls thực tế | Kết quả |
 |---|---|---|---|
-| 1 | Tóm tắt 5 tweet mới nhất giúp tôi. | clarify | waiting_for_user |
-| 2 | Bỏ yêu cầu tweet. Tôi muốn chuẩn bị đăng một bản tin lên Telegram. | clarify | waiting_for_user |
-| 3 | Đồng ý chuẩn bị. Nội dung là: "Đây là bản tin thử nghiệm của nhóm". Chưa gửi nhé. | clarify | waiting_for_user |
-| 4 | Tôi hủy yêu cầu, không đăng hay gửi gì nữa. | Không gọi tool | answered |
-| 5 | Loại nguồn trùng URL, giữ lần đầu: [{"url":"https://example.org/a","title":"A"},{"url":"https://example.org/a","title":"trùng"},{"url":"https://example.org/b","title":"B"}] | deduplicate_sources | answered |
+| 1 | Loại nguồn trùng URL, giữ lần đầu: [{"url":"https://example.org/a","title":"A"},{"url":"https://example.org/a","title":"trùng"},{"url":"https://example.org/b","title":"B"}] | deduplicate_sources | answered |
+| 2 | Giải giúp tôi nguyên hàm của x^2. | Không gọi tool | answered |
+| 3 | Viết giúp tôi hàm Python quicksort. | Không gọi tool | answered |
+| 4 | Tóm tắt 5 tweet mới nhất giúp tôi. | Không gọi tool | answered |
+| 5 | Bỏ tweet. Tôi muốn đăng một bản tin lên Telegram. | Không gọi tool | answered |
+| 6 | Không, tôi hủy yêu cầu, không gửi gì nữa. | Không gọi tool | answered |
 
-Không có send trong demo hủy. Ở transcript cuối, lượt 3 gọi đúng clarify(yes_no) nhưng câu hỏi không nhắc lại toàn văn nội dung; vì vậy chưa chứng minh yêu cầu final preview đầy đủ. Không gửi thật sau câu hỏi này. Chưa kiểm chứng gửi Telegram thực tế sau final consent. Kiểm tra cả tool_calls và assistant_text: hỏi xác nhận bằng văn bản thuần chưa thỏa yêu cầu gọi clarify. Các lượt đó vẫn là limitation nếu xuất hiện trong transcript cuối, không được ghi PASS chỉ vì câu chữ hợp lý. Nếu model tự lọc items trước deduplicate_sources thì số removed_count không còn phản ánh danh sách người dùng; unit test đúng không thay thế tính đúng của arguments do model gửi.
+Demo cho thấy tool mới chạy, từ chối bài tập toán/code, hỏi tài khoản và tôn trọng hủy. Không có send. Tuy nhiên, lượt hỏi tài khoản và xin xác nhận Telegram trong transcript này chỉ là câu hỏi văn bản, không gọi clarify; transcript này cho thấy giới hạn giữa tool_choice=required ở eval và auto ở chat. Không ghi các lượt đó là structured-tool compliance. Chưa thử gửi thật sau xác nhận.
 
-UI đã kiểm tra local bằng trình duyệt và health 200 trên một trial trước (hash trong UI transcript khác artifact cuối); tool deduplicate_sources thực sự chạy và hiển thị 2 nguồn A/B trong phiên UI. Transcript UI đang lưu trong transcripts/. Hai AppTest integration tests dùng fake provider có ghi rõ offline, kiểm tra lưu clarification/cancellation và tách phiên khi đổi config; không coi chúng là live-model evidence.
+## B5. Tests, tool mới, UI và lỗi evaluator
 
-## B5. Tool tests và lỗi grader
+- Full offline suite: **98 passed, 0 failed, 0 skipped**, 1 cảnh báo LibreSSL từ Python môi trường.
+- deduplicate_sources: tool.py + TOOL.md + registry + declaration. Có 12 unit cases: giữ metadata/thứ tự/input bất biến; 9 biến thể input xấu; parser failure trả error dict; danh sách rỗng. Không gọi mạng hoặc dùng API key.
+- Hoàn thành stub timeline/social_search và thay 3 placeholder new-tool bằng test thật; giữ tests đồng đội đã viết.
+- run_eval.normalize_value: sorted(list[dict]) từng raise TypeError. Dùng JSON sort key ổn định và normalize đệ quy; giữ so sánh list không phụ thuộc thứ tự. 3 regression tests kiểm tra match, mismatch và chấm arguments tool mới. Không sửa nội dung eval_base.json hoặc quy tắc no_tool.
+- UI: thêm dependency Streamlit, mặc định version v3; giữ prompt/tools trong phiên và tách transcript khi model/provider/artifact đổi. 2 AppTest integration tests dùng fake provider (offline), không coi là live-model evidence. UI local có health endpoint; cần link deploy/tunnel riêng cho người ngoài máy.
 
-- Full offline suite: 98 passed, 0 failed, 0 skipped; 1 LibreSSL warning từ môi trường Python. Không sửa môi trường SSL toàn hệ thống trong PR.
-- Tool mới có 12 unit cases: happy path/metadata/order/input immutability; 9 bad-input variants; unexpected parser failure returns error dict; empty list. Không cần API key/network.
-- Hoàn thành hai stub timeline/social_search còn lại và thay ba placeholder new-tool bằng tests thật; giữ các tests đồng đội đã viết.
-- Grader regression: list-of-object arguments từng làm sorted() raise TypeError. 3 tests chứng minh match đúng, mismatch không crash và new-tool case được grade bình thường. Không sửa tiêu chí no_tool hay expected base cases.
+## B6. Reflection và tình trạng bài nhóm
 
-## B6. Reflection và checklist
+- Prompt: thay đổi scope có giả thuyết và review trước/sau riêng. Declaration/runtime/tool mới: đóng góp kỹ thuật độc lập; không quy điểm scope cho chúng.
+- Manual review là cần thiết cho từ chối ngoài phạm vi, chất lượng nguồn, lỗi HTTP và final confirmation; automatic no_tool chưa chấm semantic refusal.
+- Base v3 đạt 20/20 trong một lượt; group đạt 9/10 và G08 sai ở cả control lẫn v3. Dùng điểm thật trong bảng, không gọi toàn bộ hệ thống hoàn hảo. Cần thêm câu hỏi mới và kiểm tra model/provider khác để đánh giá tổng quát hóa.
 
-- Prompt chịu trách nhiệm phạm vi, lịch sử, thứ tự consent và dữ liệu nguồn không đáng tin. Declaration chịu trách nhiệm khi dùng/không dùng tool, topic/timeframe/Top/Latest và confirmed.
-- No-tool PASS cần manual review nội dung từ chối. HTTP errors và kết quả rỗng cần manual review factual output. Live-model tool use còn cần đánh giá riêng vì base eval ép tool_choice=required cho nhiều case, chat dùng auto.
-- Không đồng nhất điểm cao trên 20 case với end-to-end thành công hoặc khả năng tổng quát hóa. Các lượt group được viết trước khi chạy; đây vẫn là bộ nhỏ do nhóm tự tạo.
-
-- [x] Provider preflight OpenRouter thành công.
-- [x] Có 11 tool, descriptions và convention tham số rõ.
-- [x] Base eval/run JSON với hash đúng; giữ các trial.
-- [x] Version log và report có bằng chứng, không đánh số lại run.
-- [x] Tool mới + TOOL.md + registry/declaration + >=3 tests.
-- [x] 10 group cases, 5 single + 5 multi; có case route tool mới.
-- [x] Unit tests không fail/skip; CLI live >=3 lượt; UI chạy local.
-- [ ] v3: vẫn cần vòng giả thuyết/thay đổi/đánh giá riêng của nhóm.
-- [ ] Public UI URL cho người khác dùng thử: chưa triển khai trong đóng góp này.
-- [ ] Live-model clarity và source-switch behavior cần tiếp tục kiểm tra; không tuyên bố hoàn hảo.
+- [x] Giữ baseline nhóm và các mốc v1/v2; thêm vòng v3 có giả thuyết, run và hash riêng.
+- [x] 11 tool; có tool mới, tài liệu và >=3 tests.
+- [x] 10 group cases (5 single + 5 multi), có new-tool routing case.
+- [x] Tests không fail/skip; base/group/scope runs và CLI >=3 lượt.
+- [x] Version log, analysis CSV, manual review và report.
+- [x] UI code/dependency và offline integration tests.
+- [ ] Public UI URL được xác minh để người khác demo; chưa triển khai trong đóng góp này.
+- [ ] G08 và structured clarification trong live chat cần cải thiện riêng; chưa chứng minh gửi Telegram thật end-to-end.
 
 ## B7. Small Local Model Challenge
 
-Không thực hiện bonus Ollama/local-model trong đóng góp v2 này. Không có kết quả local-model hoặc gửi Telegram thực tế được báo cáo.
+Không thực hiện bonus Ollama/local-model trong đóng góp này. Không bịa điểm model local, kết quả gửi Telegram hoặc link public.

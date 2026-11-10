@@ -1,7 +1,7 @@
 {
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
-  "description": "10 group-authored cases for v2: 5 single-turn and 5 contextual multi-turn, including new tool, news args and confirmation boundaries. No real send expected.",
+  "description": "10 group-authored cases for v3: 5 single-turn and 5 contextual multi-turn, including new tool, news args and confirmation boundaries. No real send expected.",
   "allowed_failure_types": [
     "wrong_tool",
     "wrong_arg_value",
