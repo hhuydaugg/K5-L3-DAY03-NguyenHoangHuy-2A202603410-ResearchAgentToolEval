@@ -161,26 +161,10 @@ Các mục dưới đây tổng hợp phần truy xuất được từ các nhá
 
 ### Trần Hoàng Phát — MSSV 2A202603536
 
-**Nhánh cá nhân:** `phattran`; **GitHub:** `phattoohigh`.
-
-Các nhiệm vụ thực hiện và lưu bằng chứng trên nhánh:
-
-1. **Tool mới:** triển khai `tools/deduplicate_sources/`, đăng ký trong `tools/__init__.py` và `artifacts/tools.yaml`; bổ sung 12 test cases sau parameterization cho đường chạy thành công, input không hợp lệ và lỗi parser. Tool giữ URL đầu tiên, thứ tự và metadata, không mutate input.
-2. **V3 scope và hợp đồng công cụ:** bổ sung quy tắc từ chối giải toán/viết code ngoài phạm vi nhưng vẫn hỗ trợ nghiên cứu về các chủ đề đó; thực hiện cặp control có cùng provider/tool configuration để kiểm chứng thay đổi scope. Xem `analysis/v3_scope_manual_review.csv`; các lượt v3 scope cũ được ghi nhãn `v3-draft-scope` trong version log.
-3. **Hội thoại và consent:** phát triển các stage chuẩn bị, thu thập nội dung, preview và xác nhận cuối; kiểm tra hủy/thay đổi nội dung, đổi đích và ngăn dùng lại quyền gửi. Transcript v3 ở B4 ghi nhận kịch bản 5 lượt, không gửi thật.
-4. **Runtime và kiểm thử hồi quy:** xử lý query rỗng/URL tự tạo trong live flow, nguồn lỗi/rỗng, gọi tool lặp và provider lỗi; sửa lỗi grader với list chứa object và bổ sung regression tests; kiểm tra consent/session của UI. One-shot evaluator ghi nhận proposed send nhưng không gửi. Không nhận toàn bộ 151 test là do cá nhân viết; đây là tổng suite của nhóm.
-5. **Eval và bằng chứng:** bổ sung 10 group cases (5 single-turn, 5 contextual multi-turn), development probes và chạy v3 đạt base 20/20, group 10/10, probes 16/16 theo các JSON ở B1. Probes là bộ phát triển đã dùng trong quá trình sửa, không phải held-out benchmark.
-6. **Replay và truy xuất nguồn:** lấy nguyên cấu hình v0/v1/v2 từ lịch sử main, chạy tuần tự qua OpenRouter và lưu raw JSON; xác minh hash v0 nhóm khác bản source LF do xuống dòng CRLF trên Windows. Dọn riêng trial cá nhân đã được thay thế, bảo toàn file nhóm có trước PR #3.
-
-**Kết quả replay cá nhân, không phải vòng tối ưu mới:** cùng `openai/gpt-4o-mini` qua OpenRouter, temperature=0, max_tokens=512; mỗi lượt measured=20, provider_errors=0:
-
-- `v0-openrouter-replay`: 13/20 (65%) — `runs/v0_B_base_openrouter_20261110T155117759410.json`.
-- `v1-openrouter-replay`: 19/20 (95%) — `runs/v1_B_base_openrouter_20261110T155220687009.json`.
-- `v2-openrouter-replay`: 20/20 (100%) — `runs/v2_B_base_openrouter_20261110T155320532977.json`.
-
-V3 ở B1 là run trước đó, chưa áp cùng output cap 512; không coi cả bốn mốc là một phép so sánh đồng nhất hoàn toàn. Các thay đổi hardening gộp nhiều bản sửa được tách khỏi thí nghiệm scope đơn yếu tố, không quy mọi cải thiện cho một dòng prompt.
-
-**Dấu vết đóng góp:** [PR #3](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/pull/3), [PR #5](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/pull/5) đã merge; commit tiêu biểu `ab7195d` (tool/group cases/tests), `57b3177` (scope có đối chứng), `a204ee8` (hardening), `8238631` (replay), `ac7c3a2` (bảo toàn bằng chứng nhóm). Tác giả các run còn được ghi trong `artifacts/version_log.csv`.
+- Triển khai tool `deduplicate_sources`, đăng ký tool và bổ sung 12 test cases; xây dựng group cases và kiểm thử hồi quy.
+- Phát triển v3 scope, luồng chuẩn bị/preview/xác nhận gửi; bổ sung xử lý lỗi nguồn, kiểm soát consent và kiểm tra session UI.
+- Chạy eval, lưu JSON/transcript và replay cấu hình v0–v2 qua OpenRouter; xác minh khác biệt hash do CRLF/LF. Chi tiết kết quả ở B1 và `artifacts/version_log.csv`; các replay dùng cap 512, không gộp với run v3 cũ khác điều kiện.
+- **Bằng chứng:** [PR #3](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/pull/3), [PR #5](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/pull/5); commit `ab7195d`, `57b3177`, `a204ee8`, `8238631` trên nhánh `phattran`, đã tích hợp vào `main`.
 
 ### Vũ Quang Dũng — MSSV 2A202603486
 
