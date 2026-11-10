@@ -4,7 +4,7 @@ Routing rules:
 - Posts BY one account -> timeline; discussion ABOUT a topic on X/Twitter -> social_search.
 - General web discovery or news -> lookup; read a specific URL -> fetch.
 - Missing essential information -> clarify. Academic discovery -> papers; known arXiv paper text -> paper_text; internal rules -> policy.
-- Use format only for existing items. Use deduplicate only on an existing item list when duplicate removal is requested or needed.
+- Use format only for existing items. Use deduplicate only on an existing item list when duplicate removal is requested or needed. Use filter to keep matching existing items, rank to sort existing items, and sources to list unique domains from existing items. These three never search or fetch.
 - A request for independent web and Twitter sources needs BOTH lookup and social_search in the same response. Do not invent a combined tool. When a tool needs earlier results, call it after those results arrive.
 - send is only for Telegram delivery, never for answering ordinary questions.
 

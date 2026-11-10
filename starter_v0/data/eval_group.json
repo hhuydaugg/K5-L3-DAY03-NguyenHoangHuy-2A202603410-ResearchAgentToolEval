@@ -1,7 +1,7 @@
 {
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
-  "description": "10 case của nhóm: 5 single-turn và 5 multi-turn. Kiểm tra routing, tham số, hỏi lại, hủy gửi và tool deduplicate mới. Chưa có kết quả model cho đến khi chạy suite group bằng API thật.",
+  "description": "13 case của nhóm: 8 single-turn và 5 multi-turn. Kiểm tra routing, tham số, hỏi lại, hủy gửi và các tool local mới (deduplicate, filter, rank, sources).",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
   "cases": [
     {
@@ -103,6 +103,30 @@
       "failure_type": "wrong_tool",
       "expect": {"tool_calls": [{"name": "deduplicate", "args": {}}]},
       "metadata": {"what_it_tests": "Tool mới dùng lại items trong hội thoại, không gọi lookup hoặc format thừa."}
+    },
+    {
+      "id": "G11_filter_existing_items",
+      "phase": "B",
+      "query": "Chỉ lọc các mục đã có chứa OpenAI, không tìm kiếm: [{\"title\":\"OpenAI news\",\"url\":\"https://example.com/oai\"},{\"title\":\"Robotics\",\"url\":\"https://example.com/bot\"}].",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "filter", "args": {"query": "OpenAI"}}]},
+      "metadata": {"what_it_tests": "Route tới filter trên items có sẵn; không gọi lookup/fetch."}
+    },
+    {
+      "id": "G12_rank_existing_items",
+      "phase": "B",
+      "query": "Sắp xếp danh sách items đã có theo ngày mới nhất, không tìm thêm: [{\"title\":\"Old\",\"date\":\"2024-01-01\",\"url\":\"https://example.com/old\"},{\"title\":\"New\",\"date\":\"2026-11-01\",\"url\":\"https://example.com/new\"}].",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "rank", "args": {"by": "date"}}]},
+      "metadata": {"what_it_tests": "Route tới rank(by=date) khi đã có items."}
+    },
+    {
+      "id": "G13_list_sources_existing_items",
+      "phase": "B",
+      "query": "Chỉ liệt kê các domain nguồn từ items này, không tìm thêm: [{\"title\":\"A\",\"url\":\"https://www.openai.com/a\"},{\"title\":\"B\",\"url\":\"https://arxiv.org/abs/1\"}].",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "sources", "args": {}}]},
+      "metadata": {"what_it_tests": "Route tới sources trên items có sẵn."}
     }
   ]
 }

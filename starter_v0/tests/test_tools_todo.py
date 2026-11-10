@@ -170,3 +170,63 @@ def test_deduplicate_keeps_items_without_urls_and_distinct_path_case():
              {"url": "https://example.com/A"}, {"url": "https://example.com/a"}]
     assert TOOL_FUNCTIONS["deduplicate"](items)["items"] == items
     assert TOOL_FUNCTIONS["deduplicate"]([])["items"] == []
+
+
+def test_filter_keeps_matching_items_without_mutating_input():
+    items = [{"title": "OpenAI news", "url": "https://example.com/oai"},
+             {"title": "Robotics", "summary": "arms"}]
+    before = deepcopy(items)
+    result = TOOL_FUNCTIONS["filter"](items, query="openai")
+    assert [item["title"] for item in result["items"]] == ["OpenAI news"]
+    assert result["input_count"] == 2
+    assert items == before
+
+
+@pytest.mark.parametrize("query", ["", "   ", None, 5])
+def test_filter_empty_or_non_string_query_returns_error(query):
+    assert TOOL_FUNCTIONS["filter"]([{"title": "A"}], query=query)["error"] == "ValueError"
+
+
+@pytest.mark.parametrize("items", [None, "text", ["bad"]])
+def test_filter_bad_items_returns_error(items):
+    assert TOOL_FUNCTIONS["filter"](items, query="A")["error"] == "ValueError"
+
+
+def test_rank_date_puts_newest_first_and_missing_last():
+    items = [{"title": "Old", "date": "2024-01-01"},
+             {"title": "None"},
+             {"title": "New", "date": "2026-11-01T00:00:00Z"}]
+    result = TOOL_FUNCTIONS["rank"](items, by="date")
+    assert [item["title"] for item in result["items"]] == ["New", "Old", "None"]
+
+
+def test_rank_title_and_limit():
+    items = [{"title": "C"}, {"title": "A"}, {"title": "B"}]
+    result = TOOL_FUNCTIONS["rank"](items, by="title", limit=2)
+    assert [item["title"] for item in result["items"]] == ["A", "B"]
+    assert result["item_count"] == 2
+
+
+@pytest.mark.parametrize("by,limit", [("score", 0), ("date", -1), ("date", True)])
+def test_rank_invalid_by_or_limit_returns_error(by, limit):
+    assert TOOL_FUNCTIONS["rank"]([{"title": "A"}], by=by, limit=limit)["error"] == "ValueError"
+
+
+def test_sources_unique_first_seen_prefers_url_host():
+    items = [{"url": "https://www.openai.com/a"},
+             {"url": "https://openai.com/b"},
+             {"source": "arxiv.org"},
+             {"title": "no source"}]
+    result = TOOL_FUNCTIONS["sources"](items)
+    assert result["sources"] == ["openai.com", "arxiv.org"]
+    assert result["source_count"] == 2
+    assert result["input_count"] == 4
+
+
+def test_sources_empty_list():
+    assert TOOL_FUNCTIONS["sources"]([])["sources"] == []
+
+
+@pytest.mark.parametrize("items", [None, "text", ["bad"]])
+def test_sources_bad_items_returns_error(items):
+    assert TOOL_FUNCTIONS["sources"](items)["error"] == "ValueError"

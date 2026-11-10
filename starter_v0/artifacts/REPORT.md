@@ -1,6 +1,6 @@
 # Research Desk — Research Agent Tool Eval
 
-> Trạng thái: đã có code, UI local/public, tool, test, baseline v0 đầy đủ và các snapshot v1–v3. Còn thiếu các lượt eval thật v1–v3, chat live tối thiểu 3 lượt và kiểm tra quyền X/Twitter. Không dùng kết quả unit test thay cho điểm đánh giá model.
+> Trạng thái: đã có code, UI local, tool, test, eval v0–v3, group eval, chat live và smoke test X/Twitter sau khi subscribe RapidAPI. Còn thiếu tên nhóm và link public. Không dùng kết quả unit test thay cho điểm đánh giá model.
 
 - Nhóm/thành viên: cần điền thông tin nhóm khi nộp.
 - Provider/model baseline đầy đủ: Gemini / **`gemini-3.5-flash-lite`**. Các run cũ dùng `gemini-3.5-flash` được giữ riêng, không dùng để so sánh trực tiếp với model mới.
@@ -12,11 +12,11 @@
 
 Research Desk hỗ trợ tìm tin trên web và X/Twitter, đọc một URL cụ thể, tìm paper arXiv, tra cứu chính sách nội bộ, loại link trùng và trình bày dữ liệu thành bản tin có nguồn. Khi thiếu tài khoản hoặc URL, agent được hướng dẫn hỏi lại. Gửi Telegram cần bước xác nhận riêng cho đúng nội dung.
 
-**UI local:** http://localhost:8501 sau khi chạy `python -m streamlit run app.py` từ `starter_v0/`.
+**UI local:** [http://localhost:8501](http://localhost:8501) sau khi chạy `python -m streamlit run app.py` từ `starter_v0/`.
 
-**Link dùng thử public:** [https://rings-posing-prisoner-hardware.trycloudflare.com](https://rings-posing-prisoner-hardware.trycloudflare.com)
+**Link dùng thử trên LAN:** [http://172.16.60.253:8501](http://172.16.60.253:8501)
 
-Link đã được kiểm tra trả HTTP 200 lúc tạo. Đây là Cloudflare Quick Tunnel tạm thời: chỉ hoạt động khi Streamlit và `cloudflared` còn chạy trên máy demo. Link localhost chỉ dùng được trên máy đang chạy UI.
+Hai URL này lấy từ phiên Streamlit đang chạy. `localhost` chỉ mở được trên máy demo. `172.16.60.253` mở được từ máy cùng mạng. Chưa có link `trycloudflare.com` public.
 
 UI có ba tab: Trò chuyện, Công cụ offline, Kết quả đánh giá. Tab offline chạy được khi Gemini hết quota, nhưng không thay thế yêu cầu chat bằng model thật.
 
@@ -31,6 +31,9 @@ UI có ba tab: Trò chuyện, Công cụ offline, Kết quả đánh giá. Tab o
 | fetch | Đọc nội dung một URL qua Firecrawl | Không |
 | format | Tạo digest từ items đã có | Không |
 | deduplicate | Loại URL trùng, bỏ qua tracking và fragment khi so sánh | **Có** |
+| filter | Giữ items đã có khớp query | **Có** |
+| rank | Sắp xếp items đã có theo ngày hoặc tiêu đề | **Có** |
+| sources | Liệt kê domain nguồn từ items đã có | **Có** |
 | policy | Tìm tài liệu chính sách nội bộ | Không |
 | papers | Tìm paper arXiv | Không |
 | paper_text | Tải và trích text từ paper arXiv đã biết | Không |
@@ -43,6 +46,8 @@ UI có ba tab: Trò chuyện, Công cụ offline, Kết quả đánh giá. Tab o
 3. Đọc và tóm tắt https://example.com/ — không tìm URL khác.
 4. Quy định nội bộ về trích dẫn nguồn trong digest là gì?
 5. Chỉ loại link trùng trong danh sách: `[{"title":"A","url":"https://example.com/a?utm_source=x"},{"title":"B","url":"https://example.com/a"}]`.
+6. Lọc các mục đã có chứa OpenAI, không tìm thêm.
+7. Sắp xếp items đã có theo ngày mới nhất.
 
 Để thử ngay không tốn quota, mở tab Công cụ offline, chạy Loại link trùng hoặc Tra cứu policy. Dữ liệu ví dụ nhập sẵn được ghi rõ là minh họa.
 
@@ -95,7 +100,9 @@ Các thay đổi runtime gồm xử lý quota/retry Gemini, chặn việc model 
 
 Failure counts theo nhãn case: wrong_tool=3, missing_info=2, wrong_boundary=1, wrong_arg_value=1. Nhãn wrong_tool trong bộ đề cũng có thể chứa lỗi args; observed_mismatch ghi 4 wrong_arg_value và 3 missing_tool_call.
 
-Trong run này, lookup trả dữ liệu ở 6 lần gọi và fetch trả nội dung ở 2 lần gọi. Timeline có 6 HTTP error và social_search có 2 HTTP error do quyền RapidAPI vẫn chưa được sửa; chẩn đoán trực tiếp trước đó trả `You are not subscribed to this API.`. Tool send trả needs_confirmation và không gửi thật. Do đó baseline routing đã đầy đủ, còn luồng X/Twitter thực tế chưa hoạt động.
+Trong run v0 này, lookup trả dữ liệu ở 6 lần gọi và fetch trả nội dung ở 2 lần gọi. Timeline có 6 HTTP error và social_search có 2 HTTP error vì lúc đó RapidAPI chưa subscribe (`You are not subscribed to this API.` / HTTP 403). Tool send trả needs_confirmation và không gửi thật. Baseline routing đã đầy đủ; dữ liệu X/Twitter lúc đó chưa về.
+
+Smoke test sau khi subscribe, chạy trực tiếp tool `timeline` từ `starter_v0/`, `error=None`, 1 tweet của `sama`: `RT @fouadmatin: Today's GPT-6 Cyber release...`. 403 đã hết. Không chạy lại cả bộ eval; điểm routing v0–v3 giữ nguyên.
 
 ### Run cũ chưa đầy đủ — gemini-3.5-flash
 
@@ -111,11 +118,11 @@ Trong run này, lookup trả dữ liệu ở 6 lần gọi và fetch trả nội
 
 7 lỗi provider: 4 HTTP 503 do model quá tải và 3 HTTP 429 do giới hạn request/phút, lấy từ `results[*].result.failures`. Một lần preflight sau đó báo hết quota ngày 20 request; thông tin này là chẩn đoán kết nối, không phải điểm eval mới.
 
-Trong tool_results của run v0, timeline/social_search trả HTTP 403, fetch cũng có HTTP error. Eval hiện chấm tool routing/arguments, không xác nhận tool đã trả nội dung hữu ích. Vì vậy PASS của eval không đồng nghĩa luồng research chạy thành công từ đầu đến cuối. Cần xử lý quyền/gói RapidAPI và thử các tool thật sau khi quota cho phép.
+Trong tool_results của run v0, timeline/social_search trả HTTP 403, fetch cũng có HTTP error. Eval chấm tool routing/arguments, không xác nhận tool đã trả nội dung hữu ích. PASS routing lúc đó không đồng nghĩa X/Twitter đã chạy được. Quyền RapidAPI đã được sửa sau đó bằng smoke test `timeline('sama', limit=1)` như trên.
 
 ## B3. Team Eval Cases
 
-Đã viết **10 case: 5 single-turn + 5 multi-turn** trong `data/eval_group.json`, không sửa `eval_base.json`. Run v3 group đạt **10/10**, routing/arguments/multiturn đều 100%, không có provider error: `runs/v3_B_group_gemini_20261110T123423722288.json`.
+Đã viết **13 case: 8 single-turn + 5 multi-turn** trong `data/eval_group.json`, không sửa `eval_base.json`. Run v3 group trên 10 case gốc đạt **10/10**, routing/arguments/multiturn đều 100%, không có provider error: `runs/v3_B_group_gemini_20261110T123423722288.json`. G11–G13 (filter/rank/sources) đã thêm sau run đó, chưa chạy eval model.
 
 | Case | Kiểm tra | Expected |
 |---|---|---|
@@ -129,6 +136,9 @@ Trong tool_results của run v0, timeline/social_search trả HTTP 403, fetch c�
 | G08_change_topic_keep_constraints | Đổi AMD→NVIDIA, giữ tuần và count | lookup(NVIDIA, news, week, 3) |
 | G09_cancel_publication | Hủy gửi ở lượt mới nhất | Không gọi tool |
 | G10_deduplicate_after_supplied_results | Dùng lại items từ hội thoại | deduplicate |
+| G11_filter_existing_items | Route tới filter trên items có sẵn | filter(query=OpenAI) |
+| G12_rank_existing_items | Sắp xếp items đã có theo ngày | rank(by=date) |
+| G13_list_sources_existing_items | Liệt kê domain từ items đã có | sources |
 
 G03/G10 đều PASS, chứng minh model route tới `deduplicate` khi items đã có trong request/hội thoại. Tính chính xác của kết quả chuẩn hóa URL được kiểm tra bằng unit test riêng.
 
@@ -146,7 +156,7 @@ Transcript provider thật: `transcripts/v3_gemini_20261110T123937847917.transcr
 
 ## B5. Tool mới, unit test và UI
 
-Tool mới: `tools/deduplicate/tool.py`, có `TOOL.md`, registry và schema đồng bộ. Tool giữ item xuất hiện đầu tiên cho mỗi URL, bỏ `utm_*`, `fbclid`, `gclid` và fragment khi so sánh; vẫn giữ path phân biệt hoa/thường và các tham số có ý nghĩa. URL gốc trong item không bị thay đổi. Item không có URL được giữ riêng, không gộp chỉ vì trùng tiêu đề.
+Tool mới (4): `deduplicate`, `filter`, `rank`, `sources`. Mỗi tool có `TOOL.md`, registry và schema đồng bộ. `deduplicate` giữ item xuất hiện đầu tiên cho mỗi URL, bỏ `utm_*`, `fbclid`, `gclid` và fragment khi so sánh; vẫn giữ path phân biệt hoa/thường và các tham số có ý nghĩa. URL gốc trong item không bị thay đổi. Item không có URL được giữ riêng. `filter` giữ mục khớp query trên title/summary/url/source. `rank` sắp theo ngày mới nhất hoặc tiêu đề. `sources` liệt kê domain theo thứ tự xuất hiện. Cả bốn tool chỉ xử lý items đã có, không tìm kiếm. Snapshot v3 đã chạy eval được giữ nguyên; các tool sau v3 nằm ở artifacts đang dùng.
 
 Unit test bao gồm happy path, input sai/thiếu, nhánh lỗi, không sửa input, URL có tracking, và item thiếu URL. Các test TODO của starter đã được thay bằng test thực cho clarify/format/send/lookup/fetch/timeline/social_search/policy. Lệnh kiểm tra offline:
 
@@ -178,7 +188,7 @@ Lệnh chạy lại khi cần tái lập hoặc khi thay model:
 
 Script dừng khi còn lỗi provider và tự cập nhật version_log/analysis từ run JSON thật. Nếu thay model, phải lấy baseline mới; không so trực tiếp với bảng trên. Model cũ từng báo quota 20 request/ngày; không mặc định model mới có cùng quota hoặc tất cả version chạy được trong một ngày free tier.
 
-Phần còn lại: sửa quyền RapidAPI để X/Twitter trả dữ liệu thật, điền tên nhóm/thành viên và giữ tunnel chạy khi demo. Không nộp `.env`/API key.
+Phần còn lại: điền tên nhóm/thành viên; link UI hiện là localhost/LAN, chưa có `trycloudflare.com`. Không nộp `.env`/API key.
 
 ## B7. Small Local Model Challenge
 

@@ -270,3 +270,93 @@ tools:
               type: string
     required:
     - items
+- name: filter
+  description: Keep existing research items whose title, summary, URL, or source contains
+    a query. Use only on an already supplied item list when the user asks to filter
+    or keep matching items. Do not search, fetch, or invent items.
+  parameters:
+    type: object
+    properties:
+      items:
+        type: array
+        default: []
+        description: Existing research items to filter.
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+            url:
+              type: string
+            source:
+              type: string
+            summary:
+              type: string
+            date:
+              type: string
+      query:
+        type: string
+        default: ''
+        description: Substring to match in title, summary, URL, or source.
+    required:
+    - items
+    - query
+- name: rank
+  description: Sort existing research items by date (newest first) or title. Use only
+    on an already supplied item list when the user asks to sort or keep the newest
+    N items. Do not search, fetch, or score claims.
+  parameters:
+    type: object
+    properties:
+      items:
+        type: array
+        default: []
+        description: Existing research items to sort.
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+            url:
+              type: string
+            source:
+              type: string
+            summary:
+              type: string
+            date:
+              type: string
+      by:
+        type: string
+        enum:
+        - date
+        - title
+        default: date
+        description: date = newest first; title = A-Z.
+      limit:
+        type: integer
+        default: 0
+        description: Keep the first N items after sorting; 0 keeps all.
+    required:
+    - items
+- name: sources
+  description: List unique source domains from existing research items, first-seen
+    order. Use only on an already supplied item list when the user asks which sites
+    the items came from. Do not search or fetch.
+  parameters:
+    type: object
+    properties:
+      items:
+        type: array
+        default: []
+        description: Existing research items whose domains should be listed.
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+            url:
+              type: string
+            source:
+              type: string
+    required:
+    - items
