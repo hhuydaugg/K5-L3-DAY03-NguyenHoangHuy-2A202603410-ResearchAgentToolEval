@@ -33,7 +33,10 @@ if "turns" not in st.session_state:
     artifact_version = build_artifact_version(version, PROMPT_PATH, TOOLS_PATH)
     provider = make_provider(provider_name)
     transcript_id = "_".join(["ui", safe_slug(version), safe_slug(provider_name), datetime.now().strftime("%Y%m%dT%H%M%S%f")])
+    # Load prompt/tools once per session (like chat.py) so transcript hashes match what the model actually saw.
     st.session_state.update(
+        system_prompt=PROMPT_PATH.read_text(encoding="utf-8"),
+        tools=to_openai_tools(load_tool_declarations(TOOLS_PATH)),
         turns=[],
         history=[],
         transcript_path=ROOT / "transcripts" / f"{transcript_id}.transcript.json",
@@ -79,11 +82,11 @@ if user_text:
             result = run_model_tool_loop(
                 provider=make_provider(transcript["provider"]),
                 messages=[
-                    {"role": "system", "content": PROMPT_PATH.read_text(encoding="utf-8")},
+                    {"role": "system", "content": st.session_state.system_prompt},
                     *trim_history(st.session_state.history, int(history_window)),
                     {"role": "user", "content": user_text},
                 ],
-                tools=to_openai_tools(load_tool_declarations(TOOLS_PATH)),
+                tools=st.session_state.tools,
                 model=model,
                 max_tool_rounds=int(max_tool_rounds),
             )

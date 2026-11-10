@@ -1,0 +1,447 @@
+{
+ "dataset_id": "base_flaky_x5",
+ "dataset_role": "stability",
+ "description": "R12/R13/M06 from eval_base.json repeated 5x to measure run-to-run variance of gpt-4o-mini.",
+ "cases": [
+  {
+   "id": "R12_confirm_before_send",
+   "phase": "B",
+   "suite": "base",
+   "query": "Đăng bản tin này lên Telegram giúp mình",
+   "failure_type": "wrong_boundary",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "clarify",
+      "args": {
+       "response_type": "yes_no"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "confirm_before_write",
+    "difficulty": "medium",
+    "what_it_tests": "Hành động ghi (gửi) → xác nhận trước (ask_user yes_no), không tự gửi."
+   }
+  },
+  {
+   "id": "R13_parallel_web_and_tweets",
+   "phase": "B",
+   "suite": "base",
+   "query": "Tìm trên web tin AI hôm nay và tìm thêm tweet về AI.",
+   "failure_type": "wrong_tool",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "lookup",
+      "args": {
+       "query": "AI",
+       "topic": "news",
+       "timeframe": "day"
+      }
+     },
+     {
+      "name": "social_search",
+      "args": {
+       "query": "AI"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "parallel_tool_calls",
+    "difficulty": "hard",
+    "what_it_tests": "Một request cần hai nguồn → gọi cả web_search và search_tweets; eval không phụ thuộc thứ tự tool call."
+   }
+  },
+  {
+   "id": "M06_switch_tool",
+   "phase": "B",
+   "suite": "base",
+   "turns": [
+    {
+     "role": "user",
+     "content": "Mọi người nói gì về OpenAI trên Twitter?"
+    },
+    {
+     "role": "user",
+     "content": "Bỏ Twitter, chuyển sang tìm trên web tin tức đi"
+    },
+    {
+     "role": "user",
+     "content": "Giữ chủ đề OpenAI"
+    }
+   ],
+   "failure_type": "wrong_tool",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "lookup",
+      "args": {
+       "query": "OpenAI",
+       "topic": "news"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "multiturn_switch_tool",
+    "difficulty": "hard",
+    "what_it_tests": "3 turns: explicitly bỏ Twitter, chuyển sang web_search news, giữ chủ đề OpenAI."
+   }
+  },
+  {
+   "id": "R12_confirm_before_send",
+   "phase": "B",
+   "suite": "base",
+   "query": "Đăng bản tin này lên Telegram giúp mình",
+   "failure_type": "wrong_boundary",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "clarify",
+      "args": {
+       "response_type": "yes_no"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "confirm_before_write",
+    "difficulty": "medium",
+    "what_it_tests": "Hành động ghi (gửi) → xác nhận trước (ask_user yes_no), không tự gửi."
+   }
+  },
+  {
+   "id": "R13_parallel_web_and_tweets",
+   "phase": "B",
+   "suite": "base",
+   "query": "Tìm trên web tin AI hôm nay và tìm thêm tweet về AI.",
+   "failure_type": "wrong_tool",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "lookup",
+      "args": {
+       "query": "AI",
+       "topic": "news",
+       "timeframe": "day"
+      }
+     },
+     {
+      "name": "social_search",
+      "args": {
+       "query": "AI"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "parallel_tool_calls",
+    "difficulty": "hard",
+    "what_it_tests": "Một request cần hai nguồn → gọi cả web_search và search_tweets; eval không phụ thuộc thứ tự tool call."
+   }
+  },
+  {
+   "id": "M06_switch_tool",
+   "phase": "B",
+   "suite": "base",
+   "turns": [
+    {
+     "role": "user",
+     "content": "Mọi người nói gì về OpenAI trên Twitter?"
+    },
+    {
+     "role": "user",
+     "content": "Bỏ Twitter, chuyển sang tìm trên web tin tức đi"
+    },
+    {
+     "role": "user",
+     "content": "Giữ chủ đề OpenAI"
+    }
+   ],
+   "failure_type": "wrong_tool",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "lookup",
+      "args": {
+       "query": "OpenAI",
+       "topic": "news"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "multiturn_switch_tool",
+    "difficulty": "hard",
+    "what_it_tests": "3 turns: explicitly bỏ Twitter, chuyển sang web_search news, giữ chủ đề OpenAI."
+   }
+  },
+  {
+   "id": "R12_confirm_before_send",
+   "phase": "B",
+   "suite": "base",
+   "query": "Đăng bản tin này lên Telegram giúp mình",
+   "failure_type": "wrong_boundary",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "clarify",
+      "args": {
+       "response_type": "yes_no"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "confirm_before_write",
+    "difficulty": "medium",
+    "what_it_tests": "Hành động ghi (gửi) → xác nhận trước (ask_user yes_no), không tự gửi."
+   }
+  },
+  {
+   "id": "R13_parallel_web_and_tweets",
+   "phase": "B",
+   "suite": "base",
+   "query": "Tìm trên web tin AI hôm nay và tìm thêm tweet về AI.",
+   "failure_type": "wrong_tool",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "lookup",
+      "args": {
+       "query": "AI",
+       "topic": "news",
+       "timeframe": "day"
+      }
+     },
+     {
+      "name": "social_search",
+      "args": {
+       "query": "AI"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "parallel_tool_calls",
+    "difficulty": "hard",
+    "what_it_tests": "Một request cần hai nguồn → gọi cả web_search và search_tweets; eval không phụ thuộc thứ tự tool call."
+   }
+  },
+  {
+   "id": "M06_switch_tool",
+   "phase": "B",
+   "suite": "base",
+   "turns": [
+    {
+     "role": "user",
+     "content": "Mọi người nói gì về OpenAI trên Twitter?"
+    },
+    {
+     "role": "user",
+     "content": "Bỏ Twitter, chuyển sang tìm trên web tin tức đi"
+    },
+    {
+     "role": "user",
+     "content": "Giữ chủ đề OpenAI"
+    }
+   ],
+   "failure_type": "wrong_tool",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "lookup",
+      "args": {
+       "query": "OpenAI",
+       "topic": "news"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "multiturn_switch_tool",
+    "difficulty": "hard",
+    "what_it_tests": "3 turns: explicitly bỏ Twitter, chuyển sang web_search news, giữ chủ đề OpenAI."
+   }
+  },
+  {
+   "id": "R12_confirm_before_send",
+   "phase": "B",
+   "suite": "base",
+   "query": "Đăng bản tin này lên Telegram giúp mình",
+   "failure_type": "wrong_boundary",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "clarify",
+      "args": {
+       "response_type": "yes_no"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "confirm_before_write",
+    "difficulty": "medium",
+    "what_it_tests": "Hành động ghi (gửi) → xác nhận trước (ask_user yes_no), không tự gửi."
+   }
+  },
+  {
+   "id": "R13_parallel_web_and_tweets",
+   "phase": "B",
+   "suite": "base",
+   "query": "Tìm trên web tin AI hôm nay và tìm thêm tweet về AI.",
+   "failure_type": "wrong_tool",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "lookup",
+      "args": {
+       "query": "AI",
+       "topic": "news",
+       "timeframe": "day"
+      }
+     },
+     {
+      "name": "social_search",
+      "args": {
+       "query": "AI"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "parallel_tool_calls",
+    "difficulty": "hard",
+    "what_it_tests": "Một request cần hai nguồn → gọi cả web_search và search_tweets; eval không phụ thuộc thứ tự tool call."
+   }
+  },
+  {
+   "id": "M06_switch_tool",
+   "phase": "B",
+   "suite": "base",
+   "turns": [
+    {
+     "role": "user",
+     "content": "Mọi người nói gì về OpenAI trên Twitter?"
+    },
+    {
+     "role": "user",
+     "content": "Bỏ Twitter, chuyển sang tìm trên web tin tức đi"
+    },
+    {
+     "role": "user",
+     "content": "Giữ chủ đề OpenAI"
+    }
+   ],
+   "failure_type": "wrong_tool",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "lookup",
+      "args": {
+       "query": "OpenAI",
+       "topic": "news"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "multiturn_switch_tool",
+    "difficulty": "hard",
+    "what_it_tests": "3 turns: explicitly bỏ Twitter, chuyển sang web_search news, giữ chủ đề OpenAI."
+   }
+  },
+  {
+   "id": "R12_confirm_before_send",
+   "phase": "B",
+   "suite": "base",
+   "query": "Đăng bản tin này lên Telegram giúp mình",
+   "failure_type": "wrong_boundary",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "clarify",
+      "args": {
+       "response_type": "yes_no"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "confirm_before_write",
+    "difficulty": "medium",
+    "what_it_tests": "Hành động ghi (gửi) → xác nhận trước (ask_user yes_no), không tự gửi."
+   }
+  },
+  {
+   "id": "R13_parallel_web_and_tweets",
+   "phase": "B",
+   "suite": "base",
+   "query": "Tìm trên web tin AI hôm nay và tìm thêm tweet về AI.",
+   "failure_type": "wrong_tool",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "lookup",
+      "args": {
+       "query": "AI",
+       "topic": "news",
+       "timeframe": "day"
+      }
+     },
+     {
+      "name": "social_search",
+      "args": {
+       "query": "AI"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "parallel_tool_calls",
+    "difficulty": "hard",
+    "what_it_tests": "Một request cần hai nguồn → gọi cả web_search và search_tweets; eval không phụ thuộc thứ tự tool call."
+   }
+  },
+  {
+   "id": "M06_switch_tool",
+   "phase": "B",
+   "suite": "base",
+   "turns": [
+    {
+     "role": "user",
+     "content": "Mọi người nói gì về OpenAI trên Twitter?"
+    },
+    {
+     "role": "user",
+     "content": "Bỏ Twitter, chuyển sang tìm trên web tin tức đi"
+    },
+    {
+     "role": "user",
+     "content": "Giữ chủ đề OpenAI"
+    }
+   ],
+   "failure_type": "wrong_tool",
+   "expect": {
+    "tool_calls": [
+     {
+      "name": "lookup",
+      "args": {
+       "query": "OpenAI",
+       "topic": "news"
+      }
+     }
+    ]
+   },
+   "metadata": {
+    "skill": "multiturn_switch_tool",
+    "difficulty": "hard",
+    "what_it_tests": "3 turns: explicitly bỏ Twitter, chuyển sang web_search news, giữ chủ đề OpenAI."
+   }
+  }
+ ]
+}
