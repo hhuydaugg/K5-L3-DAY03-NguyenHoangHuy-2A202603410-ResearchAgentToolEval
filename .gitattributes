@@ -1,0 +1,5 @@
+# run_eval.py / chat.py hash prompt + tool files byte-for-byte (versioning.py).
+# Force LF so prompt_hash / tools_hash match on Windows (autocrlf) and macOS/Linux.
+starter_v0/artifacts/*.md text eol=lf
+starter_v0/artifacts/*.yaml text eol=lf
+starter_v0/artifacts/*.yml text eol=lf
