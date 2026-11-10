@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 API_ENV_VARS = [
+    "GEMINI_API_KEY", "GEMINI_REQUEST_INTERVAL",
     "TAVILY_API_KEY", "FIRECRAWL_API_KEY", "RAPIDAPI_KEY", "RAPIDAPI_TWITTER_HOST",
     "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID",
 ]

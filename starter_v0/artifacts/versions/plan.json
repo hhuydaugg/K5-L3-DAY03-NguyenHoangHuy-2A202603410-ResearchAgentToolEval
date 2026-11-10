@@ -1,0 +1,30 @@
+{
+  "versions": [
+    {
+      "version": "v1",
+      "reason": "Scope and routing descriptions; declare the new local deduplicate tool.",
+      "hypothesis": "Explicit source-based routing and scope boundaries reduce wrong/extra/missing tool calls. New-tool introduction is a possible confound relative to v0.",
+      "status": "prepared_not_evaluated"
+    },
+    {
+      "version": "v2",
+      "reason": "Replace guessing and automatic publishing with clarification/confirmation rules.",
+      "hypothesis": "Explicit missing-information and action boundaries reduce invented URLs/handles and unconfirmed sends.",
+      "status": "prepared_not_evaluated"
+    },
+    {
+      "version": "v3",
+      "reason": "Specify argument conventions and carryover/correction rules.",
+      "hypothesis": "Preserving the concise topic and latest explicit constraints reduces wrong argument values in single- and multi-turn requests.",
+      "status": "prepared_not_evaluated"
+    }
+  ],
+  "comparison_baseline": {
+    "version": "v0",
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "run_file": "runs/v0_B_base_gemini_20261110T113128259559.json",
+    "case_accuracy": 0.65,
+    "provider_error_cases": 0
+  }
+}

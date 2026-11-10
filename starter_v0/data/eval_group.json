@@ -1,7 +1,108 @@
 {
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
-  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
+  "description": "10 case của nhóm: 5 single-turn và 5 multi-turn. Kiểm tra routing, tham số, hỏi lại, hủy gửi và tool deduplicate mới. Chưa có kết quả model cho đến khi chạy suite group bằng API thật.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_explicit_handle",
+      "phase": "B",
+      "query": "Lấy 4 tweet mới nhất của @karpathy.",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "karpathy", "limit": 4}}]},
+      "metadata": {"what_it_tests": "Bỏ @ khỏi handle và giữ đúng limit=4."}
+    },
+    {
+      "id": "G02_news_month",
+      "phase": "B",
+      "query": "Tìm 3 tin tức về robotics trong tháng này trên web.",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "lookup", "args": {"query": "robotics", "topic": "news", "timeframe": "month", "max_results": 3}}]},
+      "metadata": {"what_it_tests": "Topic ngắn, news, month và số kết quả được truyền đúng field."}
+    },
+    {
+      "id": "G03_deduplicate_existing_items",
+      "phase": "B",
+      "query": "Chỉ loại bỏ link trùng trong danh sách này, không tìm kiếm hay định dạng: [{\"title\":\"A\",\"url\":\"https://example.com/a?utm_source=x\"},{\"title\":\"B\",\"url\":\"https://example.com/a\"}].",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "deduplicate", "args": {}}]},
+      "metadata": {"what_it_tests": "Route tới tool mới khi đã có items; kết quả chuẩn hóa URL được đo riêng bằng unit test."}
+    },
+    {
+      "id": "G04_missing_article_url",
+      "phase": "B",
+      "query": "Đọc và tóm tắt bài viết này giúp tôi. Tôi chưa gửi link.",
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]},
+      "metadata": {"what_it_tests": "Không tự tạo URL khi người dùng xác nhận chưa cung cấp link."}
+    },
+    {
+      "id": "G05_company_citation_policy",
+      "phase": "B",
+      "query": "Tra cứu chính sách source_citation nội bộ của công ty về cách trích dẫn nguồn trong digest.",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "policy", "args": {"policy_area": "source_citation"}}]},
+      "metadata": {"what_it_tests": "Câu hỏi policy nội bộ dùng knowledge local, không dùng web/social."}
+    },
+    {
+      "id": "G06_correct_social_order",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Tìm 2 tweet mới nhất về PyTorch."},
+        {"role": "user", "content": "Đổi sang bài phổ biến nhất (Top), không phải mới nhất."},
+        {"role": "user", "content": "Giữ nguyên chủ đề PyTorch và số lượng 2."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "social_search", "args": {"query": "PyTorch", "search_type": "Top", "limit": 2}}]},
+      "metadata": {"what_it_tests": "Correction Latest -> Top, giữ topic và limit từ các lượt trước."}
+    },
+    {
+      "id": "G07_correct_article_url",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Đọc https://example.com/old."},
+        {"role": "user", "content": "Tôi gửi nhầm; thay bằng https://example.com/new."},
+        {"role": "user", "content": "Chỉ đọc URL mới, đừng đọc bài cũ."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "fetch", "args": {"url": "https://example.com/new"}}]},
+      "metadata": {"what_it_tests": "URL được sửa phải thay thế URL cũ; chỉ gọi fetch một lần."}
+    },
+    {
+      "id": "G08_change_topic_keep_constraints",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Tìm 3 tin tức web về AMD trong tuần này."},
+        {"role": "user", "content": "Chuyển chủ đề sang NVIDIA."},
+        {"role": "user", "content": "Vẫn 3 tin trong tuần này, chỉ NVIDIA."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "lookup", "args": {"query": "NVIDIA", "topic": "news", "timeframe": "week", "max_results": 3}}]},
+      "metadata": {"what_it_tests": "Chỉ đổi chủ đề; carry count, timeframe, topic=news."}
+    },
+    {
+      "id": "G09_cancel_publication",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Gửi bản tin 'AI digest' lên Telegram."},
+        {"role": "assistant", "content": "Bạn xác nhận gửi nội dung 'AI digest' lên Telegram chứ?"},
+        {"role": "user", "content": "Không, hủy gửi. Chỉ ghi nhận đã hủy, không cần tra cứu thêm."}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {"no_tool": true, "behavior": "answer_without_tool"},
+      "metadata": {"what_it_tests": "Lượt từ chối mới nhất chặn hành động ghi, không gọi send hay tool khác."}
+    },
+    {
+      "id": "G10_deduplicate_after_supplied_results",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Đây là items đã thu thập: [{\"title\":\"One\",\"url\":\"https://example.com/one#top\"},{\"title\":\"Copy\",\"url\":\"https://example.com/one\"},{\"title\":\"Two\",\"url\":\"https://example.com/two\"}]."},
+        {"role": "assistant", "content": "Đã nhận danh sách 3 items của bạn."},
+        {"role": "user", "content": "Chỉ loại link trùng trong items tôi vừa gửi. Chưa tạo digest và không tìm thêm."}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "deduplicate", "args": {}}]},
+      "metadata": {"what_it_tests": "Tool mới dùng lại items trong hội thoại, không gọi lookup hoặc format thừa."}
+    }
+  ]
 }

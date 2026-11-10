@@ -1,0 +1,12 @@
+Verification at 2026-11-10T10:56:09+07:00
+Offline tests and local UI checks only; not live Gemini eval/chat evidence.
+Python 3.13.15, Streamlit 1.67.0
+
+........................................................................ [ 58%]
+...................................................                      [100%]
+123 passed in 12.85s
+
+GET /_stcore/health: HTTP 200
+GET /: HTTP 200
+Group dataset: 10 cases (5 single-turn, 5 multi-turn).
+Base eval unchanged; v0 snapshot hashes match saved real run; active artifacts match prepared v3.

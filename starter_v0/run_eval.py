@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -286,8 +287,14 @@ def main() -> None:
     openai_tools = to_openai_tools(tool_declarations)
 
     results: list[dict[str, Any]] = []
+    # Save progress separately from completed run JSONs, so an interrupted run
+    # cannot be mistaken for a completed suite by the evidence exporter.
+    progress_dir = args.runs_dir / "in_progress"
+    progress_dir.mkdir(parents=True, exist_ok=True)
+    progress_path = progress_dir / f"{safe_slug(args.version)}_{safe_slug(args.suite)}_{safe_slug(args.provider)}_{datetime.now().strftime('%Y%m%dT%H%M%S%f')}.json"
     for case in cases:
         print(f"Running {case['id']}...", flush=True)
+        started = time.monotonic()
         agent = ResearchAgent(provider, system_prompt=system_prompt, tools=openai_tools, model=args.model)
         try:
             tool_choice = None if case["expect"].get("no_tool") else "required"
@@ -321,6 +328,13 @@ def main() -> None:
             "result": result,
             "tool_results": tool_results,
         })
+        progress_path.write_text(json.dumps({
+            "run_status": "in_progress", "expected_total_cases": len(cases),
+            "version": args.version, "provider": args.provider, "model": selected_model,
+            **artifact_version_dict(artifact_version), "results": results,
+        }, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+        status = "PASS" if result["passed"] else "FAIL " + str(result.get("failure_type"))
+        print(f"  {status} ({time.monotonic() - started:.1f}s)", flush=True)
 
     summary = summarize(results)
     args.runs_dir.mkdir(parents=True, exist_ok=True)
@@ -353,6 +367,7 @@ def main() -> None:
 
     out_path = args.runs_dir / f"{run_id}.json"
     out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    progress_path.unlink(missing_ok=True)
     print_table(results, summary)
     print(f"\nArtifact version: {artifact_version.artifact_version}")
     print(f"\nSaved: {out_path}")

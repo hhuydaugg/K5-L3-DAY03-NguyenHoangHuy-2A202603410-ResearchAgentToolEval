@@ -1,5 +1,8 @@
 # Day 03 Lab v2 — Research Agent Tool Eval
 
+Phần đã triển khai và lệnh chạy trên Windows: [starter_v0/README.md](starter_v0/README.md).
+Trạng thái và bằng chứng thực tế: [REPORT.md](starter_v0/artifacts/REPORT.md).
+
 ## Brief
 
 Trong lab này, nhóm build một research agent nhỏ nhưng chạy thật. Agent nhận request của user, chọn tool, truyền arguments, chạy tool thật, lưu full JSON log, rồi dùng log đó để tối ưu prompt/tool declaration qua nhiều version.

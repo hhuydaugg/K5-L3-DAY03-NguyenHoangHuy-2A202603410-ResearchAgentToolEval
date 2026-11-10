@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -20,7 +20,7 @@ load_lab_env(ROOT)
 
 
 def now_iso() -> str:
-    return datetime.now().isoformat(timespec="seconds")
+    return datetime.now(timezone(timedelta(hours=7))).isoformat(timespec="seconds")
 
 
 def safe_slug(value: str) -> str:
@@ -41,13 +41,25 @@ def trim_history(history: list[dict[str, str]], window: int) -> list[dict[str, s
     return history[-window * 2:]
 
 
-def execute_tool_call(call: ToolCall) -> dict[str, Any]:
+def execute_tool_call(call: ToolCall, *, allow_send: bool = False) -> dict[str, Any]:
     func = TOOL_FUNCTIONS.get(call.name)
     if not func:
         return {
             "tool": call.name,
             "args": call.args,
             "result": {"error": "unknown_tool", "message": f"No local implementation for {call.name}"},
+        }
+    # A model-supplied confirmed=true is not evidence of a real user approval.
+    # The UI/CLI must explicitly authorize this exact action outside the model.
+    if call.name == "send" and not allow_send:
+        return {
+            "tool": call.name,
+            "args": call.args,
+            "result": {
+                "status": "needs_confirmation", "awaiting_user": True,
+                "question": "Bạn xác nhận gửi đúng nội dung dưới đây lên Telegram?\n\n" + str(call.args.get("text", "")),
+                "pending_action": {"name": "send", "args": {"text": call.args.get("text", ""), "confirmed": True}},
+            },
         }
     try:
         result = func(**call.args)
@@ -112,7 +124,7 @@ def run_model_tool_loop(
         non_clarification_events: list[dict[str, Any]] = []
 
         for call in calls:
-            print(f"🔧 {call.name}({json.dumps(call.args, ensure_ascii=False, sort_keys=True)})")
+            print(f"[tool] {call.name}")
             event = execute_tool_call(call)
             round_record["tool_results"].append(event)
             all_tool_events.append(event)
@@ -128,6 +140,7 @@ def run_model_tool_loop(
                     "assistant_text": question,
                     "rounds": rounds,
                     "tool_events": all_tool_events,
+                    "pending_action": result.get("pending_action"),
                 }
 
             non_clarification_events.append(event)
@@ -193,6 +206,7 @@ def main() -> None:
     print("Type /exit to stop.")
 
     history: list[dict[str, str]] = []
+    pending_action: dict[str, Any] | None = None
     turn_index = 0
     while True:
         try:
@@ -224,13 +238,23 @@ def main() -> None:
         }
 
         try:
-            result = run_model_tool_loop(
-                provider=provider,
-                messages=messages,
-                tools=openai_tools,
-                model=args.model,
-                max_tool_rounds=args.max_tool_rounds,
-            )
+            if pending_action and user_text.casefold() in {"yes", "y", "có", "đồng ý", "xác nhận"}:
+                event = execute_tool_call(ToolCall(**pending_action), allow_send=True)
+                sent = event["result"].get("status") == "sent"
+                result = {"status": "answered" if sent else "tool_error", "rounds": [],
+                          "tool_events": [event], "assistant_text": "Đã gửi lên Telegram." if sent else "Gửi chưa thành công. Kiểm tra kết quả tool trong transcript."}
+            elif pending_action and user_text.casefold() in {"no", "n", "không", "hủy", "hủy gửi"}:
+                result = {"status": "answered", "rounds": [], "tool_events": [], "assistant_text": "Đã hủy gửi."}
+            else:
+                # A different request/correction invalidates the pending approval.
+                result = run_model_tool_loop(
+                    provider=provider,
+                    messages=messages,
+                    tools=openai_tools,
+                    model=args.model,
+                    max_tool_rounds=args.max_tool_rounds,
+                )
+            pending_action = result.get("pending_action")
             turn_record.update(result)
             assistant_text = result["assistant_text"]
             print(f"\nAgent> {assistant_text}")

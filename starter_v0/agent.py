@@ -44,7 +44,12 @@ class ResearchAgent:
                 results.append({"tool": call.name, "error": "unknown_tool"})
                 continue
             try:
-                result = func(**call.args)
+                # One-shot eval has no separate human approval step. Record
+                # the model's raw call for scoring, but never publish from it.
+                if call.name == "send":
+                    result = func(text=call.args.get("text", ""), confirmed=False)
+                else:
+                    result = func(**call.args)
             except Exception as exc:  # keep eval robust; failures are evidence
                 result = {"error": type(exc).__name__, "message": str(exc)}
             results.append({"tool": call.name, "args": call.args, "result": result})

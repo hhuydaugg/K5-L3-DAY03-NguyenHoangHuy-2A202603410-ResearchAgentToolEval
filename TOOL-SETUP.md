@@ -30,6 +30,19 @@ cd starter_v0
 python scripts/preflight_provider.py --provider openrouter
 ```
 
+For Gemini, set `GEMINI_API_KEY` in `starter_v0/.env` and use
+`--provider gemini` for preflight, eval, and chat. The adapter spaces requests
+by 12.1 seconds by default to suit a 5-request/minute free tier. Adjust with
+`GEMINI_REQUEST_INTERVAL` (seconds; `0` disables spacing). Temporary HTTP 429
+and 500/502/503/504 errors are retried up to three times. Retry cooldowns
+from the API and request spacing overlap instead of adding together. The
+connection is reused across cases. Runs take longer when the API is busy.
+Daily/zero quota and permission errors are returned immediately; waiting
+cannot fix them. After daily/zero quota exhaustion, further calls to that
+model fail immediately within the same process without issuing API requests.
+Keep other scripts using the same project/model stopped
+during eval: the interval only regulates this process.
+
 Local model (bonus Small Local Model Challenge, không cần API key):
 
 ```bash
