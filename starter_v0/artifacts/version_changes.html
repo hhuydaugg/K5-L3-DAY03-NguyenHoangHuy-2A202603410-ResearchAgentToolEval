@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research Agent v0–v2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column, version sections stacked, evidence tables scroll inside their own box */
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --fg: #1b2230; --muted: #5b6577; --line: #dde2ea;
+  --accent: #2d5bd7; --pass: #1f7a4d; --pass-bg: #e3f4ea; --fail: #b3261e; --fail-bg: #fbe7e5;
+  --add-bg: #e6f4ea; --del-bg: #fbe9e7; --code-bg: #f0f2f6;
+  --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --surface: #1a2029; --fg: #e4e8ef; --muted: #98a2b3; --line: #2c3442;
+    --accent: #7b9dff; --pass: #5fd394; --pass-bg: #173326; --fail: #ff8a80; --fail-bg: #3a1c1a;
+    --add-bg: #173326; --del-bg: #3a1c1a; --code-bg: #212835; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d; --surface: #1a2029; --fg: #e4e8ef; --muted: #98a2b3; --line: #2c3442;
+  --accent: #7b9dff; --pass: #5fd394; --pass-bg: #173326; --fail: #ff8a80; --fail-bg: #3a1c1a;
+  --add-bg: #173326; --del-bg: #3a1c1a; --code-bg: #212835; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--sans); }
+main { max-width: 960px; margin: 0 auto; padding-block: 32px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 40px; }
+h1 { font-size: 28px; margin: 0 0 4px; text-wrap: balance; }
+h2 { font-size: 21px; margin: 0; text-wrap: balance; }
+h3 { font-size: 16px; margin: 0; }
+p { margin: 0; max-width: 70ch; }
+.sub { color: var(--muted); }
+section { display: grid; gap: 16px; }
+.tag { display: inline-block; font: 500 12px var(--mono); letter-spacing: .04em; text-transform: uppercase;
+  color: var(--accent); }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 8px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); }
+td.best { font-weight: 600; color: var(--pass); }
+code, .mono { font-family: var(--mono); font-size: 13px; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+.pill { display: inline-block; font: 600 11px var(--mono); padding: 1px 7px; border-radius: 10px; }
+.pass { background: var(--pass-bg); color: var(--pass); }
+.fail { background: var(--fail-bg); color: var(--fail); }
+.diff { margin: 0; padding: 12px 0; font: 13px/1.55 var(--mono); white-space: pre-wrap; word-break: break-word; }
+.diff span { display: block; padding: 0 14px; }
+.diff .d { background: var(--del-bg); }
+.diff .a { background: var(--add-bg); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.cols > div { min-width: 0; display: grid; gap: 8px; align-content: start; }
+.note { border-left: 3px solid var(--accent); padding: 8px 14px; background: var(--surface); }
+ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.bars { display: grid; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: center; }
+.bar-row .lbl { font-size: 13px; color: var(--muted); }
+.bar-set { display: grid; gap: 3px; }
+.bar { height: 16px; border-radius: 2px; background: var(--accent); opacity: .35; position: relative; }
+.bar.v1 { opacity: .6; } .bar.v2 { opacity: 1; }
+.bar b { position: absolute; left: calc(100% + 6px); top: -1px; font: 500 12px var(--mono); color: var(--fg); white-space: nowrap; }
+.legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.legend i { display: inline-block; width: 12px; height: 12px; background: var(--accent); border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <span class="tag">Day 03 Lab · base eval · openrouter / gpt-4o-mini</span>
+  <h1>Research Agent: thay đổi v0 → v2</h1>
+  <p class="sub">Mỗi version sửa một giả thuyết. Số liệu lấy từ <code>runs/v0_*.json</code>, <code>runs/v1_*.json</code>, <code>runs/v2_*.json</code>, mỗi version chạy 1 lần trên 20 case.</p>
+</header>
+
+<section>
+  <h2>Tổng quan metric</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Metric</th><th class="num">v0</th><th class="num">v1</th><th class="num">v2</th></tr></thead>
+      <tbody>
+        <tr><td>case_accuracy</td><td class="num">0.70 (14/20)</td><td class="num">0.80 (16/20)</td><td class="num best">0.95 (19/20)</td></tr>
+        <tr><td>tool_routing_accuracy</td><td class="num">0.75</td><td class="num">0.95</td><td class="num best">1.00</td></tr>
+        <tr><td>argument_accuracy</td><td class="num">0.70</td><td class="num">0.80</td><td class="num best">0.95</td></tr>
+        <tr><td>multiturn_accuracy</td><td class="num">1.00 (6/6)</td><td class="num">0.83 (5/6)</td><td class="num best">1.00 (6/6)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="legend"><span><i style="opacity:.35"></i>v0</span><span><i style="opacity:.6"></i>v1</span><span><i></i>v2</span></div>
+  <div class="bars" aria-label="Biểu đồ metric theo version">
+    <div class="bar-row"><span class="lbl">case_accuracy</span><div class="bar-set">
+      <div class="bar" style="width:63%"><b>0.70</b></div><div class="bar v1" style="width:72%"><b>0.80</b></div><div class="bar v2" style="width:85.5%"><b>0.95</b></div></div></div>
+    <div class="bar-row"><span class="lbl">tool_routing</span><div class="bar-set">
+      <div class="bar" style="width:67.5%"><b>0.75</b></div><div class="bar v1" style="width:85.5%"><b>0.95</b></div><div class="bar v2" style="width:90%"><b>1.00</b></div></div></div>
+    <div class="bar-row"><span class="lbl">args</span><div class="bar-set">
+      <div class="bar" style="width:63%"><b>0.70</b></div><div class="bar v1" style="width:72%"><b>0.80</b></div><div class="bar v2" style="width:85.5%"><b>0.95</b></div></div></div>
+    <div class="bar-row"><span class="lbl">multiturn</span><div class="bar-set">
+      <div class="bar" style="width:90%"><b>1.00</b></div><div class="bar v1" style="width:75%"><b>0.83</b></div><div class="bar v2" style="width:90%"><b>1.00</b></div></div></div>
+  </div>
+</section>
+
+<section>
+  <span class="tag">v1 · artifacts/system_prompt.md</span>
+  <h2>Bỏ 3 chỉ dẫn xấu của starter</h2>
+  <p><b>Giả thuyết:</b> prompt starter ép model đoán thay vì hỏi, gửi mà không cần xác nhận, và chỉ làm một bước. Thay bằng 3 rule ngược lại thì routing sẽ đúng hơn.</p>
+  <div class="scroll"><pre class="diff"><span class="d">- You are a fast, proactive research assistant with access to tools.</span><span class="d">- The user is busy and hates being asked questions. Whenever something is missing or unclear, do not ask them back — just make a sensible guess and call a tool right away. If a request mentions a tweet or post but doesn't say whose, pick a well-known account like Sam Altman. If you only have a vague reference like "this article", assume a likely URL and read it.</span><span class="d">- When the user wants to send, post, or publish something, just go ahead and do it so they don't have to wait.</span><span class="d">- Always finish the request in a single step. Pick one tool and fill in its arguments using your best judgment.</span><span class="a">+ You are a careful research assistant with access to tools.</span><span class="a">+ Never guess missing information. If the request needs a specific account handle, URL, or other detail the user has not given, call `clarify` to ask for it instead of inventing a value.</span><span class="a">+ Never send, post, or publish anything without explicit confirmation. If the user asks to send something and has not yet confirmed the exact content, call `clarify` to ask for confirmation first. Only call `send` with `confirmed=true` after the user has confirmed.</span><span class="a">+ You may call more than one tool when the request needs several independent pieces of information (for example, web results and social posts in the same request).</span></pre></div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Chỉ dẫn xấu (v0)</th><th>Rule thay thế (v1)</th><th>Case bị ảnh hưởng</th></tr></thead>
+      <tbody>
+        <tr><td>Đoán đi, đừng hỏi lại</td><td>Thiếu thông tin thì gọi <code>clarify</code></td><td>R10, R11</td></tr>
+        <tr><td>Muốn gửi thì cứ gửi luôn</td><td>Phải có xác nhận mới được <code>send</code></td><td>R12, R08, R14</td></tr>
+        <tr><td>Làm 1 bước, chọn 1 tool</td><td>Được gọi nhiều tool khi cần</td><td>R13</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">R08 và R14 là câu hỏi ngoài phạm vi (toán, viết code). Ở v0 model trả lời xong lại gọi <code>send</code> đẩy câu trả lời lên Telegram, do câu "cứ gửi luôn". Bỏ câu đó là hai case này pass, không cần thêm rule phạm vi.</p>
+</section>
+
+<section>
+  <span class="tag">v2 · artifacts/tools.yaml (tool clarify)</span>
+  <h2>Bắt buộc truyền <code>response_type</code></h2>
+  <p><b>Giả thuyết:</b> sau v1, model đã gọi đúng <code>clarify</code> nhưng args rỗng. Field <code>response_type</code> có default và không nằm trong <code>required</code>, nên model bỏ qua. Eval chỉ so args model thực sự gửi, không tự điền default.</p>
+  <div class="scroll"><pre class="diff"><span class="d">-    description: "Gửi một câu hỏi cho người dùng."</span><span class="a">+    description: "Gửi một câu hỏi cho người dùng. Luôn truyền response_type: 'text' khi hỏi thông tin còn thiếu (handle, URL...), 'yes_no' khi xin xác nhận trước khi gửi/đăng, 'choice' khi đưa ra các lựa chọn (kèm options)."</span><span class="d">-        response_type: {..., default: "text", description: "Kiểu trả lời"}</span><span class="a">+        response_type: {..., default: "text", description: "Bắt buộc truyền. text = hỏi thông tin thiếu; yes_no = xin xác nhận gửi/đăng; choice = chọn trong options"}</span><span class="d">-      required: [question]</span><span class="a">+      required: [question, response_type]</span></pre></div>
+</section>
+
+<section>
+  <h2>v1 khác v2 thế nào</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th></th><th>v1</th><th>v2</th></tr></thead>
+      <tbody>
+        <tr><td>File sửa</td><td><code>system_prompt.md</code></td><td><code>tools.yaml</code></td></tr>
+        <tr><td>Tầng tác động</td><td>Hành vi chung: có gọi tool không, gọi tool nào</td><td>Khai báo của một tool: truyền args gì</td></tr>
+        <tr><td>Loại lỗi sửa</td><td>Routing: đoán thay vì hỏi, gửi bừa</td><td>Args: thiếu field</td></tr>
+        <tr><td>Metric tăng mạnh nhất</td><td>tool_routing 0.75 → 0.95</td><td>args 0.80 → 0.95</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Thứ tự này hợp lý: phải chọn đúng tool trước (v1) thì mới có args để sửa (v2).</p>
+</section>
+
+<section>
+  <h2>Bằng chứng theo case</h2>
+  <p class="sub">Tool call thực tế của model, lấy từ <code>result.actual_tool_calls</code>, đã ẩn field <code>question</code> cho gọn.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Case</th><th>Kỳ vọng</th><th>v0</th><th>v1</th><th>v2</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">R08_out_of_scope</td><td>không gọi tool</td>
+          <td><span class="pill fail">FAIL</span><br><code>send(text="Nguyên hàm của x^2…")</code></td>
+          <td><span class="pill pass">PASS</span><br>không gọi tool</td>
+          <td><span class="pill pass">PASS</span></td></tr>
+        <tr><td class="mono">R10_missing_handle</td><td><code>clarify(response_type="text")</code></td>
+          <td><span class="pill fail">FAIL</span><br><code>timeline(screenname="sama")</code></td>
+          <td><span class="pill fail">FAIL</span><br><code>clarify({})</code></td>
+          <td><span class="pill pass">PASS</span><br><code>clarify(response_type="text")</code></td></tr>
+        <tr><td class="mono">R11_missing_url</td><td><code>clarify(response_type="text")</code></td>
+          <td><span class="pill fail">FAIL</span><br><code>fetch(url="https://www.example.com/article")</code></td>
+          <td><span class="pill fail">FAIL</span><br><code>clarify({})</code></td>
+          <td><span class="pill pass">PASS</span><br><code>clarify(response_type="text")</code></td></tr>
+        <tr><td class="mono">R12_confirm_before_send</td><td><code>clarify(response_type="yes_no")</code></td>
+          <td><span class="pill fail">FAIL</span><br><code>send(text="Bản tin này")</code></td>
+          <td><span class="pill fail">FAIL</span><br><code>clarify({})</code></td>
+          <td><span class="pill fail">FAIL</span><br><code>clarify(response_type="text")</code></td></tr>
+        <tr><td class="mono">R13_parallel_web_and_tweets</td><td><code>lookup(query="AI", topic="news")</code> + <code>social_search</code></td>
+          <td><span class="pill fail">FAIL</span><br><code>lookup(query="AI news")</code>, thiếu <code>topic</code></td>
+          <td><span class="pill pass">PASS</span><br><code>lookup(query="AI", topic="news")</code></td>
+          <td><span class="pill pass">PASS</span></td></tr>
+        <tr><td class="mono">R14_out_of_scope_coding</td><td>không gọi tool</td>
+          <td><span class="pill fail">FAIL</span><br><code>send(text="def fibonacci(n)…")</code></td>
+          <td><span class="pill pass">PASS</span><br>không gọi tool</td>
+          <td><span class="pill pass">PASS</span></td></tr>
+        <tr><td class="mono">M06_switch_tool</td><td><code>lookup(query="OpenAI", topic="news")</code></td>
+          <td><span class="pill pass">PASS</span></td>
+          <td><span class="pill fail">FAIL</span><br><code>social_search(query="OpenAI")</code></td>
+          <td><span class="pill pass">PASS</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sub">13 case còn lại pass ở cả 3 version.</p>
+</section>
+
+<section>
+  <h2>Cách eval tính metric</h2>
+  <div class="cols">
+    <div>
+      <h3>Chấm từng case</h3>
+      <ul>
+        <li><b>routing_correct</b>: có đủ tool kỳ vọng (khớp theo tên) và không có tool thừa. Case <code>no_tool</code> thì model phải không gọi tool nào.</li>
+        <li><b>args_correct</b>: so tập con. Chỉ key ghi trong <code>expect.args</code> bị so, string được strip và đưa về chữ thường. Arg thừa không bị phạt.</li>
+        <li><b>passed</b> = routing đúng và args đúng.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Metric tổng (mẫu số 20 case)</h3>
+      <ul>
+        <li><code>case_accuracy</code> = số case passed / 20</li>
+        <li><code>tool_routing_accuracy</code> = số case routing đúng / 20</li>
+        <li><code>argument_accuracy</code> = số case args đúng / 20. Routing sai thì args cũng bị tính sai.</li>
+        <li><code>multiturn_accuracy</code> = số case multi-turn passed / 6 (M01–M06)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Lưu ý khi viết report</h2>
+  <ul>
+    <li>M06 pass ở v0, fail ở v1, pass lại ở v2 dù v2 không sửa gì liên quan. Model có dao động giữa các lần chạy, và mỗi version mới chạy 1 lần, nên chênh lệch 1 case (±0.05) chưa đủ chắc chắn.</li>
+    <li>R12 còn fail: model hỏi nội dung bản tin (<code>text</code>) thay vì xin xác nhận (<code>yes_no</code>). Đây là mục tiêu dự kiến cho v3.</li>
+    <li>Metric chỉ chấm tool và args model chọn, không chấm kết quả tool trả về hay chất lượng câu trả lời.</li>
+  </ul>
+</section>
+
+</main>
+</body>
+</html>
