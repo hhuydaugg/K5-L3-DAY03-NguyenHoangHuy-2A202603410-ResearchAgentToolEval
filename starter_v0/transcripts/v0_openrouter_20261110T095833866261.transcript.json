@@ -1,0 +1,300 @@
+{
+  "transcript_id": "v0_openrouter_20261110T095833866261",
+  "version": "v0",
+  "artifact_version": "v0+pf0c107a9d7a1+t8db0ba629f52",
+  "prompt_hash": "f0c107a9d7a14032c948d642d7c36f2a85cb6d69a099530093a874c94d472446",
+  "tools_hash": "8db0ba629f52ad1ec171bae4e4e84472c12f950fa1a6db5e1d27bad6e749b740",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "/Users/phat/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/starter_v0/artifacts/system_prompt.md",
+  "tools": "/Users/phat/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/starter_v0/artifacts/tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-11-10T09:58:33",
+  "updated_at": "2026-11-10T10:00:07",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T09:58:38",
+      "user": "Tìm các bài viết về AI agent evaluation.",
+      "status": "answered",
+      "assistant_text": "Here are some recent papers on AI agent evaluation:\n\n1. **[AI Agents: Evolution, Architecture, and Real-World Applications](http://arxiv.org/abs/2503.12687v1)**  \n   - **Authors:** Naveen Krishnan  \n   - **Published:** March 16, 2025  \n   - **Summary:** This paper examines the evolution and architecture of AI agents, discussing limitations of current evaluation benchmarks and proposing a holistic evaluation framework that balances task effectiveness, efficiency, robustness, and safety.  \n   - **[PDF Link](https://arxiv.org/pdf/2503.12687v1)**\n\n2. **[Towards trustworthy agentic AI: a comprehensive survey of safety, robustness, privacy, and system security](http://arxiv.org/abs/2605.23989v1)**  \n   - **Authors:** Jinhu Qi et al.  \n   - **Published:** May 17, 2026  \n   - **Summary:** This survey focuses on trustworthy agentic AI, examining safety, robustness, privacy, and system security, and consolidating evaluation into a unified metrics-and-benchmarks hub.  \n   - **[PDF Link](https://arxiv.org/pdf/2605.23989v1)**\n\n3. **[Toward AI VIS Co-Scientists: A General and End-to-End Agent Harness for Solving Complex Data Visualization Tasks](http://arxiv.org/abs/2605.21825v1)**  \n   - **Authors:** Haichao Miao et al.  \n   - **Published:** May 20, 2026  \n   - **Summary:** This paper presents an end-to-end agentic harness that autonomously designs custom visual analysis applications based on data and high-level task descriptions.  \n   - **[PDF Link](https://arxiv.org/pdf/2605.21825v1)**\n\n4. **[An Interactive Multi-Agent System for Evaluation of New Product Concepts](http://arxiv.org/abs/2603.05980v1)**  \n   - **Authors:** Bin Xuan et al.  \n   - **Published:** March 6, 2026  \n   - **Summary:** This study proposes an automated approach using a multi-agent system for product concept evaluation, addressing limitations of traditional expert-led methods.  \n   - **[PDF Link](https://arxiv.org/pdf/2603.05980v1)**\n\n5. **[Defining AI Agents: A Compendium of Criteria, Metrics, and Benchmarks](http://arxiv.org/abs/2609.11018v1)**  \n   - **Authors:** Mia Lassiter, Brinnae Bent  \n   - **Published:** September 10, 2026  \n   - **Summary:** This paper surveys the definition of AI agents and synthesizes metrics and benchmarks for evaluating agent capabilities, introducing the Agent Compendium as a resource.  \n   - **[PDF Link](https://arxiv.org/pdf/2609.11018v1)**\n\nThese papers provide a comprehensive overview of current research and methodologies in AI agent evaluation.",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "papers",
+              "args": {
+                "query": "AI agent evaluation",
+                "max_results": 5
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "papers",
+              "args": {
+                "query": "AI agent evaluation",
+                "max_results": 5
+              },
+              "result": {
+                "tool": "arxiv_search",
+                "query": "AI agent evaluation",
+                "api_query": "all:AI AND all:agent AND all:evaluation",
+                "total_results": 6016,
+                "items": [
+                  {
+                    "arxiv_id": "2503.12687v1",
+                    "title": "AI Agents: Evolution, Architecture, and Real-World Applications",
+                    "summary": "This paper examines the evolution, architecture, and practical applications of AI agents from their early, rule-based incarnations to modern sophisticated systems that integrate large language models with dedicated modules for perception, planning, and tool use. Emphasizing both theoretical foundations and real-world deployments, the paper reviews key agent paradigms, discusses limitations of current evaluation benchmarks, and proposes a holistic evaluation framework that balances task effectiveness, efficiency, robustness, and safety. Applications across enterprise, personal assistance, and specialized domains are analyzed, with insights into future research directions for more resilient and adaptive AI agent systems.",
+                    "authors": [
+                      "Naveen Krishnan"
+                    ],
+                    "published": "2025-03-16T23:07:48Z",
+                    "updated": "2025-03-16T23:07:48Z",
+                    "url": "http://arxiv.org/abs/2503.12687v1",
+                    "pdf_url": "https://arxiv.org/pdf/2503.12687v1",
+                    "source": "arxiv.org",
+                    "primary_category": "cs.AI",
+                    "categories": [
+                      "cs.AI"
+                    ]
+                  },
+                  {
+                    "arxiv_id": "2605.23989v1",
+                    "title": "Towards trustworthy agentic AI: a comprehensive survey of safety, robustness, privacy, and system security",
+                    "summary": "Agentic AI systems -- Large Language Models (LLMs) augmented with planning, tool use, memory, and long-horizon interactions -- can execute complex tasks autonomously, but their multi-step trajectories introduce new failure modes that challenge trustworthiness. This survey provides a focused examination of trustworthy agentic AI through two core dimensions that are critical for high-risk deployments: Safety and Robustness, and Privacy and System Security. For each dimension, we clarify key concepts, identify where risks emerge along the agent workflow, and summarize stage-targeted mitigation strategies. Other trustworthiness aspects (value alignment, transparency, fairness, and accountability) are discussed as relevant context rather than parallel chapters. To support consistent comparison and deployment decisions, we consolidate evaluation into a unified metrics-and-benchmarks hub, emphasizing both outcome and process signals (e.g., constraint violations, trace completeness, and adversarial success rates) and offering scenario-to-metric guidance for release gating. We conclude by outlining open challenges such as self-evolving agents, runtime monitoring and verification, privacy-preserving personalization, and the trust-utility trade-off, and present a case study of real-world security failures in open-source agentic systems. Our goal is to serve as a practical reference for researchers and practitioners building trustworthy agentic systems in high-stakes environments.",
+                    "authors": [
+                      "Jinhu Qi",
+                      "Muzhi Li",
+                      "Jiahong Liu",
+                      "Yuqin Shu",
+                      "Dianzhi Yu",
+                      "Shicheng Ma",
+                      "Wenqian Cui",
+                      "Yiyang Zhao",
+                      "Yiyi Chen",
+                      "Ruoxi Jiang",
+                      "Irwin King",
+                      "Zenglin Xu"
+                    ],
+                    "published": "2026-05-17T10:26:37Z",
+                    "updated": "2026-05-17T10:26:37Z",
+                    "url": "http://arxiv.org/abs/2605.23989v1",
+                    "pdf_url": "https://arxiv.org/pdf/2605.23989v1",
+                    "source": "arxiv.org",
+                    "primary_category": "cs.AI",
+                    "categories": [
+                      "cs.AI",
+                      "cs.CL",
+                      "cs.CR"
+                    ]
+                  },
+                  {
+                    "arxiv_id": "2605.21825v1",
+                    "title": "Toward AI VIS Co-Scientists: A General and End-to-End Agent Harness for Solving Complex Data Visualization Tasks",
+                    "summary": "The ability to inspect, interpret, and communicate complex data is crucial for virtually any scientific endeavor, but often requires significant expertise outside the core domain ranging from data management and analysis to visualization design and implementation. We present an end-to-end agentic harness that, based on only the data and a high level description of the tasks, independently designs custom visual analysis applications (VIS apps). This represents an important step towards a general AI co-scientist envisioned by many as an autonomous system that can autonomously execute long horizon tasks based on high-level directions. Our proposed VIS co-scientist is an essential component of this broader AI co-scientist vision: a harness that can autonomously analyze data and design visualization solutions using a collection of agents and specialized skills that coordinate exploratory analysis, plan, configure the environment, implement, validate the interface, and most importantly evaluate the overall task completion. Each stage produces document and instruction artifacts that guide downstream work and enable iterative refinement. We validate this approach on IEEE SciVis Contests spanning multiple science and engineering fields. These contests serve as ideal proving grounds because they encode real-world complexity: ambiguous requirements, diverse data modalities, design trade-offs, and task-driven validation. Given only the data and target tasks, our system autonomously produces functional single-page VIS Apps with verified linked-view behavior, highly customized to domain experts' specified tasks and needs.",
+                    "authors": [
+                      "Haichao Miao",
+                      "Zhimin Li",
+                      "Kuangshi Ai",
+                      "Kaiyuan Tang",
+                      "Chaoli Wang",
+                      "Peer-Timo Bremer",
+                      "Shusen Liu"
+                    ],
+                    "published": "2026-05-20T23:49:28Z",
+                    "updated": "2026-05-20T23:49:28Z",
+                    "url": "http://arxiv.org/abs/2605.21825v1",
+                    "pdf_url": "https://arxiv.org/pdf/2605.21825v1",
+                    "source": "arxiv.org",
+                    "primary_category": "cs.AI",
+                    "categories": [
+                      "cs.AI",
+                      "cs.HC"
+                    ]
+                  },
+                  {
+                    "arxiv_id": "2603.05980v1",
+                    "title": "An Interactive Multi-Agent System for Evaluation of New Product Concepts",
+                    "summary": "Product concept evaluation is a critical stage that determines strategic resource allocation and project success in enterprises. However, traditional expert-led approaches face limitations such as subjective bias and high time and cost requirements. To support this process, this study proposes an automated approach utilizing a large language model (LLM)-based multi-agent system (MAS). Through a systematic analysis of previous research on product development and team collaboration, this study established two primary evaluation dimensions, namely technical feasibility and market feasibility. The proposed system consists of a team of eight virtual agents representing specialized domains such as R&D and marketing. These agents use retrieval-augmented generation (RAG) and real-time search tools to gather objective evidence and validate concepts through structured deliberations based on the established criteria. The agents were further fine-tuned using professional product review data to enhance their judgment accuracy. A case study involving professional display monitor concepts demonstrated that the system's evaluation rankings were consistent with those of senior industry experts. These results confirm the usability of the proposed multi-agent-based evaluation approach for supporting product development decisions.",
+                    "authors": [
+                      "Bin Xuan",
+                      "Ruo Ai",
+                      "Hakyeon Lee"
+                    ],
+                    "published": "2026-03-06T07:22:52Z",
+                    "updated": "2026-03-06T07:22:52Z",
+                    "url": "http://arxiv.org/abs/2603.05980v1",
+                    "pdf_url": "https://arxiv.org/pdf/2603.05980v1",
+                    "source": "arxiv.org",
+                    "primary_category": "cs.AI",
+                    "categories": [
+                      "cs.AI"
+                    ]
+                  },
+                  {
+                    "arxiv_id": "2609.11018v1",
+                    "title": "Defining AI Agents: A Compendium of Criteria, Metrics, and Benchmarks",
+                    "summary": "The term agent in artificial intelligence lacks a standard definition, complicating the evaluation, comparison, and reproducibility of AI agent research. We address this ambiguity through a survey organized around five dimensions of agenticness: environmental interaction, learning and adaptation, autonomy, goal-directed behavior, and temporal coherence. For each dimension, we examine how the underlying capability has been conceptualized across prior work and synthesize the metrics, benchmarks, and evaluation frameworks used to assess it. This review provides a structured account of the current landscape of agent evaluation, highlighting both established approaches and areas where evaluation remains limited or inconsistent. We additionally introduce the Agent Compendium, a public-facing digital resource that organizes and extends the evaluation methods identified through this review. Together, the survey and compendium provide a common structure for evaluating and comparing agent capabilities across AI systems, supporting more reproducible research, clearer communication, and more systematic study of artificial agents.",
+                    "authors": [
+                      "Mia Lassiter",
+                      "Brinnae Bent"
+                    ],
+                    "published": "2026-09-10T02:50:29Z",
+                    "updated": "2026-09-10T02:50:29Z",
+                    "url": "http://arxiv.org/abs/2609.11018v1",
+                    "pdf_url": "https://arxiv.org/pdf/2609.11018v1",
+                    "source": "arxiv.org",
+                    "primary_category": "cs.AI",
+                    "categories": [
+                      "cs.AI",
+                      "cs.MA"
+                    ]
+                  }
+                ],
+                "rate_limit_note": "arXiv may return 429 if called too frequently; this tool waits at least 3 seconds between requests in-process."
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Here are some recent papers on AI agent evaluation:\n\n1. **[AI Agents: Evolution, Architecture, and Real-World Applications](http://arxiv.org/abs/2503.12687v1)**  \n   - **Authors:** Naveen Krishnan  \n   - **Published:** March 16, 2025  \n   - **Summary:** This paper examines the evolution and architecture of AI agents, discussing limitations of current evaluation benchmarks and proposing a holistic evaluation framework that balances task effectiveness, efficiency, robustness, and safety.  \n   - **[PDF Link](https://arxiv.org/pdf/2503.12687v1)**\n\n2. **[Towards trustworthy agentic AI: a comprehensive survey of safety, robustness, privacy, and system security](http://arxiv.org/abs/2605.23989v1)**  \n   - **Authors:** Jinhu Qi et al.  \n   - **Published:** May 17, 2026  \n   - **Summary:** This survey focuses on trustworthy agentic AI, examining safety, robustness, privacy, and system security, and consolidating evaluation into a unified metrics-and-benchmarks hub.  \n   - **[PDF Link](https://arxiv.org/pdf/2605.23989v1)**\n\n3. **[Toward AI VIS Co-Scientists: A General and End-to-End Agent Harness for Solving Complex Data Visualization Tasks](http://arxiv.org/abs/2605.21825v1)**  \n   - **Authors:** Haichao Miao et al.  \n   - **Published:** May 20, 2026  \n   - **Summary:** This paper presents an end-to-end agentic harness that autonomously designs custom visual analysis applications based on data and high-level task descriptions.  \n   - **[PDF Link](https://arxiv.org/pdf/2605.21825v1)**\n\n4. **[An Interactive Multi-Agent System for Evaluation of New Product Concepts](http://arxiv.org/abs/2603.05980v1)**  \n   - **Authors:** Bin Xuan et al.  \n   - **Published:** March 6, 2026  \n   - **Summary:** This study proposes an automated approach using a multi-agent system for product concept evaluation, addressing limitations of traditional expert-led methods.  \n   - **[PDF Link](https://arxiv.org/pdf/2603.05980v1)**\n\n5. **[Defining AI Agents: A Compendium of Criteria, Metrics, and Benchmarks](http://arxiv.org/abs/2609.11018v1)**  \n   - **Authors:** Mia Lassiter, Brinnae Bent  \n   - **Published:** September 10, 2026  \n   - **Summary:** This paper surveys the definition of AI agents and synthesizes metrics and benchmarks for evaluating agent capabilities, introducing the Agent Compendium as a resource.  \n   - **[PDF Link](https://arxiv.org/pdf/2609.11018v1)**\n\nThese papers provide a comprehensive overview of current research and methodologies in AI agent evaluation.",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "papers",
+          "args": {
+            "query": "AI agent evaluation",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "arxiv_search",
+            "query": "AI agent evaluation",
+            "api_query": "all:AI AND all:agent AND all:evaluation",
+            "total_results": 6016,
+            "items": [
+              {
+                "arxiv_id": "2503.12687v1",
+                "title": "AI Agents: Evolution, Architecture, and Real-World Applications",
+                "summary": "This paper examines the evolution, architecture, and practical applications of AI agents from their early, rule-based incarnations to modern sophisticated systems that integrate large language models with dedicated modules for perception, planning, and tool use. Emphasizing both theoretical foundations and real-world deployments, the paper reviews key agent paradigms, discusses limitations of current evaluation benchmarks, and proposes a holistic evaluation framework that balances task effectiveness, efficiency, robustness, and safety. Applications across enterprise, personal assistance, and specialized domains are analyzed, with insights into future research directions for more resilient and adaptive AI agent systems.",
+                "authors": [
+                  "Naveen Krishnan"
+                ],
+                "published": "2025-03-16T23:07:48Z",
+                "updated": "2025-03-16T23:07:48Z",
+                "url": "http://arxiv.org/abs/2503.12687v1",
+                "pdf_url": "https://arxiv.org/pdf/2503.12687v1",
+                "source": "arxiv.org",
+                "primary_category": "cs.AI",
+                "categories": [
+                  "cs.AI"
+                ]
+              },
+              {
+                "arxiv_id": "2605.23989v1",
+                "title": "Towards trustworthy agentic AI: a comprehensive survey of safety, robustness, privacy, and system security",
+                "summary": "Agentic AI systems -- Large Language Models (LLMs) augmented with planning, tool use, memory, and long-horizon interactions -- can execute complex tasks autonomously, but their multi-step trajectories introduce new failure modes that challenge trustworthiness. This survey provides a focused examination of trustworthy agentic AI through two core dimensions that are critical for high-risk deployments: Safety and Robustness, and Privacy and System Security. For each dimension, we clarify key concepts, identify where risks emerge along the agent workflow, and summarize stage-targeted mitigation strategies. Other trustworthiness aspects (value alignment, transparency, fairness, and accountability) are discussed as relevant context rather than parallel chapters. To support consistent comparison and deployment decisions, we consolidate evaluation into a unified metrics-and-benchmarks hub, emphasizing both outcome and process signals (e.g., constraint violations, trace completeness, and adversarial success rates) and offering scenario-to-metric guidance for release gating. We conclude by outlining open challenges such as self-evolving agents, runtime monitoring and verification, privacy-preserving personalization, and the trust-utility trade-off, and present a case study of real-world security failures in open-source agentic systems. Our goal is to serve as a practical reference for researchers and practitioners building trustworthy agentic systems in high-stakes environments.",
+                "authors": [
+                  "Jinhu Qi",
+                  "Muzhi Li",
+                  "Jiahong Liu",
+                  "Yuqin Shu",
+                  "Dianzhi Yu",
+                  "Shicheng Ma",
+                  "Wenqian Cui",
+                  "Yiyang Zhao",
+                  "Yiyi Chen",
+                  "Ruoxi Jiang",
+                  "Irwin King",
+                  "Zenglin Xu"
+                ],
+                "published": "2026-05-17T10:26:37Z",
+                "updated": "2026-05-17T10:26:37Z",
+                "url": "http://arxiv.org/abs/2605.23989v1",
+                "pdf_url": "https://arxiv.org/pdf/2605.23989v1",
+                "source": "arxiv.org",
+                "primary_category": "cs.AI",
+                "categories": [
+                  "cs.AI",
+                  "cs.CL",
+                  "cs.CR"
+                ]
+              },
+              {
+                "arxiv_id": "2605.21825v1",
+                "title": "Toward AI VIS Co-Scientists: A General and End-to-End Agent Harness for Solving Complex Data Visualization Tasks",
+                "summary": "The ability to inspect, interpret, and communicate complex data is crucial for virtually any scientific endeavor, but often requires significant expertise outside the core domain ranging from data management and analysis to visualization design and implementation. We present an end-to-end agentic harness that, based on only the data and a high level description of the tasks, independently designs custom visual analysis applications (VIS apps). This represents an important step towards a general AI co-scientist envisioned by many as an autonomous system that can autonomously execute long horizon tasks based on high-level directions. Our proposed VIS co-scientist is an essential component of this broader AI co-scientist vision: a harness that can autonomously analyze data and design visualization solutions using a collection of agents and specialized skills that coordinate exploratory analysis, plan, configure the environment, implement, validate the interface, and most importantly evaluate the overall task completion. Each stage produces document and instruction artifacts that guide downstream work and enable iterative refinement. We validate this approach on IEEE SciVis Contests spanning multiple science and engineering fields. These contests serve as ideal proving grounds because they encode real-world complexity: ambiguous requirements, diverse data modalities, design trade-offs, and task-driven validation. Given only the data and target tasks, our system autonomously produces functional single-page VIS Apps with verified linked-view behavior, highly customized to domain experts' specified tasks and needs.",
+                "authors": [
+                  "Haichao Miao",
+                  "Zhimin Li",
+                  "Kuangshi Ai",
+                  "Kaiyuan Tang",
+                  "Chaoli Wang",
+                  "Peer-Timo Bremer",
+                  "Shusen Liu"
+                ],
+                "published": "2026-05-20T23:49:28Z",
+                "updated": "2026-05-20T23:49:28Z",
+                "url": "http://arxiv.org/abs/2605.21825v1",
+                "pdf_url": "https://arxiv.org/pdf/2605.21825v1",
+                "source": "arxiv.org",
+                "primary_category": "cs.AI",
+                "categories": [
+                  "cs.AI",
+                  "cs.HC"
+                ]
+              },
+              {
+                "arxiv_id": "2603.05980v1",
+                "title": "An Interactive Multi-Agent System for Evaluation of New Product Concepts",
+                "summary": "Product concept evaluation is a critical stage that determines strategic resource allocation and project success in enterprises. However, traditional expert-led approaches face limitations such as subjective bias and high time and cost requirements. To support this process, this study proposes an automated approach utilizing a large language model (LLM)-based multi-agent system (MAS). Through a systematic analysis of previous research on product development and team collaboration, this study established two primary evaluation dimensions, namely technical feasibility and market feasibility. The proposed system consists of a team of eight virtual agents representing specialized domains such as R&D and marketing. These agents use retrieval-augmented generation (RAG) and real-time search tools to gather objective evidence and validate concepts through structured deliberations based on the established criteria. The agents were further fine-tuned using professional product review data to enhance their judgment accuracy. A case study involving professional display monitor concepts demonstrated that the system's evaluation rankings were consistent with those of senior industry experts. These results confirm the usability of the proposed multi-agent-based evaluation approach for supporting product development decisions.",
+                "authors": [
+                  "Bin Xuan",
+                  "Ruo Ai",
+                  "Hakyeon Lee"
+                ],
+                "published": "2026-03-06T07:22:52Z",
+                "updated": "2026-03-06T07:22:52Z",
+                "url": "http://arxiv.org/abs/2603.05980v1",
+                "pdf_url": "https://arxiv.org/pdf/2603.05980v1",
+                "source": "arxiv.org",
+                "primary_category": "cs.AI",
+                "categories": [
+                  "cs.AI"
+                ]
+              },
+              {
+                "arxiv_id": "2609.11018v1",
+                "title": "Defining AI Agents: A Compendium of Criteria, Metrics, and Benchmarks",
+                "summary": "The term agent in artificial intelligence lacks a standard definition, complicating the evaluation, comparison, and reproducibility of AI agent research. We address this ambiguity through a survey organized around five dimensions of agenticness: environmental interaction, learning and adaptation, autonomy, goal-directed behavior, and temporal coherence. For each dimension, we examine how the underlying capability has been conceptualized across prior work and synthesize the metrics, benchmarks, and evaluation frameworks used to assess it. This review provides a structured account of the current landscape of agent evaluation, highlighting both established approaches and areas where evaluation remains limited or inconsistent. We additionally introduce the Agent Compendium, a public-facing digital resource that organizes and extends the evaluation methods identified through this review. Together, the survey and compendium provide a common structure for evaluating and comparing agent capabilities across AI systems, supporting more reproducible research, clearer communication, and more systematic study of artificial agents.",
+                "authors": [
+                  "Mia Lassiter",
+                  "Brinnae Bent"
+                ],
+                "published": "2026-09-10T02:50:29Z",
+                "updated": "2026-09-10T02:50:29Z",
+                "url": "http://arxiv.org/abs/2609.11018v1",
+                "pdf_url": "https://arxiv.org/pdf/2609.11018v1",
+                "source": "arxiv.org",
+                "primary_category": "cs.AI",
+                "categories": [
+                  "cs.AI",
+                  "cs.MA"
+                ]
+              }
+            ],
+            "rate_limit_note": "arXiv may return 429 if called too frequently; this tool waits at least 3 seconds between requests in-process."
+          }
+        }
+      ],
+      "ended_at": "2026-11-10T09:58:53"
+    }
+  ]
+}
