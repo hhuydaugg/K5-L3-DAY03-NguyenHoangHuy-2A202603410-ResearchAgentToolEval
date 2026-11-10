@@ -23,7 +23,7 @@ tools:
         question: {type: string, default: "", description: "Câu hỏi"}
         response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu trả lời"}
         options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn"}
-      required: [question, response_type]
+      required: [question]
 
   - name: timeline
     description: "Lấy các bài đăng gần đây."
@@ -50,7 +50,7 @@ tools:
       type: object
       properties:
         query: {type: string, default: "", description: "Truy vấn"}
-        topic: {type: string, enum: [general, news], default: "general", description: "Luôn truyền rõ tham số này: news khi người dùng yêu cầu tin tức hoặc thời sự, kể cả khi đồng thời tìm tweet; general cho tra cứu thông tin thông thường."}
+        topic: {type: string, enum: [general, news], default: "general", description: "Phân loại"}
         timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "Khoảng thời gian"}
         max_results: {type: integer, default: 5, description: "Số kết quả"}
       required: [query]
