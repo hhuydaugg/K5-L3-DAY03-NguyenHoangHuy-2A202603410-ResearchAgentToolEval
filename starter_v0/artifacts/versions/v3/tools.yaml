@@ -66,8 +66,9 @@ tools:
     required:
     - query
 - name: lookup
-  description: Search the web for a topic or news. Use for general research or news discovery; do not use for reading
-    an already supplied URL or Twitter-only requests.
+  description: 'Search the web for a topic or news. Use for general research or news discovery; do not use for reading
+    an already supplied URL or Twitter-only requests. Keep query to the subject only: "AI news today" means query="AI",
+    topic="news", timeframe="day"; never put news/today/latest into query.'
   parameters:
     type: object
     properties:

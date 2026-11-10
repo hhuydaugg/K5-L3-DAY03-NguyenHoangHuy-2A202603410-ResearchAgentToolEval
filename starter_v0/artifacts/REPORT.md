@@ -50,7 +50,7 @@ UI có ba tab: Trò chuyện, Công cụ offline, Kết quả đánh giá. Tab o
 
 ## B1. Version Evidence
 
-Log thực tế được tổng hợp trong `artifacts/version_log.csv` và `analysis/eval_cases.csv` bằng `python scripts/summarize_evidence.py`. File CSV chỉ ghi các run có JSON thật; các version chưa chạy không có điểm giả.
+Log thực tế được tổng hợp trong `artifacts/version_log.csv` và `analysis/eval_cases.csv` bằng `python scripts/summarize_evidence.py`. Mọi version từ v0 đến v3 dưới đây dùng cùng provider/model `gemini / gemini-3.5-flash-lite`, cùng 20 case base và không có provider error.
 
 | Version | Thay đổi / giả thuyết | Kết quả thật | Run / snapshot |
 |---|---|---|---|
@@ -58,17 +58,24 @@ Log thực tế được tổng hợp trong `artifacts/version_log.csv` và `ana
 | v0 lần 2 | Starter nguyên bản | 6/13 case đo được đạt, case_accuracy 46,15%; 7/20 case lỗi provider | `runs/v0_B_base_gemini_20261110T102058602511.json` |
 | v0 lần 3 | `gemini-3.5-flash` vẫn hết quota ngày | 20 provider_error; không có điểm baseline hợp lệ | `runs/v0_B_base_gemini_20261110T111601629945.json` |
 | **v0 đầy đủ** | **Snapshot gốc, model `gemini-3.5-flash-lite`** | **13/20 đạt (65%); 0 provider_error** | `runs/v0_B_base_gemini_20261110T113128259559.json` |
-| v1 | Làm rõ scope và routing theo nguồn; khai báo tool deduplicate mới | **Chưa chạy API** | `artifacts/versions/v1/` |
-| v2 | Thay quy tắc đoán/gửi ngay bằng hỏi lại và xác nhận | **Chưa chạy API** | `artifacts/versions/v2/` |
-| v3 | Giữ query ngắn, đúng enum/count và thông tin đã sửa qua nhiều lượt | **Chưa chạy API** | `artifacts/versions/v3/` |
+| v1 | Làm rõ scope/routing theo nguồn; khai báo tool deduplicate | 13/20 (65%); không thay đổi so với v0 | `runs/v1_B_base_gemini_20261110T122013639908.json` |
+| v2 | Thêm ranh giới hỏi lại và xác nhận trước action | 15/20 (75%); R10/R11 chuyển PASS | `runs/v2_B_base_gemini_20261110T122431453288.json` |
+| v3 | Bổ sung convention args, ví dụ exact query và rule hội thoại | 20/20 (100%); routing/args/multiturn đều 100% | `runs/v3_B_base_gemini_20261110T123228953059.json` |
 
 Chi tiết v0 lần 2: routing_accuracy 61,54%; argument_accuracy 46,15%; multiturn_accuracy 66,67% trên các case đo được. Các tỷ lệ này không phải kết quả của toàn bộ 20 case vì 7 case đã bị loại khỏi mẫu số.
 
-**Mốc so sánh từ đây:** v0 trên `gemini-3.5-flash-lite`, case_accuracy **65%**, tool_routing_accuracy **80%**, argument_accuracy **65%**, multiturn_accuracy **66,67% (4/6)**. Cả 20 case đều đo được. V1–v3 phải dùng cùng model và suite để so sánh với mốc này. Không kết luận model mới cải thiện so với 46,15% của run cũ vì model và số case đo được khác nhau.
+| Version | case accuracy | tool routing | argument | multiturn | provider errors |
+|---|---:|---:|---:|---:|---:|
+| v0 | 65% (13/20) | 80% | 65% | 66,67% | 0 |
+| v1 | 65% (13/20) | 80% | 65% | 66,67% | 0 |
+| v2 | 75% (15/20) | 100% | 75% | 66,67% | 0 |
+| v3 | 100% (20/20) | 100% | 100% | 100% | 0 |
+
+V1 không cải thiện metric nên được giữ như kết quả phủ định giả thuyết. V2 cải thiện 10 điểm case accuracy nhờ không còn đoán account/URL. V3 tăng thêm 25 điểm nhờ giữ query đúng chủ đề, truyền đủ `topic/timeframe`, ưu tiên confirm `yes_no`, và xử lý correction/carryover. Kết quả này là routing/argument score của bộ base cố định, không phải thước đo chất lượng nội dung cuối cùng.
 
 Đã thử `gemini-3.1-flash-lite` nhưng dừng do HTTP 500/503 lặp lại; tiến độ được giữ tại `runs/in_progress/` với trạng thái interrupted, không đưa vào điểm hoặc version_log. Adapter được bổ sung timeout 60 giây/request; run_eval ghi tiến độ sau mỗi case để không mất dấu khi bị gián đoạn.
 
-Bản gốc được giữ tại `artifacts/versions/v0/`. Artifacts đang hoạt động là bản v3 **đã chuẩn bị**, chưa có bằng chứng rằng nó tốt hơn v0. Mỗi snapshot có cả prompt và tools để chạy lại đúng cấu hình. V1 đồng thời giới thiệu tool mới nên so sánh v0→v1 có yếu tố thay đổi tập tool; cần ghi nhận khi diễn giải kết quả.
+Bản gốc được giữ tại `artifacts/versions/v0/`. Artifacts đang hoạt động là v3 đã chạy thật. Mỗi snapshot có cả prompt và tools để có thể chạy lại đúng cấu hình. V1 đồng thời giới thiệu tool mới nên so sánh v0→v1 có yếu tố thay đổi tập tool; cần ghi nhận khi diễn giải kết quả.
 
 Các thay đổi runtime gồm xử lý quota/retry Gemini, chặn việc model tự xác nhận gửi trong UI/CLI/eval, và kiểm tra boolean của tool send. Chúng khác với thay đổi prompt, nên không quy toàn bộ thay đổi metric sau này cho prompt.
 
@@ -108,7 +115,7 @@ Trong tool_results của run v0, timeline/social_search trả HTTP 403, fetch c�
 
 ## B3. Team Eval Cases
 
-Đã viết **10 case: 5 single-turn + 5 multi-turn** trong `data/eval_group.json`, không sửa `eval_base.json`. Tất cả kết quả model bên dưới đang chờ API thật.
+Đã viết **10 case: 5 single-turn + 5 multi-turn** trong `data/eval_group.json`, không sửa `eval_base.json`. Run v3 group đạt **10/10**, routing/arguments/multiturn đều 100%, không có provider error: `runs/v3_B_group_gemini_20261110T123423722288.json`.
 
 | Case | Kiểm tra | Expected |
 |---|---|---|
@@ -123,19 +130,19 @@ Trong tool_results của run v0, timeline/social_search trả HTTP 403, fetch c�
 | G09_cancel_publication | Hủy gửi ở lượt mới nhất | Không gọi tool |
 | G10_deduplicate_after_supplied_results | Dùng lại items từ hội thoại | deduplicate |
 
-G03/G10 chấm model chọn đúng tool; tính chính xác của kết quả chuẩn hóa URL được kiểm tra bằng unit test riêng.
+G03/G10 đều PASS, chứng minh model route tới `deduplicate` khi items đã có trong request/hội thoại. Tính chính xác của kết quả chuẩn hóa URL được kiểm tra bằng unit test riêng.
 
 ## B4. Live Chat Evidence
 
-**Chưa có transcript chat bằng provider thật để nộp.** Không dùng các transcript mẫu có sẵn hoặc các fake provider trong unit test làm bằng chứng live.
+Transcript provider thật: `transcripts/v3_gemini_20261110T123937847917.transcript.json`, provider `gemini`, model `gemini-3.5-flash-lite`, artifact `v3+pb8bfbc906b1c+t368438afec59`.
 
-Kịch bản cần thực hiện tối thiểu 3 lượt:
+| Lượt | User request | Tool call | Kết quả |
+|---|---|---|---|
+| 1 | What does the internal source citation policy say? | `policy(query="source citation policy")` | Trả về source tiers, citation URL, lưu ý arXiv và Tier 3 |
+| 2 | Please summarize this article for me. | `clarify(response_type="text")` | Dừng để yêu cầu URL, không tự tạo link |
+| 3 | https://openai.com/research/ | `fetch(url="https://openai.com/research/")` | Đọc URL và trả tóm tắt có link nguồn |
 
-1. Một request research bình thường, ví dụ tìm 3 tin robotics tuần này.
-2. Request thiếu URL/account để agent hỏi lại.
-3. Bổ sung thông tin, kiểm tra agent dùng đúng URL/account và giữ các ràng buộc trước đó.
-
-Chạy `python chat.py --provider gemini --version v3 --model gemini-3.5-flash-lite` hoặc chọn cùng model trên UI. Transcript CLI/UI được lưu vào `transcripts/*.transcript.json`. UI cũng có nút tải JSON. Ghi lại tên file và kết quả thực sau khi chạy.
+Đây là chat live thực, không dùng transcript mẫu hoặc fake provider. CLI được sửa cấu hình UTF-8 để transcript không lỗi ký tự tiếng Việt trên PowerShell.
 
 ## B5. Tool mới, unit test và UI
 
@@ -151,17 +158,17 @@ Bug tìm thấy: send dùng `if not confirmed`, khiến các giá trị truthy s
 
 UI: `app.py`, cấu hình tại `.streamlit/config.toml`. Có chat nhiều vòng, xem tool results, lưu/tải transcript, dùng trực tiếp tool local, và xem run đã lưu. Nút xác nhận gửi Telegram nằm ngoài model; model không được tự dùng confirmed=true để gửi từ UI/CLI. Eval one-shot vẫn lưu raw tool call để chấm, nhưng không thực hiện gửi thật.
 
-Bằng chứng tại `analysis/verification.txt`: **123 passed, 0 failed, 0 skipped**. UI được kiểm tra bằng Streamlit AppTest với provider giả lập, và server local trả HTTP 200 cho trang chính lẫn `/_stcore/health`. Đây là kiểm thử offline/UI, không thay thế eval hoặc chat live bằng Gemini thật. Chưa có bằng chứng Telegram gửi thật vì chưa cấu hình/chạy bonus này.
+Bằng chứng tại `analysis/verification.txt`: **123 passed, 0 failed, 0 skipped** trước khi thêm regression test UTF-8; test full mới nhất đạt **124 passed, 0 failed, 0 skipped**. UI được kiểm tra bằng Streamlit AppTest với provider giả lập, và server local/public trả HTTP 200 cho trang chính lẫn `/_stcore/health`. Đây là kiểm thử offline/UI; eval và chat live ở các phần trên dùng Gemini thật. Chưa có bằng chứng Telegram gửi thật vì chưa cấu hình/chạy bonus này.
 
 ## B6. Reflection và phần còn lại
 
 - `system_prompt.md` xử lý scope, routing tổng quát, khi nào hỏi lại, thứ tự phụ thuộc, carryover và sửa thông tin qua nhiều lượt.
 - `tools.yaml` mô tả chức năng, khi dùng/không dùng và convention của từng tham số.
 - Cần manual review cho chất lượng nội dung, nguồn/citation, quyền thực hiện action, và các tool HTTP error. Automatic routing score không đo các phần này.
-- Chưa kết luận v1/v2/v3 cải thiện bao nhiêu. Phải chạy thật với cùng model, suite và snapshot rồi so sánh đầy đủ; provider_error phải được báo riêng.
+- V1 không thay đổi metric; v2 giảm 2 lỗi missing_info; v3 giải quyết những failure còn lại của base. Đây là kết quả lặp trên một model/suite cố định, nên cần thêm holdout eval nếu dùng để kết luận tổng quát hơn.
 - Không bỏ các khoảng chờ quota hoặc thay model âm thầm để tăng điểm. Nếu dùng model khác, ghi model rõ ràng và lấy baseline của model đó.
 
-Khi quota hồi lại, chạy từng version để có thể điều chỉnh giả thuyết theo log giữa các lượt:
+Lệnh chạy lại khi cần tái lập hoặc khi thay model:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts/run_versions.py --versions v1 --model gemini-3.5-flash-lite
@@ -169,9 +176,9 @@ Khi quota hồi lại, chạy từng version để có thể điều chỉnh gi�
 .\.venv\Scripts\python.exe scripts/run_versions.py --versions v3 --include-group --model gemini-3.5-flash-lite
 ```
 
-Script dừng khi còn lỗi provider và tự cập nhật version_log/analysis từ run JSON thật. Nếu một kết quả không ủng hộ giả thuyết, sửa snapshot kế tiếp trước khi chạy. Model cũ từng báo quota 20 request/ngày; không mặc định model mới có cùng quota hoặc tất cả version chạy được trong một ngày free tier.
+Script dừng khi còn lỗi provider và tự cập nhật version_log/analysis từ run JSON thật. Nếu thay model, phải lấy baseline mới; không so trực tiếp với bảng trên. Model cũ từng báo quota 20 request/ngày; không mặc định model mới có cùng quota hoặc tất cả version chạy được trong một ngày free tier.
 
-Sau đó hoàn thành chat live, sửa quyền RapidAPI, tạo link public, điền thông tin nhóm và cập nhật báo cáo bằng kết quả thật. Không nộp `.env`/API key.
+Phần còn lại: sửa quyền RapidAPI để X/Twitter trả dữ liệu thật, điền tên nhóm/thành viên và giữ tunnel chạy khi demo. Không nộp `.env`/API key.
 
 ## B7. Small Local Model Challenge
 
