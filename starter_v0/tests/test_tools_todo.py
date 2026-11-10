@@ -1,4 +1,4 @@
-"""TODO(student): Tool Unit Test Challenge.
+"""Offline tool tests completed by the group.
 
 Each test below is a stub. Replace `pytest.skip(...)` with a real test.
 Patterns to copy are in test_tools_examples.py. Fixtures are in conftest.py.
@@ -15,7 +15,6 @@ import pytest
 from conftest import FakeResponse  # noqa: F401  (you will need it)
 from tools import TOOL_FUNCTIONS  # noqa: F401
 
-TODO = "TODO(student): implement this test"
 
 
 # ---------------- clarify ----------------
@@ -130,14 +129,30 @@ def test_fetch_truncates_markdown_to_4000_chars(monkeypatch, fake_http) -> None:
 # ---------------- timeline / social_search ----------------
 
 def test_timeline_respects_limit_and_skips_items_without_id(monkeypatch, fake_http) -> None:
-    # Mock {"timeline": [...]} with 1 item missing tweet_id and 6 valid items, limit=3.
-    # Assert 3 items, and each url looks like https://x.com/<handle>/status/<id>.
-    pytest.skip(TODO)
+    monkeypatch.setenv("RAPIDAPI_KEY", "test-key")
+    payload = {"timeline": [{"text": "no id"}] + [
+        {"tweet_id": str(i), "screen_name": "research_team", "text": f"post {i}"}
+        for i in range(6)
+    ]}
+    calls = fake_http(FakeResponse(payload))
+    result = TOOL_FUNCTIONS["timeline"](screenname="research_team", limit=3)
+    assert len(calls) == 1
+    assert calls[0]["params"] == {"screenname": "research_team"}
+    assert len(result["items"]) == 3
+    assert [x["url"] for x in result["items"]] == [
+        f"https://x.com/research_team/status/{i}" for i in range(3)
+    ]
 
 
 def test_social_search_passes_search_type(monkeypatch, fake_http) -> None:
-    # Assert the request params carry the query and search_type ("Top" / "Latest").
-    pytest.skip(TODO)
+    monkeypatch.setenv("RAPIDAPI_KEY", "test-key")
+    calls = fake_http(FakeResponse({"tweets": [
+        {"tweet_id": "42", "screen_name": "team", "text": "research news"}
+    ]}))
+    result = TOOL_FUNCTIONS["social_search"](query="AI evaluation", search_type="Top", limit=1)
+    assert len(calls) == 1
+    assert calls[0]["params"] == {"query": "AI evaluation", "search_type": "Top"}
+    assert result["items"][0]["url"] == "https://x.com/team/status/42"
 
 
 # ---------------- policy (local knowledge + trust boundary) ----------------
@@ -169,13 +184,43 @@ def test_policy_instruction_like_lines_go_to_untrusted_text() -> None:
 #   2. bad / missing input from the model (empty string, wrong type, out-of-enum value)
 #   3. failure path (missing key, HTTP error, timeout) -> returns error dict, does not raise
 
-def test_my_new_tool_happy_path() -> None:
-    pytest.skip(TODO)
+def test_deduplicate_preserves_first_metadata_order_and_input() -> None:
+    from copy import deepcopy
+    items = [
+        {"url": " https://example.org/a ", "title": "first"},
+        {"url": "https://example.org/b?x=1", "title": "second"},
+        {"url": "https://example.org/a", "title": "duplicate"},
+        {"url": "https://example.org/b?x=2", "title": "distinct query"},
+    ]
+    original = deepcopy(items)
+    result = TOOL_FUNCTIONS["deduplicate_sources"](items=items)
+    assert result["removed_count"] == 1
+    assert result["item_count"] == 3
+    assert [x["title"] for x in result["items"]] == ["first", "second", "distinct query"]
+    assert result["items"][0]["url"] == "https://example.org/a"
+    assert items == original
 
 
-def test_my_new_tool_bad_input_from_model() -> None:
-    pytest.skip(TODO)
+@pytest.mark.parametrize("items", [None, "bad", {}, ["bad"], [{}], [{"url": 1}], [{"url": ""}], [{"url": "file:///tmp/a"}], [{"url": "https://bad host/a"}]])
+def test_deduplicate_bad_input_returns_error_dict(items) -> None:
+    result = TOOL_FUNCTIONS["deduplicate_sources"](items=items)
+    assert result["error"] == "ValueError"
+    assert result["message"]
+    assert "items" not in result
 
 
-def test_my_new_tool_failure_returns_error_dict() -> None:
-    pytest.skip(TODO)
+def test_deduplicate_unexpected_parser_failure_returns_error_dict(monkeypatch) -> None:
+    import importlib
+    module = importlib.import_module("tools.deduplicate_sources.tool")
+    def broken_parser(url):
+        raise RuntimeError("simulated parser failure")
+    monkeypatch.setattr(module, "urlsplit", broken_parser)
+    result = TOOL_FUNCTIONS["deduplicate_sources"](items=[{"url": "https://example.org/a"}])
+    assert result["error"] == "RuntimeError"
+    assert result["message"] == "simulated parser failure"
+
+
+def test_deduplicate_empty_list_succeeds() -> None:
+    result = TOOL_FUNCTIONS["deduplicate_sources"](items=[])
+    assert result["items"] == []
+    assert result["item_count"] == result["removed_count"] == 0

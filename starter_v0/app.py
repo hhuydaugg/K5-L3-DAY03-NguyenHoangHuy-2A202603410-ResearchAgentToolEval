@@ -7,7 +7,8 @@ from datetime import datetime
 import streamlit as st
 
 # chat.py prints emoji; Windows server stdout defaults to cp1252 and would raise UnicodeEncodeError.
-sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from chat import ARTIFACTS_DIR, ROOT, now_iso, run_model_tool_loop, safe_slug, trim_history, write_transcript
 from providers import make_provider
@@ -20,20 +21,30 @@ TOOLS_PATH = ARTIFACTS_DIR / "tools.yaml"
 st.set_page_config(page_title="Research Agent", page_icon="🔎")
 
 with st.sidebar:
-    provider_name = st.selectbox("Provider", ["openai", "openrouter", "gemini", "anthropic", "ollama"])
+    provider_name = st.selectbox("Provider", ["openrouter", "openai", "gemini", "anthropic", "ollama"])
     model = st.text_input("Model (để trống = mặc định của provider)").strip() or None
-    version = st.text_input("Version label", "v0").strip() or "v0"
+    version = st.text_input("Version label", "v2").strip() or "v2"
     history_window = st.number_input("History window (cặp lượt)", 0, 20, 5)
     max_tool_rounds = st.number_input("Max tool rounds", 1, 8, 4)
     if st.button("Cuộc chat mới"):
         st.session_state.clear()
         st.rerun()
 
+# A transcript must use one provider/model/artifact configuration throughout.
+artifact_version = build_artifact_version(version, PROMPT_PATH, TOOLS_PATH)
+configuration = (provider_name, model, artifact_version.artifact_version, int(history_window), int(max_tool_rounds))
+if st.session_state.get("configuration") != configuration:
+    for key in ("turns", "history", "transcript", "transcript_path", "configuration", "system_prompt", "openai_tools"):
+        st.session_state.pop(key, None)
+
 if "turns" not in st.session_state:
     artifact_version = build_artifact_version(version, PROMPT_PATH, TOOLS_PATH)
     provider = make_provider(provider_name)
     transcript_id = "_".join(["ui", safe_slug(version), safe_slug(provider_name), datetime.now().strftime("%Y%m%dT%H%M%S%f")])
     st.session_state.update(
+        configuration=configuration,
+        system_prompt=PROMPT_PATH.read_text(encoding="utf-8"),
+        openai_tools=to_openai_tools(load_tool_declarations(TOOLS_PATH)),
         turns=[],
         history=[],
         transcript_path=ROOT / "transcripts" / f"{transcript_id}.transcript.json",
@@ -79,12 +90,12 @@ if user_text:
             result = run_model_tool_loop(
                 provider=make_provider(transcript["provider"]),
                 messages=[
-                    {"role": "system", "content": PROMPT_PATH.read_text(encoding="utf-8")},
+                    {"role": "system", "content": st.session_state.system_prompt},
                     *trim_history(st.session_state.history, int(history_window)),
                     {"role": "user", "content": user_text},
                 ],
-                tools=to_openai_tools(load_tool_declarations(TOOLS_PATH)),
-                model=model,
+                tools=st.session_state.openai_tools,
+                model=transcript["model"],
                 max_tool_rounds=int(max_tool_rounds),
             )
             turn.update(result)
