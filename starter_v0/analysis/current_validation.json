@@ -11,8 +11,6 @@
   "base": "runs/v3_B_base_openrouter_20261110T140413243846.json",
   "group": "runs/v3_B_group_openrouter_20261110T130027992623.json",
   "robustness": "runs/v3_B_cross_openrouter_20261110T140411362763.json",
-  "stability": "runs/v3-stability_B_cross_openrouter_20261110T140348993404.json",
-  "author_stability": "runs/v3-author-stability_B_cross_openrouter_20261110T130012778338.json",
   "live_transcript": "transcripts/v3_openrouter_20261110T140357969604.transcript.json",
   "prompt_hash": "c413bdb53768172d36071c06ff57073b4258dff4b3d66891d3d94cb2bb69c9ab",
   "tools_hash": "43f5a02176189e06bf5358ba76824b1d287dd48a1bbc6a74c998654fab1505f9",
@@ -27,5 +25,6 @@
   "benchmark_unchanged": true,
   "branch": "phattran",
   "old_pr_2": "closed; not merged",
-  "old_branch_phattran_v3": "deleted after ancestry and pushed-copy checks"
+  "old_branch_phattran_v3": "deleted after ancestry and pushed-copy checks",
+  "evidence_selection": "All 11 runs and 3 transcripts predating PR3 preserved; retain current base/group/robustness and controlled base/scope pairs. Optional repeats and superseded scope group/live removed; historical scores remain in experiment_history.csv."
 }

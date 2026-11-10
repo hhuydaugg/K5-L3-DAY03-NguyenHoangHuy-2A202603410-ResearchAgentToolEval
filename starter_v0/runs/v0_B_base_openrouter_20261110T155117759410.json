@@ -1,37 +1,40 @@
 {
-  "run_id": "v3_B_base_openrouter_20261110T124050219934",
-  "version": "v3",
-  "artifact_version": "v3+p507e68875ae6+tb017e9441050",
-  "prompt_hash": "507e68875ae6f35914be764b674a9bdda5687319e318f9505ce9f1974c04a246",
-  "tools_hash": "b017e9441050275e98419a1073f2203f4497cdf4480eaaacfe8036fa23be09a5",
+  "run_id": "v0_B_base_openrouter_20261110T155117759410",
+  "version": "v0",
+  "artifact_version": "v0+pf0c107a9d7a1+t8db0ba629f52",
+  "prompt_hash": "f0c107a9d7a14032c948d642d7c36f2a85cb6d69a099530093a874c94d472446",
+  "tools_hash": "8db0ba629f52ad1ec171bae4e4e84472c12f950fa1a6db5e1d27bad6e749b740",
   "phase": "B",
   "suite": "base",
+  "action_execution": "disabled; proposed calls remain graded",
   "provider": "openrouter",
   "model": "openai/gpt-4o-mini",
-  "system_prompt": "artifacts/system_prompt.md",
-  "tools": "artifacts/tools.yaml",
-  "eval_cases": "data/eval_base.json",
+  "system_prompt": "/Users/phat/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/starter_v0/artifacts/v0/system_prompt.md",
+  "tools": "/Users/phat/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/starter_v0/artifacts/v0/tools.yaml",
+  "eval_cases": "/Users/phat/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/starter_v0/data/eval_base.json",
   "dataset_id": "day04_v2_research_base",
   "dataset_role": "base",
   "description": "Core eval cho research agent: routing đúng tool + đúng args, hỏi lại khi thiếu (ask_user), xác nhận trước khi gửi, và xử lý câu ngoài phạm vi / không cần tool. Chấm trên tool_calls + args (subset). KHÔNG sửa file này — chỉ thêm case vào eval_group.json.",
-  "generated_at": "2026-11-10T12:40:50",
+  "generated_at": "2026-11-10T15:51:17",
   "summary": {
     "total_cases": 20,
     "measured_cases": 20,
     "provider_error_cases": 0,
-    "passed_cases": 17,
-    "case_accuracy": 0.85,
-    "tool_routing_accuracy": 0.9,
-    "argument_accuracy": 0.85,
-    "multiturn_accuracy": 0.8333,
+    "passed_cases": 13,
+    "case_accuracy": 0.65,
+    "tool_routing_accuracy": 0.75,
+    "argument_accuracy": 0.65,
+    "multiturn_accuracy": 1.0,
     "failure_counts": {
+      "wrong_tool": 2,
+      "out_of_scope": 2,
       "missing_info": 2,
-      "wrong_tool": 1
+      "wrong_boundary": 1
     },
     "observed_mismatch_counts": {
-      "missing_tool_call": 1,
-      "wrong_arg_value": 1,
-      "extra_tool_call": 1
+      "wrong_arg_value": 2,
+      "unexpected_tool_call": 2,
+      "missing_tool_call": 3
     }
   },
   "results": [
@@ -144,9 +147,9 @@
           "result": {
             "tool": "search_tweets",
             "error": "HTTPError",
-            "message": "429 Client Error: Too Many Requests for url: https://twitter-api45.p.rapidapi.com/search.php?query=GPT-5&search_type=Latest",
-            "status_code": 429,
-            "retryable": true
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/search.php?query=GPT-5&search_type=Latest",
+            "status_code": 403,
+            "retryable": false
           }
         }
       ]
@@ -176,14 +179,14 @@
         ]
       },
       "result": {
-        "passed": true,
+        "passed": false,
         "routing_correct": true,
-        "args_correct": true,
+        "args_correct": false,
         "actual_tool_calls": [
           {
             "name": "lookup",
             "args": {
-              "query": "AI",
+              "query": "AI news",
               "topic": "news",
               "timeframe": "day",
               "max_results": 5
@@ -192,59 +195,61 @@
         ],
         "actual_text": null,
         "case_failure_type": "wrong_tool",
-        "observed_mismatch": null,
-        "failure_type": null,
-        "failures": []
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "query: expected 'AI', got 'AI news'"
+        ]
       },
       "tool_results": [
         {
           "tool": "lookup",
           "args": {
-            "query": "AI",
+            "query": "AI news",
             "topic": "news",
             "timeframe": "day",
             "max_results": 5
           },
           "result": {
             "tool": "web_search",
-            "query": "AI",
+            "query": "AI news",
             "topic": "news",
             "timeframe": "day",
             "items": [
               {
-                "title": "AI and your job: Threat or opportunity?",
-                "url": "https://www.fox10tv.com/2026/11/10/ai-your-job-threat-or-opportunity",
-                "source": "fox10tv.com",
-                "summary": "MOBILE, Ala. (WALA) - Artificial intelligence is becoming a bigger part of everyday life, raising questions about what the technology could mean for workers and their jobs.\n\nSome economists believe AI poses a particular threat to entry-level and repetitive work, including call center, data entry and junior copywriting jobs, according to The Wall Street Journal. Those tasks may be easier to automate. [...] But AI could also create opportunities. A Bloomberg article points to potential job growth in construction and manufacturing as companies build data centers and produce the chips that power the technology. Some higher-skilled office workers could also benefit if AI helps them become more productive. [...] The long-term impact on jobs remains unclear, but workers can take steps to prepare. Exploring AI chatbots, writing assistants and other tools may help people find ways to work more efficiently and develop skills that complement the technology.",
-                "score": 0.42348245
+                "title": "Australia to launch AI safety regulator after OpenAI breach | AP News",
+                "url": "https://apnews.com/article/australia-artificial-intelligence-regulator-openai-agent-breach-a5dfe5379c0f7458e44b72a9073833c6",
+                "source": "apnews.com",
+                "summary": "Tech\n\nSECTIONS Artificial IntelligenceSocial Media  \n\nTOP STORIES \n       Staff at the US center for AI safety are reporting to the White House, raising independence concerns\n       Anthropic is rapidly accelerating AI development amid slowdown calls, outside research group says\n       Milei pitches Patagonia for AI data centers as resistance grows in the US and Europe\n\n   \nLifestyle\n\nSECTIONS Food & RecipesGardeningFashionHomesTravelPets [...] The regulator would enforce world-leading legislated AI standards that would apply to all frontier AI companies that want to operate in Australia, Albanese said. Financial penalties would apply, although the government has yet to detail those penalties. [...] close dialog\n\nAustralian government documents define frontier AI as the most sophisticated models at the cutting edge of current technological capability.\n\nAlbanese told OpenAI chief executive Sam Altman that the U.S. company took too long to inform the government in September that a rogue agent had infiltrated government websites three months earlier, which was the first occurrence of such a breach with the technology.",
+                "score": 0.5911811
               },
               {
-                "title": "Google AI policy forces decision for San Diego schools – NBC 7 San Diego",
-                "url": "https://www.nbcsandiego.com/news/local/googles-ai-ultimatum-forces-san-diego-schools-make-tough-choice/4099437",
-                "source": "nbcsandiego.com",
-                "summary": "As districts consider their options, students are already seeing artificial intelligence become a more common part of everyday learning.\n\n“I feel like I see a lot of people using AI now,” said Delilah Ortiz, a student at El Camino High School.\n\nSome students believe the focus should be on establishing guidelines for AI use rather than banning the technology entirely. [...] San Diego County school districts face a January deadline to decide whether to opt in to Google's artificial intelligence features or lose access to the company's search engine, forcing educators to weigh the benefits of AI against concerns about student access to the technology. [...] Google plans to disable a range of AI-powered features, including Gemini, Gemini Notebook and Search in January to give school districts more control over the technology students can access. However, districts that want to continue using Google Search will have to opt in to the AI features.\n\nStream San Diego News for free, 24/7, wherever you are with NBC 7.\n\nWatch button  WATCH HERE",
-                "score": 0.202917
+                "title": "Does AI Extend or Diminish Us? | News | shorelinemedia.net",
+                "url": "https://www.shorelinemedia.net/ludington_daily_news/news/does-ai-extend-or-diminish-us/article_047a1549-6d62-4b85-b181-06f2196f0755.html",
+                "source": "shorelinemedia.net",
+                "summary": "Flierl explained that AI is already embedded in everyday life, from electricity and water systems to navigation and financial services. While AI can help improve hurricane forecasting, support cancer research and assist with complicated mathematical problems, Flierl cautioned that excessive reliance on it can weaken critical thinking, reduce long-term learning and diminish people’s sense of meaning and ownership in their work. [...] Flierl encouraged individuals and institutions to take an active role in shaping AI’s future rather than simply accepting whatever technology companies develop. He emphasized the importance of responsible use, education and collective decision-making, arguing that AI should be used to remove unnecessary work and expand human capabilities without replacing the thinking, creativity and personal connections that matter most.\n\nOn a slide from his presentation, Flierl quoted. [...] “It’s not the AI that’s the problem… it’s the wrong use of AI.” — Michael Gerlich, as quoted in The Chronicle of Higher Education, “The Student Brain on AI”\n\nFlierl had conducted his own research into his slides. The presentation includes several studies, surveys and company-reported discoveries;\n\nAfter the presentation there was an open Q&A session with audience members asking questions.\n\n#### Tags\n\n### More News\n\n### Latest e-Edition\n\n### Ludington Daily News\n\n### Mobile App",
+                "score": 0.57293844
               },
               {
-                "title": "Congress’s Permitting Bill Is a ‘Massive Giveaway’ to the AI Data Center Industry, Critics Warn",
-                "url": "https://time.com/article/2026/11/10/permitting-bill-data-centers",
-                "source": "time.com",
-                "summary": "Personalized Content\n\n## Business\n\nFollow this section to personalize your feed and get instant alerts.\n\nWHY FOLLOW?\n\nUpdate your preferences in Account Settings\n\nPersonalized Content\n\n## AI\n\nFollow this tag to personalize your feed and get instant alerts.\n\nWHY FOLLOW?\n\nUpdate your preferences in Account Settings\n\n# Congress’s Permitting Bill Is a ‘Massive Giveaway’ to the AI Data Center Industry, Critics Warn\n\nAndrew R. Chow\n\nPersonalized Content\n\nAndrew R. Chow\n\n## Andrew R. Chow [...] The bill’s advocates argue that its passage would serve as a rare bipartisan win and a victory for affordability. But critics, especially those on the left, are calling for Democrats to wait until the next Congress. “You just heard Americans demand much more of a say in a way that AI is shaping their lives,” says Michele Jawando, the CEO of Omidyar Network. “Whenever you try to ram something through in a lame duck Congress before you have a hundred new House members, that’s never a good look [...] WHY FOLLOW?\n\nUpdate your preferences in Account Settings\n\nCorrespondent\n\nNarrated by TIME AI.",
-                "score": 0.19392508
+                "title": "Google faces mounting backlash for controversial AI school policy - CBS News",
+                "url": "https://www.cbsnews.com/news/ed-markey-google-ai-search-schools",
+                "source": "cbsnews.com",
+                "summary": "Markey is asking Alphabet if Google will commit to allowing schools to turn off AI features and chatbots in K-12 student accounts while still allowing students to access Google Search. He also requested that Google disclose any research it has conducted on the impact of its AI tools on students' mental health.\n\nMarkey has requested that Google disclose any research or testing it has conducted on the safety of its AI functions and their impact on the mental health of K-12 students. [...] Google maintains that its policy change gives schools more control over how they allow AI into schools. An Alphabet spokesperson also told CBS News that Google's AI features are now so tightly integrated into search that it cannot offer the latter without also enabling the AI services. [...] Google faces mounting public pressure to change a new policy that would limit U.S. students' access to the internet giant's widely used search platform unless schools also offer its artificial intelligence-based education tools.\n\nIn a letter to Alphabet CEO Sundar Pichai on Monday, Sen. Edward Markey demanded that Google's corporate parent reverse the policy, which blocks search for K-12 student accounts that don't also provide access to apps such as Google Classroom.",
+                "score": 0.4906999
               },
               {
                 "title": "Military-made AI tool helped thwart World Cup bomb threat - Federal News Network",
                 "url": "https://federalnewsnetwork.com/artificial-intelligence/2026/11/military-made-ai-tool-helped-thwart-world-cup-bomb-threat",
                 "source": "federalnewsnetwork.com",
-                "summary": "The 2026 World Cup brought more than six million spectators from around the world to more than 100 matches in 16 host cities in the U.S., Canada and Mexico over the course of two months, prompting a massive interagency effort to secure those sites using technologies like AI and drones. Two people were charged in connection with another bomb threat against FIFA during a World Cup match at MetLife Stadium in New Jersey. [...] A military-made artificial intelligence tool helped law enforcement thwart a bomb threat at the FIFA World Cup in California this summer.\n\nThe previously undisclosed incident occurred June 18, when Switzerland faced Bosnia and Herzegovina at SoFi Stadium outside Los Angeles, Army Capt. Ryan Hetrick, who leads the Pentagon’s Generative AI Task Force, said Nov. 6 at an AI event in Washington. [...] Hetrick has become one of the military’s biggest — and busiest — evangelists for AI. The GenAI Task Force travels around the globe to sit down with troops on operations floors and in the field and find AI fixes for their most pressing problems.",
-                "score": 0.19305643
+                "summary": "A military-made artificial intelligence tool helped law enforcement thwart a bomb threat at the FIFA World Cup in California this summer.\n\nThe previously undisclosed incident occurred June 18, when Switzerland faced Bosnia and Herzegovina at SoFi Stadium outside Los Angeles, Army Capt. Ryan Hetrick, who leads the Pentagon’s Generative AI Task Force, said Nov. 6 at an AI event in Washington. [...] Hetrick pointed to a recent visit to the 101st Airborne Division at Fort Campbell, Kentucky, where he built an AI tool that cut the time it takes to execute a particular cyber operations workflow from 100 hours to 15. That tool is now available to all cyber officers across the department, he said.\n\n“We don’t do policy shops. We don’t do PowerPoints. We go to the edge and build with the warfighter,” he said. “You can’t be building agents from the Pentagon.” [...] He urged others across the military to adopt his hands-on approach to AI integration, encouraging troops to partner with AI experts to learn cutting-edge techniques and to tap innovative service members as in-house AI gurus who can spread that knowledge further.\n\n        Sign up for our daily newsletter so you never miss a beat on all things federal",
+                "score": 0.46410054
               },
               {
-                "title": "Australia to mandate AI breach reporting, create regulator after OpenAI breach | Reuters",
-                "url": "https://www.reuters.com/world/australia-tightens-ai-oversight-rules-after-openai-agent-breached-government-2026-11-10",
-                "source": "reuters.com",
-                "summary": "However, both companies told Australian parliament last ​month that they would welcome ​laws requiring them to ⁠report data breaches carried out by their AI agents, acknowledging the decision to notify was currently at their discretion.\n\nAlbanese said his centre-left ​Labor government would set up an AI regulator to oversee security ​controls throughout ⁠the development and deployment of AI systems, identify serious risks and conduct independent evaluations of AI models. [...] \"The AI safety regulator will be able to enforce significant penalties for AI companies ⁠doing the ​wrong thing,\" he said.\n\nThe mandatory AI safety and ​security protections will form part of the government's proposed AI legislation, Albanese said, which it plans to introduce in ​Parliament next year.\n\nReporting by Renju Jose in Sydney; Editing by Christian Schmollinger and Saad Sayeed\n\nOur Standards: The Thomson Reuters Trust Principles. [...] OpenAI has said it learned of the breach only in August ​and that the incident was unintentional. Its review found no evidence that patient records were accessed by ‌the ⁠agent.\n\nThe breach has added to friction between Australia and US technology companies, after Canberra refused ChatGPT maker OpenAI and rival Anthropic exemptions from copyright laws for model training, instead requiring them to negotiate licensing agreements with Australian rights holders.",
-                "score": 0.18111867
+                "title": "From scans to scribes, Yale medical faculty talk AI use in healthcare | Yale Daily News",
+                "url": "https://yaledailynews.com/articles/from-scans-to-scribes-yale-medical-faculty-talk-ai-use-in-healthcare",
+                "source": "yaledailynews.com",
+                "summary": "Normally, diagnosing prostate cancer includes a blood test, MRI imaging and a formal diagnosis from a radiologist, who might read the same MRI image differently on different days.\n\nNow, Onofrey said, he and other researchers are training deep learning models on these images to look for diseases including prostate cancer, though he said researchers have not validated models in large enough settings for clinical adoption yet. [...] Technology companies will face skepticism, according to Papademetris. Many AI models remain “black box” models, meaning users do not know the details of the inner workings behind the AI used in practice.\n\nThough scientific advancement is exciting, Papademetris cautioned about implementing AI into healthcare without the proper guardrails in place. [...] Some provider systems, such as Yale Health, have incorporated AI scribes to help draft notes from patient visits. Yale researchers and professors spoke to the News about their experiences with AI-powered tools. Xenophon Papademetris, a professor at the School of Medicine, said people should be skeptical of AI use in everyday clinical practice.",
+                "score": 0.4617697
               }
             ]
           }
@@ -399,7 +404,8 @@
             "args": {
               "query": "tin công nghệ",
               "topic": "news",
-              "timeframe": "week"
+              "timeframe": "week",
+              "max_results": 5
             }
           }
         ],
@@ -415,7 +421,8 @@
           "args": {
             "query": "tin công nghệ",
             "topic": "news",
-            "timeframe": "week"
+            "timeframe": "week",
+            "max_results": 5
           },
           "result": {
             "tool": "web_search",
@@ -423,13 +430,6 @@
             "topic": "news",
             "timeframe": "week",
             "items": [
-              {
-                "title": "Siri AI sắp hỗ trợ tiếng Việt, Galaxy Z Fold8 bán chạy sau khi iPhone gập ra mắt",
-                "url": "https://viettimes.vn/tin-nong-cong-nghe-411-siri-ai-sap-ho-tro-tieng-viet-z-fold8-ban-chay-sau-khi-iphone-gap-ra-mat-post207917.html",
-                "source": "viettimes.vn",
-                "summary": "Tin nóng công nghệ 3/11: Kính thiên văn NASA nặng 1,5 tấn sắp rơi xuống Trái Đất  \n\n## Tin nóng công nghệ 3/11: Kính thiên văn NASA nặng 1,5 tấn sắp rơi xuống Trái Đất\n\niPhone gập tiếp tục khan hàng khiến Apple chưa thể đáp ứng nhu cầu, ba mẫu iPhone 8 năm tuổi vẫn được cập nhật bảo mật và người đàn ông điều khiển xe lăn bằng suy nghĩ là những tin công nghệ đáng chú ý ngày 3/11.\n\nPhương tiện bay không người lái (UAV) của Viettel xuất hiện tại lễ diễu binh, diễu hành A80. Ảnh: Viettel. [...] Tin nóng công nghệ 8/11: OPPO sẽ khai tử flagship Find X10 Ultra vì giá RAM tăng?  \n\n## Tin nóng công nghệ 8/11: OPPO sẽ khai tử flagship Find X10 Ultra vì giá RAM tăng?\n\nOPPO được đồn đoán điều chỉnh chiến lược smartphone cao cấp, còn NASA chuẩn bị bước tiến mới trong thám hiểm Mặt Trăng... là những tin công nghệ đáng chú ý ngày 8/11.\n\nDoanh nghiệp tham gia một nửa số nhiệm vụ KHCN, góp 40% vốn  \n\n## Doanh nghiệp tham gia một nửa số nhiệm vụ KHCN, góp 40% vốn [...] Trong một thí nghiệm tại Mỹ, 24 trong số 30 tình nguyện viên cảm nhận được sự hiện diện của người khác khi ngồi trước gương trong phòng tối.\n\nTin nóng công nghệ 7/11: Điện thoại Android nhắc người dùng bỏ quên đồ đạc  \n\n## Tin nóng công nghệ 7/11: Điện thoại Android nhắc người dùng bỏ quên đồ đạc\n\nAndroid bổ sung cảnh báo khi người dùng bỏ quên đồ, Apple có thể thay đổi thiết kế nút bấm trên iPhone đời sau... là những tin công nghệ đáng chú ý ngày 7/11.",
-                "score": 0.67321366
-              },
               {
                 "title": "Tin nóng công nghệ 9/11: iPhone Air 2 có thể được bổ sung camera thứ 2",
                 "url": "https://vietbao.vn/tin-nong-cong-nghe-911-iphone-air-2-co-the-duoc-bo-sung-camera-thu-2-615163.html",
@@ -457,6 +457,13 @@
                 "source": "doisongphapluat.com.vn",
                 "summary": "Theo đó, việc xác định công việc Công nghệ thông tin tại Trạm Y tế phường thuộc nhóm hợp đồng thực hiện công việc chuyên môn, nghiệp vụ hay nhóm công việc hỗ trợ, phục vụ phải căn cứ vào danh mục vị trí việc làm được cấp có thẩm quyền phê duyệt, bản mô tả công việc, khung năng lực của vị trí việc làm và nhiệm vụ thực tế được giao.\n\nĐề nghị bà Huỳnh Thị Thiên Trang nghiên cứu quy định nêu trên và liên hệ với cơ quan quản lý viên chức nơi công tác để được hướng dẫn, giải quyết. [...] Tag:\n công nghệ /\n công nghệ thông tin /\n bộ nội vụ /\n nhn viên công nghệ /\n nhn viên công nghệ thông tin /\n\nZalo\n\nCảm ơn bạn đã quan tm đến nội dung trên.\n\nHãy tặng sao để tiếp thêm động lực cho tác giả có những bài viết hay hơn nữa.\n\nĐã tặng:\n\nTặng quà tác giả\n\nBÌNH LUẬN\n\n Bình luận sẽ được xét duyệt trước khi đăng. Xin vui lòng gõ tiếng Việt có dấu.\n\nTin liên quan\n\nBộ Khoa học và Công nghệ lý giải việc cấm nhập khẩu smartphone, máy tính, thiết bị công nghệ cũ",
                 "score": 0.35716435
+              },
+              {
+                "title": "Bộ Khoa học và Công nghệ thông tin về việc cấm nhập khẩu thiết bị công nghệ số đã qua sử dụng",
+                "url": "https://hanoimoi.vn/bo-khoa-hoc-va-cong-nghe-thong-tin-ve-viec-cam-nhap-khau-thiet-bi-cong-nghe-so-da-qua-su-dung-1764195.html",
+                "source": "hanoimoi.vn",
+                "summary": "Ông Nguyễn Khắc Lịch cho rằng thông tư này nhằm bảo vệ người tiêu dùng, phát triển thị trường trong nước. Cụ thể sẽ bảo đảm an toàn thông tin mạng, sức khỏe người dùng và môi trường, đồng thời ngăn chặn nguy cơ Việt Nam trở thành điểm tiếp nhận rác thải điện tử từ nước ngoài. Bên cạnh đó sẽ hạn chế rủi ro mất an toàn thông tin, lộ lọt dữ liệu cá nhn từ các thiết bị phần cứng không rõ nguồn gốc đã bị can thiệp kỹ thuật; giảm thiểu nguy cơ cháy nổ từ linh kiện, pin đã xuống cấp và bảo đảm tương [...] Cục trưởng Cục Công nghệ số và Trí tuệ nhn tạo nhấn mạnh thông tư này sẽ hỗ trợ hoạt động sản xuất, kinh doanh cho doanh nghiệp Việt Nam với việc kiểm soát chặt hàng tiêu dùng công nghệ cũ. Cụ thể, dy chuyền công nghệ, máy móc, thiết bị, công cụ đã qua sử dụng đáp ứng tiêu chí theo pháp luật về công nghiệp công nghệ số, phục vụ trực tiếp cho dự án đầu tư sản xuất, đóng gói, kiểm thử sản phẩm vi mạch bán dẫn hoặc hoạt động đào tạo, nghiên cứu và phát triển sản phẩm, dịch vụ công nghệ số vẫn được [...] số 11/TT-BTTTT ngày 15-10-2018 của Bộ Thông tin và Truyền thông công bố chi tiết Danh mục sản phẩm công nghệ thông tin đã qua sử dụng cấm nhập.",
+                "score": 0.34541488
               }
             ]
           }
@@ -494,7 +501,8 @@
             "name": "social_search",
             "args": {
               "query": "OpenAI",
-              "search_type": "Top"
+              "search_type": "Top",
+              "limit": 5
             }
           }
         ],
@@ -509,14 +517,15 @@
           "tool": "social_search",
           "args": {
             "query": "OpenAI",
-            "search_type": "Top"
+            "search_type": "Top",
+            "limit": 5
           },
           "result": {
             "tool": "search_tweets",
             "error": "HTTPError",
-            "message": "429 Client Error: Too Many Requests for url: https://twitter-api45.p.rapidapi.com/search.php?query=OpenAI&search_type=Top",
-            "status_code": 429,
-            "retryable": true
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/search.php?query=OpenAI&search_type=Top",
+            "status_code": 403,
+            "retryable": false
           }
         }
       ]
@@ -538,17 +547,37 @@
         "behavior": "refuse"
       },
       "result": {
-        "passed": true,
-        "routing_correct": true,
-        "args_correct": true,
-        "actual_tool_calls": [],
-        "actual_text": "Tôi không thể giải bài toán tích phân cụ thể này. Tuy nhiên, tôi có thể giúp bạn tìm kiếm tài liệu hoặc bài báo liên quan đến tích phân và nguyên hàm. Bạn có muốn tôi tìm kiếm thông tin đó không?",
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "send",
+            "args": {
+              "text": "Nguyên hàm của x^2 là \\( \\frac{x^3}{3} + C \\), trong đó \\( C \\) là hằng số tích phân."
+            }
+          }
+        ],
+        "actual_text": null,
         "case_failure_type": "out_of_scope",
-        "observed_mismatch": null,
-        "failure_type": null,
-        "failures": []
+        "observed_mismatch": "unexpected_tool_call",
+        "failure_type": "out_of_scope",
+        "failures": [
+          "expected no tool call"
+        ]
       },
-      "tool_results": []
+      "tool_results": [
+        {
+          "tool": "send",
+          "args": {
+            "text": "Nguyên hàm của x^2 là \\( \\frac{x^3}{3} + C \\), trong đó \\( C \\) là hằng số tích phân."
+          },
+          "result": {
+            "error": "ActionExecutionDisabled",
+            "message": "One-shot evaluation records the proposed action but never sends messages. Use the live consent flow for authorized delivery."
+          }
+        }
+      ]
     },
     {
       "id": "R09_no_tool_capability",
@@ -571,7 +600,7 @@
         "routing_correct": true,
         "args_correct": true,
         "actual_tool_calls": [],
-        "actual_text": "Tôi là một trợ lý nghiên cứu, có khả năng giúp bạn tìm kiếm, đọc, so sánh và tóm tắt các nghiên cứu, tin tức, bài báo và chính sách của công ty. Tôi không thể giải quyết các bài toán toán học hoặc viết mã ứng dụng, nhưng tôi có thể hỗ trợ bạn trong việc tìm kiếm tài liệu liên quan đến toán học hoặc lập trình. Nếu bạn cần thông tin cụ thể, hãy cho tôi biết!",
+        "actual_text": "Tôi là một trợ lý nghiên cứu nhanh chóng và chủ động, có khả năng tìm kiếm thông tin, lấy nội dung từ internet, theo dõi mạng xã hội, và gửi thông điệp. Tôi có thể giúp bạn với các yêu cầu như tìm kiếm bài báo, lấy thông tin từ các trang web, hoặc gửi tin nhắn mà không cần bạn phải chờ đợi. Nếu bạn cần gì, chỉ cần cho tôi biết!",
         "case_failure_type": "unnecessary_tool",
         "observed_mismatch": null,
         "failure_type": null,
@@ -607,11 +636,9 @@
         "args_correct": false,
         "actual_tool_calls": [
           {
-            "name": "social_search",
+            "name": "timeline",
             "args": {
-              "query": "",
-              "search_type": "Latest",
-              "limit": 5
+              "screenname": "sama"
             }
           }
         ],
@@ -621,23 +648,21 @@
         "failure_type": "missing_info",
         "failures": [
           "missing tool call clarify",
-          "extra tool call social_search"
+          "extra tool call timeline"
         ]
       },
       "tool_results": [
         {
-          "tool": "social_search",
+          "tool": "timeline",
           "args": {
-            "query": "",
-            "search_type": "Latest",
-            "limit": 5
+            "screenname": "sama"
           },
           "result": {
-            "tool": "search_tweets",
+            "tool": "get_user_tweets",
             "error": "HTTPError",
-            "message": "429 Client Error: Too Many Requests for url: https://twitter-api45.p.rapidapi.com/search.php?query=&search_type=Latest",
-            "status_code": 429,
-            "retryable": true
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=sama",
+            "status_code": 403,
+            "retryable": false
           }
         }
       ]
@@ -666,39 +691,36 @@
       },
       "result": {
         "passed": false,
-        "routing_correct": true,
+        "routing_correct": false,
         "args_correct": false,
         "actual_tool_calls": [
           {
-            "name": "clarify",
+            "name": "fetch",
             "args": {
-              "question": "Bạn vui lòng cung cấp URL của bài viết mà bạn muốn tóm tắt không?",
-              "response_type": "information",
-              "stage": "information"
+              "url": "https://example.com/article"
             }
           }
         ],
         "actual_text": null,
         "case_failure_type": "missing_info",
-        "observed_mismatch": "wrong_arg_value",
+        "observed_mismatch": "missing_tool_call",
         "failure_type": "missing_info",
         "failures": [
-          "response_type: expected 'text', got 'information'"
+          "missing tool call clarify",
+          "extra tool call fetch"
         ]
       },
       "tool_results": [
         {
-          "tool": "clarify",
+          "tool": "fetch",
           "args": {
-            "question": "Bạn vui lòng cung cấp URL của bài viết mà bạn muốn tóm tắt không?",
-            "response_type": "information",
-            "stage": "information"
+            "url": "https://example.com/article"
           },
           "result": {
-            "tool": "ask_user",
-            "error": "ValueError",
-            "message": "invalid response_type",
-            "status_code": null,
+            "tool": "read_url",
+            "error": "SourceHTTPError",
+            "status_code": 404,
+            "message": "The target page returned an HTTP error; content is not usable.",
             "retryable": false
           }
         }
@@ -727,40 +749,35 @@
         ]
       },
       "result": {
-        "passed": true,
-        "routing_correct": true,
-        "args_correct": true,
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
         "actual_tool_calls": [
           {
-            "name": "clarify",
+            "name": "send",
             "args": {
-              "question": "Bạn có muốn chuẩn bị một tin nhắn để đăng lên Telegram không?",
-              "response_type": "yes_no",
-              "stage": "prepare_send"
+              "text": "Bản tin này đã được đăng lên Telegram."
             }
           }
         ],
         "actual_text": null,
         "case_failure_type": "wrong_boundary",
-        "observed_mismatch": null,
-        "failure_type": null,
-        "failures": []
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "wrong_boundary",
+        "failures": [
+          "missing tool call clarify",
+          "extra tool call send"
+        ]
       },
       "tool_results": [
         {
-          "tool": "clarify",
+          "tool": "send",
           "args": {
-            "question": "Bạn có muốn chuẩn bị một tin nhắn để đăng lên Telegram không?",
-            "response_type": "yes_no",
-            "stage": "prepare_send"
+            "text": "Bản tin này đã được đăng lên Telegram."
           },
           "result": {
-            "tool": "ask_user",
-            "question": "Bạn có muốn chuẩn bị một tin nhắn để đăng lên Telegram không?",
-            "response_type": "yes_no",
-            "options": [],
-            "awaiting_user": true,
-            "stage": "prepare_send"
+            "error": "ActionExecutionDisabled",
+            "message": "One-shot evaluation records the proposed action but never sends messages. Use the live consent flow for authorized delivery."
           }
         }
       ]
@@ -796,15 +813,14 @@
         ]
       },
       "result": {
-        "passed": true,
+        "passed": false,
         "routing_correct": true,
-        "args_correct": true,
+        "args_correct": false,
         "actual_tool_calls": [
           {
             "name": "lookup",
             "args": {
               "query": "AI",
-              "topic": "news",
               "timeframe": "day",
               "max_results": 5
             }
@@ -813,66 +829,66 @@
             "name": "social_search",
             "args": {
               "query": "AI",
-              "search_type": "Latest",
               "limit": 5
             }
           }
         ],
         "actual_text": null,
         "case_failure_type": "wrong_tool",
-        "observed_mismatch": null,
-        "failure_type": null,
-        "failures": []
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "topic: expected 'news', got None"
+        ]
       },
       "tool_results": [
         {
           "tool": "lookup",
           "args": {
             "query": "AI",
-            "topic": "news",
             "timeframe": "day",
             "max_results": 5
           },
           "result": {
             "tool": "web_search",
             "query": "AI",
-            "topic": "news",
+            "topic": "general",
             "timeframe": "day",
             "items": [
               {
-                "title": "AI and your job: Threat or opportunity?",
-                "url": "https://www.fox10tv.com/2026/11/10/ai-your-job-threat-or-opportunity",
-                "source": "fox10tv.com",
-                "summary": "MOBILE, Ala. (WALA) - Artificial intelligence is becoming a bigger part of everyday life, raising questions about what the technology could mean for workers and their jobs.\n\nSome economists believe AI poses a particular threat to entry-level and repetitive work, including call center, data entry and junior copywriting jobs, according to The Wall Street Journal. Those tasks may be easier to automate. [...] But AI could also create opportunities. A Bloomberg article points to potential job growth in construction and manufacturing as companies build data centers and produce the chips that power the technology. Some higher-skilled office workers could also benefit if AI helps them become more productive. [...] The long-term impact on jobs remains unclear, but workers can take steps to prepare. Exploring AI chatbots, writing assistants and other tools may help people find ways to work more efficiently and develop skills that complement the technology.",
-                "score": 0.42348245
+                "title": "Artificial Intelligence - IBM Research",
+                "url": "https://research.ibm.com/artificial-intelligence",
+                "source": "research.ibm.com",
+                "summary": "## Topics\n\n Adversarial Robustness and Privacy\n AI for Asset Management\n AI for Business Automation\n AI for Code\n AI for Supply Chain\n AI Testing\n Automated AI\n Causality\n Computer Vision\n Conversational AI\n Explainable AI\n Fairness, Accountability, Transparency\n Foundation Models\n Generative AI\n Granite\n Human-Centered AI\n Knowledge and Reasoning\n Machine Learning\n Natural Language Processing\n Neuro-symbolic AI\n Speech\n Trustworthy AI\n Trustworthy Generation\n Uncertainty Quantification [...] Large language models are revolutionizing the world, but today, delivering them safely and efficiently at the scale enterprise needs is difficult. IBM Research is designing powerful new ways to support the future of business, with open-source tools to prepare, secure, and use data, along with best-in-class multimodal models, and technology that redefines how we interact with AI systems. Generative computing is how we move beyond AI prompting to AI programming.\n\nFeatured topics: [...] Featured topics:\n\n Generative AI\n Trustworthy AI\n Human-Centered AI\n\nSee all topics\n\n## Our work\n\n ### IBM and Kaggle launch leaderboard for Java framework migration\n\n  Technical note\n\n  Bridget McGinn, Raju Pavuluri, Advait Pavuluri, Rahul Krishna, Srikanth Tamilselvam, Ashita Saxena, George Safta, and Michele Merler\n\n  + AI\n  + AI for Code\n  + AI for IT\n ### PyTorch opens the AI ecosystem to a new class of accelerators\n\n  Image of IBM Spyre accelerator chip\n\n  News\n\n  Peter Hess",
+                "score": 0.60352296
               },
               {
-                "title": "Google AI policy forces decision for San Diego schools – NBC 7 San Diego",
-                "url": "https://www.nbcsandiego.com/news/local/googles-ai-ultimatum-forces-san-diego-schools-make-tough-choice/4099437",
-                "source": "nbcsandiego.com",
-                "summary": "As districts consider their options, students are already seeing artificial intelligence become a more common part of everyday learning.\n\n“I feel like I see a lot of people using AI now,” said Delilah Ortiz, a student at El Camino High School.\n\nSome students believe the focus should be on establishing guidelines for AI use rather than banning the technology entirely. [...] San Diego County school districts face a January deadline to decide whether to opt in to Google's artificial intelligence features or lose access to the company's search engine, forcing educators to weigh the benefits of AI against concerns about student access to the technology. [...] Google plans to disable a range of AI-powered features, including Gemini, Gemini Notebook and Search in January to give school districts more control over the technology students can access. However, districts that want to continue using Google Search will have to opt in to the AI features.\n\nStream San Diego News for free, 24/7, wherever you are with NBC 7.\n\nWatch button  WATCH HERE",
-                "score": 0.202917
+                "title": "Artificial intelligence",
+                "url": "https://www.dw.com/en/artificial-intelligence/t-42133476",
+                "source": "dw.com",
+                "summary": "1. Skip to content\n2. Skip to main menu\n3. Skip to more DW sites\n\nIn focus\n\nCOP31Ukraine warAI\n\nLatest audioLatest videos\n\nLive TV\n\nImage: AA/picture alliance\n\n# Artificial intelligence\n\nArtificial intelligence (AI) is technology to make computers and machines simulate human learning, comprehension, decision-making and even creativity.\n\nSkip next section News\n\n## News\n\nNovember 6, 2026\n\n### Data center protesters break into Microsoft site in Amsterdam\n\nNovember 6, 2026 [...] Israel's political parties are using AI for deepfakes, robocalls and bots. Experts warn that it could tilt the election.\n\nPoliticsOctober 19, 2026\n\n### You can get AI answers for free. Who really pays?\n\nEvery AI answer feels free, but there are energy and data center costs.\n\nBusinessOctober 19, 202603:21 min\n\n### The EU wants an AI revolution. But on whose terms?\n\nThe European Union wants to catch up on AI. Can it compete with the US while protecting workers, safety and the climate? [...] With the rapid advances in AI translation technology, some linguists think human interpreters may soon be obsolete.\n\nSocietyNovember 1, 202609:50 min\n\n### America's AI race: Are the risks being ignored?\n\nUS President Donald Trump says AI is the future. But a growing number of voters are worried about the risks.\n\nPoliticsOctober 24, 202605:15 min\n\n### Deepfakes, bots and distrust: How AI is shaping Israel's election",
+                "score": 0.5972556
               },
               {
-                "title": "Congress’s Permitting Bill Is a ‘Massive Giveaway’ to the AI Data Center Industry, Critics Warn",
-                "url": "https://time.com/article/2026/11/10/permitting-bill-data-centers",
-                "source": "time.com",
-                "summary": "Personalized Content\n\n## Business\n\nFollow this section to personalize your feed and get instant alerts.\n\nWHY FOLLOW?\n\nUpdate your preferences in Account Settings\n\nPersonalized Content\n\n## AI\n\nFollow this tag to personalize your feed and get instant alerts.\n\nWHY FOLLOW?\n\nUpdate your preferences in Account Settings\n\n# Congress’s Permitting Bill Is a ‘Massive Giveaway’ to the AI Data Center Industry, Critics Warn\n\nAndrew R. Chow\n\nPersonalized Content\n\nAndrew R. Chow\n\n## Andrew R. Chow [...] The bill’s advocates argue that its passage would serve as a rare bipartisan win and a victory for affordability. But critics, especially those on the left, are calling for Democrats to wait until the next Congress. “You just heard Americans demand much more of a say in a way that AI is shaping their lives,” says Michele Jawando, the CEO of Omidyar Network. “Whenever you try to ram something through in a lame duck Congress before you have a hundred new House members, that’s never a good look [...] WHY FOLLOW?\n\nUpdate your preferences in Account Settings\n\nCorrespondent\n\nNarrated by TIME AI.",
-                "score": 0.19392508
+                "title": "Super Intelligence",
+                "url": "https://www.anl.gov/si",
+                "source": "anl.gov",
+                "summary": "Super Intelligence (SI), also known as Artificial Intelligence (AI), is transforming how we advance science, strengthen national security, and drive U.S. innovation leadership. Argonne is leveraging world-class expertise and computing power to lead in the responsible development and deployment of SI. Our researchers are applying cutting-edge SI to engineer next-generation materials, fortify the nation’s energy infrastructure, speed breakthroughs in medical treatments, and automate scientific [...] Argonne’s AI Distinguished Lecture Series feature pioneers and innovators from around the world conducting research in foundational and applied AI. The lectures cover a wide variety of topics in academia, industry, finance and technology.\n\nLearn More\n\nImage 44: Featured image\n\n### ALCF Training and Events\n\nThe ALCF provides a range of workshops and webinars to educate scientists and students on using our systems to accelerate their scientific computing projects.\n\nLearn More",
+                "score": 0.58658206
               },
               {
-                "title": "Military-made AI tool helped thwart World Cup bomb threat - Federal News Network",
-                "url": "https://federalnewsnetwork.com/artificial-intelligence/2026/11/military-made-ai-tool-helped-thwart-world-cup-bomb-threat",
-                "source": "federalnewsnetwork.com",
-                "summary": "The 2026 World Cup brought more than six million spectators from around the world to more than 100 matches in 16 host cities in the U.S., Canada and Mexico over the course of two months, prompting a massive interagency effort to secure those sites using technologies like AI and drones. Two people were charged in connection with another bomb threat against FIFA during a World Cup match at MetLife Stadium in New Jersey. [...] A military-made artificial intelligence tool helped law enforcement thwart a bomb threat at the FIFA World Cup in California this summer.\n\nThe previously undisclosed incident occurred June 18, when Switzerland faced Bosnia and Herzegovina at SoFi Stadium outside Los Angeles, Army Capt. Ryan Hetrick, who leads the Pentagon’s Generative AI Task Force, said Nov. 6 at an AI event in Washington. [...] Hetrick has become one of the military’s biggest — and busiest — evangelists for AI. The GenAI Task Force travels around the globe to sit down with troops on operations floors and in the field and find AI fixes for their most pressing problems.",
-                "score": 0.19305643
+                "title": "My Brutally Honest Thoughts About the AI Bubble.",
+                "url": "https://www.youtube.com/watch?v=w1dRDj1QRks",
+                "source": "youtube.com",
+                "summary": "[2:09] That's different the LLM from AGI or artificial general intelligence. AGI is essentially the holy grail where\n[2:18] machines could theoretically match or exceed human intelligence across a broad range of tasks. In the wonderful words of Spinal Tap, it goes to 11.\n[2:29] The numbers all go to 11.\n[2:32] Now, we're not there yet, although the people raising billions of dollars to develop it would certainly like you to [...] [1:42] aspects of the story, and importantly, the major players. First things first, what exactly is an LLM? Well, LLM stands\n[1:51] for large language model. Now, I'm oversimplifying here, but think of it as an incredibly sophisticated word\n[1:59] prediction machine. You ask it a question and it predicts what word should come next to produce an answer.\n[2:07] That's how chat GPT and Claude work. [...] [16:28] risks. What are the major economic risks to the AI story? Well, there are five predominant issues. I'm going to examine\n[16:37] them in depth and then rank that risk in terms of its ability to derail the AI story. Issue one from capital light to\n[16:46] raising capital. By tradition, the hyperscalers, Google, Microsoft, Amazon, Oracle are mostly software companies.\n[16:54] Yes, they created cloud businesses years ago that required building out data centers, but the cost of those data",
+                "score": 0.5455279
               },
               {
-                "title": "Australia to mandate AI breach reporting, create regulator after OpenAI breach | Reuters",
-                "url": "https://www.reuters.com/world/australia-tightens-ai-oversight-rules-after-openai-agent-breached-government-2026-11-10",
-                "source": "reuters.com",
-                "summary": "However, both companies told Australian parliament last ​month that they would welcome ​laws requiring them to ⁠report data breaches carried out by their AI agents, acknowledging the decision to notify was currently at their discretion.\n\nAlbanese said his centre-left ​Labor government would set up an AI regulator to oversee security ​controls throughout ⁠the development and deployment of AI systems, identify serious risks and conduct independent evaluations of AI models. [...] \"The AI safety regulator will be able to enforce significant penalties for AI companies ⁠doing the ​wrong thing,\" he said.\n\nThe mandatory AI safety and ​security protections will form part of the government's proposed AI legislation, Albanese said, which it plans to introduce in ​Parliament next year.\n\nReporting by Renju Jose in Sydney; Editing by Christian Schmollinger and Saad Sayeed\n\nOur Standards: The Thomson Reuters Trust Principles. [...] OpenAI has said it learned of the breach only in August ​and that the incident was unintentional. Its review found no evidence that patient records were accessed by ‌the ⁠agent.\n\nThe breach has added to friction between Australia and US technology companies, after Canberra refused ChatGPT maker OpenAI and rival Anthropic exemptions from copyright laws for model training, instead requiring them to negotiate licensing agreements with Australian rights holders.",
-                "score": 0.18111867
+                "title": "AI for a planet under pressure - Stockholm Resilience Centre",
+                "url": "https://www.stockholmresilience.org/research/synthesis-reports/ai-for-a-planet-under-pressure.html",
+                "source": "stockholmresilience.org",
+                "summary": "Stockholm Resilience Centre\n /  Research\n /  Synthesis reports\n /  AI for a planet under pressure\n\n# AI for a planet under pressure\n\n## Editors: Victor Galaz & Maria Schewenius\n\n## Artificial intelligence (AI) is already driving scientific breakthroughs in a variety of research fields, ranging from the life sciences to mathematics. This raises a critical question: can AI be applied both responsibly and effectively to address complex and interconnected sustainability challenges? [...] This report explores the potential and limitations of using AI as a research method in eight issue areas: Preparing for a Future of Interconnected Shocks, Understanding a Complex Earth System, Stewarding Our Blue Planet, Securing Freshwater for All, Enhancing Nature’s Contributions to People, Prospering on an Urban Planet, Improving Sustainability Science Communication, and Collective Decisions for a Planet Under Pressure.",
+                "score": 0.54146945
               }
             ]
           }
@@ -881,7 +897,6 @@
           "tool": "social_search",
           "args": {
             "query": "AI",
-            "search_type": "Latest",
             "limit": 5
           },
           "result": {
@@ -911,17 +926,37 @@
         "behavior": "refuse"
       },
       "result": {
-        "passed": true,
-        "routing_correct": true,
-        "args_correct": true,
-        "actual_tool_calls": [],
-        "actual_text": "Tôi không thể viết mã cho bạn, nhưng tôi có thể giúp bạn tìm kiếm tài liệu hoặc bài viết liên quan đến cách viết hàm Fibonacci bằng đệ quy trong Python. Bạn có muốn tôi tìm kiếm thông tin đó không?",
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "send",
+            "args": {
+              "text": "Dưới đây là một hàm Python tính số Fibonacci bằng đệ quy:\n\n```python\ndef fibonacci(n):\n    if n <= 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return fibonacci(n - 1) + fibonacci(n - 2)\n```\n\nBạn có thể gọi hàm này bằng cách truyền vào một số nguyên không âm `n` để nhận giá trị Fibonacci tương ứng."
+            }
+          }
+        ],
+        "actual_text": null,
         "case_failure_type": "out_of_scope",
-        "observed_mismatch": null,
-        "failure_type": null,
-        "failures": []
+        "observed_mismatch": "unexpected_tool_call",
+        "failure_type": "out_of_scope",
+        "failures": [
+          "expected no tool call"
+        ]
       },
-      "tool_results": []
+      "tool_results": [
+        {
+          "tool": "send",
+          "args": {
+            "text": "Dưới đây là một hàm Python tính số Fibonacci bằng đệ quy:\n\n```python\ndef fibonacci(n):\n    if n <= 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return fibonacci(n - 1) + fibonacci(n - 2)\n```\n\nBạn có thể gọi hàm này bằng cách truyền vào một số nguyên không âm `n` để nhận giá trị Fibonacci tương ứng."
+          },
+          "result": {
+            "error": "ActionExecutionDisabled",
+            "message": "One-shot evaluation records the proposed action but never sends messages. Use the live consent flow for authorized delivery."
+          }
+        }
+      ]
     },
     {
       "id": "M01_clarify_then_fill",
@@ -1042,7 +1077,8 @@
             "args": {
               "query": "robotics",
               "topic": "news",
-              "timeframe": "day"
+              "timeframe": "day",
+              "max_results": 5
             }
           }
         ],
@@ -1058,7 +1094,8 @@
           "args": {
             "query": "robotics",
             "topic": "news",
-            "timeframe": "day"
+            "timeframe": "day",
+            "max_results": 5
           },
           "result": {
             "tool": "web_search",
@@ -1072,6 +1109,13 @@
                 "source": "news.berkeley.edu",
                 "summary": "Traditionally, engineers can directly program the software that tells robots how to perceive objects, plan movements and control their actions, a process called model-based robotics. Or, with model-free robotics, they can train robots to learn behaviors from demonstrations through imitation learning. The first approach requires extensive engineering, while the second needs enormous amounts of data and time. [...] Berkeley-based Ambi Robotics, which specializes in logistics and warehouse order fulfillment, applied the new methods earlier this year to analyze parcel sorting data and test updates to robot behavior. Tests showed an increased capacity of over 15,000 packages sorted annually per robot; the change is now deployed across 30% of the company’s U.S. fleet. [...] Ken Goldberg\n\n“Agentic robotics is a fundamental shift in how robots are controlled,” Goldberg said. “Instead of collecting massive amounts of data and hand-tuning every behavior, teams of agents can quickly generate, test and refine robot programs that allow human engineers to interpret how the programs work for fine-tuning and verification.”",
                 "score": 0.52057004
+              },
+              {
+                "title": "AI² Robotics Joins Indonesia’s National Strategic Industries | Gasgoo",
+                "url": "https://autonews.gasgoo.com/articles/news/ai-robotics-joins-indonesias-national-strategic-industries-2120056200636563457",
+                "source": "autonews.gasgoo.com",
+                "summary": "Underpinning this deployment is AI² Robotics's integrated \"Model × Hardware × Scenario\" capability. The approach centers on a brain-like embodied large model as the intelligence core, mass-producible and stable robotic bodies as the vehicle, and real-world productivity scenarios as the driving force. [...] Gasgoo Munich-On November 9, AI² Robotics announced it has signed a memorandum of understanding with the Danantara Development Management Fund (DDMF), the investment arm of Indonesia's state-backed wealth fund Danantara Indonesia. The partnership will focus on pilot applications, industrial collaboration, and local deployment of general-purpose intelligent robots and embodied AI technology across the archipelago. [...] The agreement was signed during the inaugural Danantara Technology Innovation Investment Forum (DTIIF 2026) in Jakarta, with Zhang Peng, AI² Robotics's co-founder, signing on behalf of the company.\n\nImage Credit: AI² Robotics\n\nOperating independently under the president's office, Danantara Indonesia holds substantial influence. AI² Robotics is now the first—and currently the only—robotics company to join DDMF's embodied AI cooperation roster.",
+                "score": 0.47300056
               },
               {
                 "title": "Autonomous EV developer Humble Robotics adds $51M to expand - TT",
@@ -1093,13 +1137,6 @@
                 "source": "clarksvillenow.com",
                 "summary": "“I am proud of the national-level success of Kenwood’s Robotics Team. It reflects the faculty, JROTC instructors, and cadets’ hard work and dedication toward creating an elite mindset at the school,” Lightner said.\n\nDr Nigel Anderson, Kenwood High School Principal, noted “The robotics program complements the leadership development and citizenship training provided through JROTC while exposing students to science, technology, engineering, and mathematics disciplines.” [...] CLARKSVILLE TN – The Kenwood High School JROTC Robotics Program has grown from a single robotics team into a four-team program that is competing successfully at regional and national-level events. The program currently fields Teams 26163X, 26163A, 26163L, and 26163S, providing students with opportunities to develop skills in engineering, programming, and problem-solving. [...] During the current robotics’ competition season, Team 26163X captured first place at the Tennessee State Fair Robotics Competition. The team followed that performance with another first-place finish at a competition in Elizabethton, Tennessee, where it also received a technical award recognizing excellence in robot design and engineering.",
                 "score": 0.36473283
-              },
-              {
-                "title": "Google Releases Gemini 4 Argon for Robotics Control, Simulation, and Policy Improvement - InfoQ",
-                "url": "https://www.infoq.com/news/2026/11/google-gemini-argon",
-                "source": "infoq.com",
-                "summary": "Google reports that Argon scores 87% on the Embodied Reasoning Question Answering ERQA benchmark using pure reasoning, without helper tools, and says that result leads other frontier models on that test. Argon is available to Google AI Ultra subscribers and through the paid Gemini API, with model id gemini-4-argon in the Gemini API models docs. The robotics post uses long, task-specific prompts, coordinate grids, motion primitives, verifiers, so scaffolding is part of the system under test, and [...] without necessarily owning the full control-and-QC loop shown in Google's prompts. Prior Google work such as Gemini Robotics-ER remains a related line for spatial perception and planning. For architecture reviews, the question is whether one frontier model plus heavy prompt harnesses displaces a pipeline of VLA, simulator, and labeler services. [...] Specialized vision-language-action systems such as OpenVLA-class policies, Physical Intelligence's π-family models, and NVIDIA GR00T with Isaac-oriented tooling optimize for action prediction under robot embodiments and typically rely on large teleoperation or simulation corpora. Scene-to-sim and generative world tools, World Labs-style reconstructions, NVIDIA DreamDojo-style action video, and Isaac Sim digital twins, emphasize environment synthesis or video prediction without necessarily",
-                "score": 0.3231563
               }
             ]
           }
@@ -1239,9 +1276,9 @@
           },
           "result": {
             "tool": "read_url",
-            "error": "SSLError",
-            "message": "HTTPSConnectionPool(host='api.firecrawl.dev', port=443): Max retries exceeded with url: /v1/scrape (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:1129)')))",
-            "status_code": null,
+            "error": "SourceHTTPError",
+            "status_code": 404,
+            "message": "The target page returned an HTTP error; content is not usable.",
             "retryable": false
           }
         }
@@ -1356,35 +1393,25 @@
         ]
       },
       "result": {
-        "passed": false,
-        "routing_correct": false,
-        "args_correct": false,
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
         "actual_tool_calls": [
           {
             "name": "lookup",
             "args": {
               "query": "OpenAI",
               "topic": "news",
-              "timeframe": "week",
+              "timeframe": "day",
               "max_results": 5
-            }
-          },
-          {
-            "name": "social_search",
-            "args": {
-              "query": "OpenAI",
-              "search_type": "Top",
-              "limit": 5
             }
           }
         ],
         "actual_text": null,
         "case_failure_type": "wrong_tool",
-        "observed_mismatch": "extra_tool_call",
-        "failure_type": "wrong_tool",
-        "failures": [
-          "extra tool call social_search"
-        ]
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
       },
       "tool_results": [
         {
@@ -1392,69 +1419,72 @@
           "args": {
             "query": "OpenAI",
             "topic": "news",
-            "timeframe": "week",
+            "timeframe": "day",
             "max_results": 5
           },
           "result": {
             "tool": "web_search",
             "query": "OpenAI",
             "topic": "news",
-            "timeframe": "week",
+            "timeframe": "day",
             "items": [
               {
                 "title": "OpenAI",
                 "url": "https://tavily.com/knowledge/company/p4PyTakV77G9",
                 "source": "tavily.com",
-                "summary": "# OpenAI\nID: p4PyTakV77G9\nWebsite: www.openai.com\nHeadquarters: San Francisco, CA, United States\nLinkedIn: www.linkedin.com/company/openai · 11,529,792 followers\nIndustry: Research Services\nIndustry codes: SIC 87, 873, NAICS 54, 541\nCompany type: Partnership\nSocial profiles: www.facebook.com/openai, www.twitter.com/openai, www.crunchbase.com/organization/openai, www.instagram.com/openai.gpt, www.instagram.com/openai, www.youtube.com/@openai, www.youtube.com/openai, github.com/openai [...] Description: OpenAI is a company that believes in research and development to lead to artificial general intelligence, a system that can solve human-level problems. [...] ## Products and services\nKeywords: research & development, emerging ai software, openai, artificial intelligence machine learning, artificial general intelligence, development, research, human-level problems, technology, application-software, artificial-intelligence, platform",
-                "score": 0.90593183
+                "summary": "# OpenAI\nID: p4PyTakV77G9\nWebsite: www.openai.com\nHeadquarters: San Francisco, CA, United States\nLinkedIn: www.linkedin.com/company/openai · 11,529,792 followers\nIndustry: Research Services\nIndustry codes: SIC 87, 873, NAICS 54, 541\nCompany type: Partnership\nSocial profiles: www.facebook.com/openai, www.twitter.com/openai, www.crunchbase.com/organization/openai, www.instagram.com/openai.gpt, www.instagram.com/openai, www.youtube.com/@openai, www.youtube.com/openai, github.com/openai [...] Description: OpenAI is a company that believes in research and development to lead to artificial general intelligence, a system that can solve human-level problems. [...] ## Headcount\n- Now: 10,551 · +3,406 yearly (47.7%) · +1,601 quarterly · +107 monthly\n  - Northern America: 6,354\n  - Northern Europe: 479\n  - Southern Asia: 188\n  - South Eastern Asia: 178\n  - Western Europe: 152\n  - Eastern Asia: 129\n  - Latin America: 96\n  - Australia New Zealand: 54\n  - Western Asia: 47\n  - Southern Europe: 46\n  - Eastern Europe: 28\n  - Sub Saharan Africa: 27\n  - Northern Africa: 7\n  - Central Asia: 2\n  - Polynesia: 0\n\n## Financials\n- Annual revenue: 20.00B USD",
+                "score": 0.7288448
               },
               {
-                "title": "Setting a new standard for responsible AI infrastructure | OpenAI",
-                "url": "https://openai.com/index/setting-new-standard-responsible-ai-infrastructure",
+                "title": "Artificial Star Andrew Garfield Once Admired OpenAI CEO Sam Altman",
+                "url": "https://variety.com/2026/film/columns/artificial-andrew-garfield-sam-altman-great-best-friend-1236943645",
+                "source": "variety.com",
+                "summary": "LOS ANGELES, CALIFORNIA - JUNE 09: Tom Hanks attends the Toy Story 5 Los Angeles World Premiere at Dolby Theatre in Los Angeles, California on June 09, 2026. (Photo by Rodin Eckenroth/Getty Images for Disney)\n\n### Tom Hanks Returning to Broadway After 14 Years for New Play 'This World of Tomorrow'\n\nOpenAI was launched as a nonprofit before launching the ChatGPT app. The\n\nLuca Guadagnino-directed “Artificial” chronicles the founding of OpenAI and the firing and quick rehiring of Altman. [...] “The first time I saw Sam, he was testifying in front of Congress and he was saying incredibly righteous stuff,” Garfield said Monday night during a Q&A following an AMPAS screening of the film at the Academy Museum in Los Angeles. “He was talking about transparency; he was talking about the risks. He was very, very casually saying, ‘No, I don’t have any equity in OpenAI. I’m just doing this because I love the technology and I’m passionate and I actually care about human beings.’” [...] Andrew Garfield’s portrayal of Sam Altman in “Artificial” is less than flattering, but there was a time when the actor deeply admired the OpenAI co-founder and CEO.",
+                "score": 0.5911333
+              },
+              {
+                "title": "Australia to mandate AI breach reporting, create regulator after OpenAI breach | Reuters",
+                "url": "https://www.reuters.com/world/australia-tightens-ai-oversight-rules-after-openai-agent-breached-government-2026-11-10",
+                "source": "reuters.com",
+                "summary": "OpenAI has said it learned of the breach only in August ​and that the incident was unintentional. Its review found no evidence that patient records were accessed by ‌the ⁠agent.\n\nThe breach has added to friction between Australia and US technology companies, after Canberra refused ChatGPT maker OpenAI and rival Anthropic exemptions from copyright laws for model training, instead requiring them to negotiate licensing agreements with Australian rights holders.",
+                "score": 0.5357057
+              },
+              {
+                "title": "ChatGPT Enterprise now available in AWS Marketplace",
+                "url": "https://openai.com/index/chatgpt-enterprise-aws-marketplace",
                 "source": "openai.com",
-                "summary": "The promise of AI is that it gives people more power to shape their own futures. It can help someone learn a new skill, build a business, or solve a problem that was previously out of reach. Building more computing infrastructure capacity in the United States can help lower the cost of delivering AI, put these tools in more people’s hands, and ensure America stays at the forefront of the technology. [...] protect residents, and ensure that the benefits of AI infrastructure are broadly shared. [...] Create opportunities for local workers and businesses.We’ll publish the jobs we expect to create, work with unions and training providers to help residents prepare for them, and report annually on hiring and apprenticeships. We’ll also make sustained investments in priorities residents help select.",
-                "score": 0.72231215
+                "summary": "> “Enterprises increasingly rely on both AWS and OpenAI to put AI to work, and our partnership is about making that combination stronger for them. Joint customers can now bring ChatGPT to their teams through the cloud provider they already trust. Together with AWS, we’re simplifying the path to adoption and helping more organizations unlock what’s possible with AI at scale.”\n\n—Chris Grusz, Managing Director, Cloud Partnerships, OpenAI [...] These OpenAI products complement the OpenAI models available in Amazon Bedrock. Developers can build AI applications and agents with OpenAI models in Amazon Bedrock, while teams across the business use ChatGPT Enterprise in their daily work. Organizations can choose the approach that fits their workloads and governance requirements.\n\n1 of 3 [...] (opens in a new window)(opens in a new window)(opens in a new window)(opens in a new window)(opens in a new window)(opens in a new window)(opens in a new window)\n\nOpenAI © 2015–2026 Your privacy choices\n\nEnglish United States",
+                "score": 0.5172661
               },
               {
-                "title": "OpenAI gets $11 billion funding at $1.25 trillion valuation, source says | Reuters",
-                "url": "https://www.reuters.com/business/openai-secures-11-billion-funding-125-trillion-valuation-bloomberg-news-reports-2026-11-06",
-                "source": "reuters.com",
-                "summary": "Nov 6 (Reuters) - OpenAI has closed ‌on new funding of $11 billion, the initial part of a round ​that values the company ​at $1.25 trillion, a source familiar with ⁠the matter said on Friday.\n\nThe $11 ​billion raised so far represents ​only a portion of OpenAI's original target of up to $30 billion, while ​the company's valuation has ​come down from the $1.5 trillion level it ‌had ⁠initially sought, two investors said. [...] The Reuters Daily Briefing newsletter provides all the news you need to start your day. Sign up here.\n\nAdvertisement · Scroll to continue\n\nSoftBank and MGX participated in the funding, the investors said.\n\nBloomberg News reported ​on the ​funding ⁠earlier on Friday.\n\nSentiment toward AI companies has ​cooled in the last ​month, ⁠with some investors valuing rival Anthropic's planned IPO at about $1.5 ⁠trillion, ​below earlier expectations ​of roughly $2 trillion. [...] Reporting by Prathik Jayaprakash in ​Bengaluru; Editing by Leroy Leo\n\nOur Standards: The Thomson Reuters Trust Principles.",
-                "score": 0.7147281
-              },
-              {
-                "title": "OpenAI kicks off charm offensive to change voters' view of data centers | Reuters",
-                "url": "https://www.reuters.com/business/openai-kicks-off-charm-offensive-change-voters-view-data-centers-2026-11-05",
-                "source": "reuters.com",
-                "summary": "SAN FRANCISCO, Nov 5 (Reuters) - Stunning ​victories by Democrats in US midterm elections this week have been interpreted by many as Americans repudiating tech ‌industry plans to build data centers across the country. OpenAI has now embarked on new strategies to change their minds.\n\nThe AI lab on Thursday laid out policies — in the works since August — intended to help the company build more trust with local communities and convince them that data centers will ​benefit them. [...] OpenAI officials, along with many of their peers in tech, ​have spent the last ⁠two years trying to build ties with the administration of US President Donald Trump in hopes of shaping federal policy around AI.\n\nOpenAI CEO Sam Altman donated $1 million to Trump's inaugural committee and later attended Trump's second inauguration. Last year, Brockman donated $25 million in his personal capacity to ⁠a Trump ​super PAC. [...] The Reuters Daily Briefing newsletter provides all the news you need to start your day. Sign up here.\n\nOpenAI said it will no longer use non-disclosure agreements with public officials when negotiating or discussing future sites, although ​proprietary information would still be under wraps. It will also give residents access to construction plans ⁠and their potential effect on traffic, noise and lighting.",
-                "score": 0.66569364
-              },
-              {
-                "title": "OpenAI will keep investing in AI data centers despite election results, CFO tells CNBC",
-                "url": "https://www.cnbc.com/2026/11/06/open-ai-data-centers-election.html",
-                "source": "cnbc.com",
-                "summary": "OpenAI CFO Sarah Friar on Friday said the company will continue to invest in artificial intelligence infrastructure, even after voters strongly rebuked data centers during Tuesday's midterm elections. [...] OpenAI depends on data centers to train its AI models and serve customers, and Friar said she doesn't think the midterms dramatically changed anything for the company.\n\n\"If the midterm means more focus on data centers and communities, we're going to keep doing the work to get into those communities and to build trust with them,\" Friar said. [...] \"When I think about the midterms, I need to keep thinking about how do we keep investing to meet that customer demand,\" Friar told CNBC's Sara Eisen in an interview at the Citi TMT Leadership Summit at California's Pebble Beach. \"It starts early with having built relationships with all of the hyperscalers, and it will continue to mean that we raise capital.\"",
-                "score": 0.65914243
+                "title": "Australia to launch AI safety regulator after OpenAI breach | AP News",
+                "url": "https://apnews.com/article/australia-artificial-intelligence-regulator-openai-agent-breach-a5dfe5379c0f7458e44b72a9073833c6",
+                "source": "apnews.com",
+                "summary": "close dialog\n\nAustralian government documents define frontier AI as the most sophisticated models at the cutting edge of current technological capability.\n\nAlbanese told OpenAI chief executive Sam Altman that the U.S. company took too long to inform the government in September that a rogue agent had infiltrated government websites three months earlier, which was the first occurrence of such a breach with the technology.",
+                "score": 0.48343503
               }
             ]
-          }
-        },
-        {
-          "tool": "social_search",
-          "args": {
-            "query": "OpenAI",
-            "search_type": "Top",
-            "limit": 5
-          },
-          "result": {
-            "tool": "search_tweets",
-            "error": "HTTPError",
-            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/search.php?query=OpenAI&search_type=Top",
-            "status_code": 403,
-            "retryable": false
           }
         }
       ]
     }
-  ]
+  ],
+  "replay_metadata": {
+    "version": "v0",
+    "source_commit": "73bf0f556ed831044a67fa657fc75885de3c2078",
+    "prompt_hash": "f0c107a9d7a14032c948d642d7c36f2a85cb6d69a099530093a874c94d472446",
+    "tools_hash": "8db0ba629f52ad1ec171bae4e4e84472c12f950fa1a6db5e1d27bad6e749b740",
+    "provider": "openrouter",
+    "model": "openai/gpt-4o-mini",
+    "temperature": 0,
+    "max_tokens": 512,
+    "runtime_commit": "1aa5cf399a190b409db56ebaaad001f855b3c2ad",
+    "passed_cases": 13,
+    "total_cases": 20,
+    "measured_cases": 20,
+    "provider_error_cases": 0,
+    "run_file": "runs/v0_B_base_openrouter_20261110T155117759410.json",
+    "runner": "local one-shot replay with explicit SDK max_tokens=512; temporary helper excluded from submission",
+    "notes": "Current one-shot runtime/grader; send disabled. Same bounded provider settings for all versions. v0 uses source LF; original team v0 hashes match its CRLF equivalent."
+  }
 }
