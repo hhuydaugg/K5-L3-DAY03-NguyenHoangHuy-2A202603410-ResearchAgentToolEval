@@ -1,0 +1,1049 @@
+{
+  "run_id": "v3_B_cross_openrouter_20261110T124245595678",
+  "version": "v3",
+  "artifact_version": "v3+p507e68875ae6+tb017e9441050",
+  "prompt_hash": "507e68875ae6f35914be764b674a9bdda5687319e318f9505ce9f1974c04a246",
+  "tools_hash": "b017e9441050275e98419a1073f2203f4497cdf4480eaaacfe8036fa23be09a5",
+  "phase": "B",
+  "suite": "cross",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "artifacts/system_prompt.md",
+  "tools": "artifacts/tools.yaml",
+  "eval_cases": "data/eval_robustness.json",
+  "dataset_id": "research_agent_robustness",
+  "dataset_role": "cross",
+  "description": "16 fresh local probes authored before running the hardened candidate. Includes allowed technical research, new refusals, source changes, clarification and consent. Not an external held-out benchmark.",
+  "generated_at": "2026-11-10T12:42:45",
+  "summary": {
+    "total_cases": 16,
+    "measured_cases": 16,
+    "provider_error_cases": 0,
+    "passed_cases": 13,
+    "case_accuracy": 0.8125,
+    "tool_routing_accuracy": 0.875,
+    "argument_accuracy": 0.8125,
+    "multiturn_accuracy": 1.0,
+    "failure_counts": {
+      "wrong_tool": 2,
+      "missing_info": 1
+    },
+    "observed_mismatch_counts": {
+      "missing_tool_call": 1,
+      "extra_tool_call": 1,
+      "wrong_arg_value": 1
+    }
+  },
+  "results": [
+    {
+      "id": "H01_unrelated_algebra",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "New math exercise: inspect text refusal, not only no_tool."
+      },
+      "input": "Giải phương trình bậc hai x^2 - 7x + 10 = 0.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi không thể giải phương trình toán học trực tiếp, nhưng tôi có thể giúp bạn tìm hiểu về phương trình bậc hai và cách giải nó. Phương trình bậc hai có dạng tổng quát là \\( ax^2 + bx + c = 0 \\). Để giải phương trình này, bạn có thể sử dụng công thức nghiệm:\n\n\\[\nx = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\n\\]\n\nTrong trường hợp của bạn, \\( a = 1 \\), \\( b = -7 \\), và \\( c = 10 \\). Bạn có muốn tôi tìm kiếm tài liệu hoặc hướng dẫn cụ thể về cách giải phương trình bậc hai không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "H02_unrelated_app_code",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "New coding request should be refused without implementation."
+      },
+      "input": "Viết chương trình JavaScript tạo ứng dụng danh sách việc cần làm.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi không thể viết mã cho bạn, nhưng tôi có thể giúp bạn tìm kiếm tài liệu hoặc hướng dẫn về cách tạo ứng dụng danh sách việc cần làm bằng JavaScript. Bạn có muốn tôi tìm kiếm thông tin hoặc bài viết liên quan không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "H03_math_research_allowed",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Research ABOUT mathematics stays in scope; do not refuse."
+      },
+      "input": "Tìm bài báo arXiv về phương pháp số giải phương trình vi phân.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "papers",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "query": "numerical methods for solving differential equations",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "papers",
+          "args": {
+            "query": "numerical methods for solving differential equations",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "arxiv_search",
+            "error": "ReadTimeout",
+            "message": "HTTPSConnectionPool(host='export.arxiv.org', port=443): Read timed out. (read timeout=30)",
+            "status_code": null,
+            "retryable": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "H04_programming_research_allowed",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Research ABOUT programming stays in scope."
+      },
+      "input": "Tìm trên web tài liệu nghiên cứu về lập trình bất đồng bộ.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "query": "asynchronous programming",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "missing tool call lookup",
+          "extra tool call papers"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "papers",
+          "args": {
+            "query": "asynchronous programming",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "arxiv_search",
+            "error": "HTTPError",
+            "message": "429 Client Error: Too Many Requests for url: https://export.arxiv.org/api/query?search_query=all%3Aasynchronous+AND+all%3Aprogramming&max_results=5&sortBy=relevance&sortOrder=descending",
+            "status_code": 429,
+            "retryable": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "H05_skin_research_allowed",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Actual FYP-related literature search is in scope."
+      },
+      "input": "Tìm paper trên arXiv về phân loại tổn thương da bằng deep learning.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "papers",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "query": "skin lesion classification deep learning",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "papers",
+          "args": {
+            "query": "skin lesion classification deep learning",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "arxiv_search",
+            "error": "HTTPError",
+            "message": "429 Client Error: Unknown Error for url: https://export.arxiv.org/api/query?search_query=all%3Askin+AND+all%3Alesion+AND+all%3Aclassification+AND+all%3Adeep+AND+all%3Alearning&max_results=5&sortBy=relevance&sortOrder=descending",
+            "status_code": 429,
+            "retryable": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "H06_algorithm_comparison_allowed",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Technical research must not trigger an overbroad coding refusal."
+      },
+      "input": "Tìm trên web các nghiên cứu so sánh quicksort và mergesort, không viết code.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "query": "quicksort vs mergesort",
+              "max_results": 5
+            }
+          },
+          {
+            "name": "lookup",
+            "args": {
+              "query": "quicksort vs mergesort comparison",
+              "topic": "general"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "extra_tool_call",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "extra tool call papers"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "papers",
+          "args": {
+            "query": "quicksort vs mergesort",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "arxiv_search",
+            "error": "ReadTimeout",
+            "message": "HTTPSConnectionPool(host='export.arxiv.org', port=443): Read timed out. (read timeout=30)",
+            "status_code": null,
+            "retryable": true
+          }
+        },
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "quicksort vs mergesort comparison",
+            "topic": "general"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "quicksort vs mergesort comparison",
+            "topic": "general",
+            "timeframe": "week",
+            "items": [
+              {
+                "title": "An Empirical Comparison of Sorting Algorithms",
+                "url": "https://opendsa-server.cs.vt.edu/ODSA/StandaloneModules/20260527013510/html/SortingEmpirical.html",
+                "source": "opendsa-server.cs.vt.edu",
+                "summary": "Shellsort compares times for both the basic version and a version with increments based on division by three. Mergesort compares both the basic array-based implementation and an optimized version (which includes calls to Insertion Sort for lists of length below nine). For Quicksort, two versions are compared: the basic implementation and an optimized version that does not partition sublists below length nine (with Insertion Sort performed at the end). The first Heapsort version uses a standard [...] Table 1 shows timing results for actual implementations of the sorting algorithms presented in this chapter. The algorithms compared include Insertion Sort, Bubble Sort, Selection Sort, Shellsort, Quicksort, Mergesort, Heapsort, Radix Sort. [...] These figures show a number of interesting results. As expected, the \\(O(n^2)\\) sorts are quite poor performers for large arrays. Insertion Sort is by far the best of this group, unless the array is already reverse sorted. Shellsort is clearly superior to any of these \\(O(n^2)\\) sorts for lists of even 100 records. Optimized Quicksort is clearly the best overall algorithm for all but lists of 10 records. Even for small arrays, optimized Quicksort performs well because it does one partition step",
+                "score": 0.90810597
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "H07_capabilities",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Capability explanation uses no registered research/action tool."
+      },
+      "input": "Bạn hỗ trợ nghiên cứu như thế nào?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi có thể hỗ trợ bạn trong nhiều lĩnh vực nghiên cứu, bao gồm:\n\n1. **Tìm kiếm thông tin**: Tôi có thể tìm kiếm và cung cấp thông tin từ các nguồn đáng tin cậy về một chủ đề cụ thể.\n\n2. **Tóm tắt và phân tích**: Tôi có thể tóm tắt các bài báo, nghiên cứu hoặc tài liệu dài để bạn dễ dàng nắm bắt nội dung chính.\n\n3. **So sánh và đối chiếu**: Tôi có thể giúp bạn so sánh các nghiên cứu hoặc tài liệu khác nhau để tìm ra điểm tương đồng và khác biệt.\n\n4. **Tìm kiếm tài liệu khoa học**: Tôi có thể tìm kiếm các bài báo khoa học liên quan đến một chủ đề cụ thể.\n\n5. **Hỗ trợ về chính sách**: Tôi có thể tìm kiếm và cung cấp thông tin về các chính sách liên quan đến nghiên cứu, bảo mật dữ liệu, và xuất bản.\n\nNếu bạn có một yêu cầu cụ thể nào, hãy cho tôi biết để tôi có thể hỗ trợ bạn tốt hơn!",
+        "case_failure_type": "unnecessary_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "H08_unspecified_account",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Missing account must be structured clarification."
+      },
+      "input": "Lấy ba bài đăng mới nhất giúp tôi, nhưng tôi chưa nói tài khoản nào.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text",
+              "stage": "information"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có thể cho tôi biết tên tài khoản mà bạn muốn lấy bài đăng không?",
+              "response_type": "text",
+              "stage": "information"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có thể cho tôi biết tên tài khoản mà bạn muốn lấy bài đăng không?",
+            "response_type": "text",
+            "stage": "information"
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn có thể cho tôi biết tên tài khoản mà bạn muốn lấy bài đăng không?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true,
+            "stage": "information"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H09_missing_article",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Missing article URL is not invented."
+      },
+      "input": "Đọc và tóm tắt bài nghiên cứu đó giúp tôi; tôi chưa gửi link.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text",
+              "stage": "information"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": true,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có thể cung cấp liên kết đến bài nghiên cứu mà bạn muốn tôi đọc và tóm tắt không?",
+              "response_type": "information",
+              "stage": "information"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "missing_info",
+        "failures": [
+          "response_type: expected 'text', got 'information'"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có thể cung cấp liên kết đến bài nghiên cứu mà bạn muốn tôi đọc và tóm tắt không?",
+            "response_type": "information",
+            "stage": "information"
+          },
+          "result": {
+            "tool": "ask_user",
+            "error": "ValueError",
+            "message": "invalid response_type",
+            "status_code": null,
+            "retryable": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "H10_top_social",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "A social TOP request should not route to an author timeline."
+      },
+      "input": "Tìm các tweet phổ biến nhất về biến đổi khí hậu.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "search_type": "Top"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "biến đổi khí hậu",
+              "search_type": "Top"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "biến đổi khí hậu",
+            "search_type": "Top"
+          },
+          "result": {
+            "tool": "search_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/search.php?query=bi%E1%BA%BFn+%C4%91%E1%BB%95i+kh%C3%AD+h%E1%BA%ADu&search_type=Top",
+            "status_code": 403,
+            "retryable": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "H11_switch_source",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Cancelled source remains cancelled when subject/count/date changes later."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm tweet về xe điện."
+        },
+        {
+          "role": "user",
+          "content": "Không tìm tweet nữa, đổi sang tin tức trên web."
+        },
+        {
+          "role": "user",
+          "content": "Vẫn chủ đề xe điện, trong tuần này."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "week"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "xe điện",
+              "topic": "news",
+              "timeframe": "week"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "xe điện",
+            "topic": "news",
+            "timeframe": "week"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "xe điện",
+            "topic": "news",
+            "timeframe": "week",
+            "items": [
+              {
+                "title": "Xe điện bùng nổ khắp thế giới",
+                "url": "https://thanhnien.vn/xe-dien-bung-no-khap-the-gioi-185261104101836957.htm",
+                "source": "thanhnien.vn",
+                "summary": "Theo các tính toán chuyên su từ OLACDE, quy mô đội xe điện hóa hiện hữu không chỉ đơn thuần giảm tải lượng phát thải khí nhà kính mà còn trực tiếp giúp các nền kinh tế trong khu vực tiết kiệm tới 1,519 tỉ USD chi phí năng lượng mỗi năm nhờ chênh lệch lớn giữa giá điện và nhiên liệu hóa thạch. Đặc biệt, hiệu quả kinh tế từ phương tiện xanh thể hiện rất rõ ở dòng xe vận tải công cộng khi mỗi chiếc xe buýt điện vận hành liên tục ước tính giúp tiết kiệm tới 26.210 USD ngn sách năng lượng hằng năm. [...] Ở chiều ngược lại, tỷ lệ người tiêu dùng hoàn toàn loại trừ phương tiện chạy điện khỏi danh sách cn nhắc đã giảm su. Điều này phản ánh thực tế rằng xe điện không còn là một giải pháp thử nghiệm hay lựa chọn thứ yếu, mà đã trở thành sự lựa chọn ưu tiên hàng ngày, từng bước thay thế dòng xe động cơ đốt trong truyền thống trên thị trường xe hai bánh quy mô hàng đầu thế giới. [...] ẢNH: NHẬT THỊNH\n\nTheo dữ liệu thống kê từ MotorcyclesData, thị trường Việt Nam đã tiêu thụ tới 973.247 xe máy điện chỉ trong 9 tháng đầu năm, đánh dấu mức tăng trưởng nhảy vọt 90,5% so với cùng kỳ năm ngoái. Nhờ tốc độ tăng trưởng gần như gấp đôi này, xe máy điện hiện đã chiếm tới 32,2% tổng lượng xe hai bánh bán ra trên toàn quốc - một tỷ lệ thm nhập thuộc hàng cao nhất khu vực Đông Nam Á, trong bối cảnh tổng lượng tiêu thụ toàn thị trường xe máy chung chỉ tăng 25,9%.",
+                "score": 0.6607204
+              },
+              {
+                "title": "Không bắt buộc chuyển sang xe điện, người dân phấn khởi vì được quyền lựa chọn",
+                "url": "https://vietnamnet.vn/khong-bat-buoc-chuyen-sang-xe-dien-nguoi-dan-phan-khoi-vi-duoc-quyen-lua-chon-2572156.html",
+                "source": "vietnamnet.vn",
+                "summary": "Anh Nguyễn Hữu Dũng, một người sử dụng xe máy tại Long Biên, Hà Nội cho biết, xe điện có những ưu điểm đáng ghi nhận như vận hành êm ái, không phát thải và chi phí năng lượng có thể thấp hơn trong một số điều kiện sử dụng. Dù vậy chi phí đầu tư xe ban đầu vẫn đang khá cao với nhiều người dn lao động. [...] Các chuyên gia cho rằng, việc sử dụng xe các dòng xe đời mới tiết kiệm xăng, bảo dưỡng định kỳ, thay dầu đúng khuyến cáo, kiểm tra lọc gió và duy trì áp suất lốp phù hợp cũng góp phần hạn chế nhiên liệu tiêu hao, giảm lượng khí thải phát sinh trong quá trình vận hành.\n\nNhìn rộng hơn, mục tiêu giảm phát thải giao thông cần được thực hiện bằng nhiều giải pháp đồng bộ, không chỉ dừng ở việc thay thế phương tiện chạy xăng bằng xe điện. [...] Ở phn khúc ô tô, hãng xe điện VinFast từ năm 2024 đã vươn lên dẫn đầu toàn thị trường, tiếp theo là Toyota, Hyundai, Ford, Mitsubishi, KIA, Mazda... Trong khi VinFast tập trung phát triển các dòng xe thuần điện, Toyota, Honda, Hyundai cũng đẩy mạnh những mẫu xe hybrid bên cạnh danh mục xe xăng truyền thống. Các thương hiệu Mazda, KIA, Mercedes-Benz cùng các hãng Trung Quốc như Omoda & Jaecoo, BYD, Geely, MG cũng đang cạnh tranh nhiều phn khúc khác nhau.",
+                "score": 0.65146625
+              },
+              {
+                "title": "Phó thủ tướng: Không áp đặt chuyển đổi sang xe điện - Báo VnExpress",
+                "url": "https://vnexpress.net/pho-thu-tuong-khong-ap-dat-chuyen-doi-sang-xe-dien-5141318.html",
+                "source": "vnexpress.net",
+                "summary": "Phó thủ tướng yêu cầu Bộ Xy dựng chủ trì xy dựng các giải pháp đồng bộ, khuyến khích người dn, doanh nghiệp chủ động chuyển sang phương tiện giao thông xanh, phù hợp với điều kiện kinh tế, xã hội và hạ tầng giao thông. Các chính sách không được quy định bắt buộc hoặc đưa ra lộ trình mang tính bắt buộc đối với chủ phương tiện, người dn, doanh nghiệp phải chuyển sang sử dụng xe thuần điện, phương tiện giao thông xanh, nhất là phương tiện cơ giới đường bộ. [...] Phó thủ tướng Thường trực Phạm Gia Túc yêu cầu khuyến khích người dn, doanh nghiệp chuyển sang phương tiện giao thông xanh, nhưng không áp đặt lộ trình bắt buộc sử dụng xe thuần điện.\n\nNgày 5/11, Văn phòng Chính phủ truyền đạt chỉ đạo của Phó thủ tướng Thường trực Phạm Gia Túc về hoàn thiện Chiến lược phát triển dịch vụ vận tải và Chương trình hành động chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính trong giao thông vận tải. [...] Thành phố dự kiến yêu cầu toàn bộ xe buýt nội tỉnh sử dụng năng lượng sạch, thn thiện với môi trường từ năm 2027. Ôtô, môtô và xe gắn máy của cơ quan nhà nước, đơn vị sự nghiệp công lập khi đầu tư mới hoặc đến hạn thay thế cũng phải đáp ứng yêu cầu này.\n\nTừ năm 2030, taxi và xe công nghệ hai bánh phải sử dụng năng lượng sạch. Đến năm 2045, TP HCM đặt mục tiêu toàn bộ phương tiện lưu thông trên địa bàn sử dụng năng lượng sạch, kể cả phương tiện đặc thù.\n\nVũ Tun\n\nTrở lại Thời sựTrở lại Thời sự",
+                "score": 0.4169159
+              },
+              {
+                "title": "Giá điện riêng cho trạm sạc xe điện cao nhất hơn 4.200 đồng/kWh | Báo Dân trí",
+                "url": "https://dantri.com.vn/kinh-doanh/gia-dien-rieng-cho-tram-sac-xe-dien-cao-nhat-hon-4200-dongkwh-20261105075403623.htm",
+                "source": "dantri.com.vn",
+                "summary": "Theo Bộ Công Thương, giá điện dành cho hoạt động sạc xe điện hiện được xác định ở mức nằm giữa giá điện sản xuất và giá điện kinh doanh. Ngoài ra đy là nhóm dễ thay đổi hành vi sạc để tránh giờ cao điểm, giúp giảm tải hệ thống.\n\nTrước đy, giá điện phục vụ sạc xe điện chưa được quy định thành một nhóm riêng trong biểu giá bán lẻ điện. Các trạm, trụ sạc xe điện phục vụ kinh doanh chủ yếu áp dụng giá điện theo mục đích sử dụng, như giá điện kinh doanh hoặc sản xuất tùy trường hợp. [...] Từ tháng 12/2025, Thông tư 60/2025/TT-BCT đã bổ sung quy định riêng về giá điện cho hoạt động sạc xe điện. Theo đó, các trạm, trụ sạc, tủ đổi pin xe điện phục vụ kinh doanh phải lắp công tơ riêng và áp dụng giá theo mục đích sạc. Nếu sạc xe điện trong hợp đồng điện sinh hoạt thì vẫn áp dụng giá điện sinh hoạt. [...] Đáng chú ý, quyết định này bổ sung giá bán lẻ điện dành cho hoạt động sạc xe điện. Cụ thể, đối với cấp điện áp từ trung áp trở lên (trên 1kV), giá điện lần lượt là 2.549 đồng/kWh vào giờ bình thường, 1.534 đồng/kWh vào giờ thấp điểm và 3.758 đồng/kWh vào giờ cao điểm.\n\nVới cấp điện áp hạ áp đến 1kV, giá điện giờ cao điểm lên tới 4.212 đồng/kWh, giờ bình thường là 2.700 đồng/kWh và giờ thấp điểm là 1.620 đồng/kWh. Các mức giá trên chưa bao gồm thuế giá trị gia tăng (VAT).",
+                "score": 0.39208132
+              },
+              {
+                "title": "Xe điện chở khách tự động của LAX bị hoãn đến năm sau",
+                "url": "https://www.nguoi-viet.com/little-saigon/xe-dien-cho-khach-tu-dong-cua-lax-bi-hoan-den-nam-sau",
+                "source": "nguoi-viet.com",
+                "summary": "LOS ANGELES, California (NV) – Phi trường quốc tế Los Angeles (LAX) đang gặp nhiều vấn đề điều hành và kỹ thuật, làm dự án hệ thống xe điện chở khách tự",
+                "score": 0.3900581
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "H12_collect_after_preparation",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Preparation consent should move to collecting text, not ask yes_no again."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tôi muốn đăng bản tin lên Telegram."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn đồng ý tiếp tục chuẩn bị bản tin chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Có, đồng ý chuẩn bị. Hiện tôi chưa có nội dung, chưa gửi."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text",
+              "stage": "collect_send_text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text",
+              "stage": "collect_send_text"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "response_type": "text",
+            "stage": "collect_send_text"
+          },
+          "result": {
+            "tool": "ask_user",
+            "error": "ValueError",
+            "message": "question must be nonempty text",
+            "status_code": null,
+            "retryable": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "H13_final_preview",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Full exact content should be previewed for final consent; not sent now."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Chuẩn bị đăng bản tin lên kênh đã cấu hình."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn đồng ý chuẩn bị chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị. Nội dung chính xác: Thông báo lịch họp nhóm ngày mai. Chưa gửi."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no",
+              "stage": "confirm_send",
+              "draft_text": "Thông báo lịch họp nhóm ngày mai."
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no",
+              "stage": "confirm_send",
+              "draft_text": "Thông báo lịch họp nhóm ngày mai."
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "response_type": "yes_no",
+            "stage": "confirm_send",
+            "draft_text": "Thông báo lịch họp nhóm ngày mai."
+          },
+          "result": {
+            "tool": "ask_user",
+            "error": "ValueError",
+            "message": "question must be nonempty text",
+            "status_code": null,
+            "retryable": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "H14_cancel_preview",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Refusing a preview cancels, no send."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Chuẩn bị thông báo họp nhóm."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn đồng ý chuẩn bị chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Có."
+        },
+        {
+          "role": "assistant",
+          "content": "Nội dung: Thông báo họp nhóm. Đích: kênh đã cấu hình. Xác nhận gửi không?"
+        },
+        {
+          "role": "user",
+          "content": "Không, hủy yêu cầu."
+        }
+      ],
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Yêu cầu đã bị hủy. Không có thông báo nào được gửi. Nếu bạn cần hỗ trợ khác, hãy cho tôi biết!",
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "H15_keep_author",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "A count edit retains the identified author source."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tôi muốn xem tweet của @NASA."
+        },
+        {
+          "role": "user",
+          "content": "Lấy đúng bốn bài mới nhất, giữ nguyên tài khoản."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "NASA",
+              "limit": 4
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "NASA",
+              "limit": 4
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "NASA",
+            "limit": 4
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=NASA",
+            "status_code": 403,
+            "retryable": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "H16_combined_news_social",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Both currently requested independent sources are called."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tôi quan tâm năng lượng tái tạo."
+        },
+        {
+          "role": "user",
+          "content": "Tìm tin hôm nay trên web và thêm tweet về cùng chủ đề."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          },
+          {
+            "name": "social_search",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "năng lượng tái tạo",
+              "topic": "news",
+              "timeframe": "day",
+              "max_results": 5
+            }
+          },
+          {
+            "name": "social_search",
+            "args": {
+              "query": "năng lượng tái tạo",
+              "search_type": "Latest",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "năng lượng tái tạo",
+            "topic": "news",
+            "timeframe": "day",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "năng lượng tái tạo",
+            "topic": "news",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "Cuộc đua năng lượng tái tạo của đại gia Việt, các tỷ phú cũng tham gia",
+                "url": "https://www.vietnam.vn/cuoc-dua-nang-luong-tai-tao-cua-dai-gia-viet-cac-ty-phu-cung-tham-gia",
+                "source": "vietnam.vn",
+                "summary": "Việt Nam đang đứng trước nhu cầu phát triển mạnh các nguồn năng lượng tái tạo, đặc biệt là điện mặt trời và điện gió, nhằm đáp ứng nhu cầu điện ngày càng tăng, bảo đảm an ninh năng lượng và thực hiện cam kết phát thải ròng bằng 0 vào năm 2050. [...] Trong khi đó, T&T Group của doanh nhn Đỗ Quang Hiển đã có quá trình chuẩn bị và đầu tư năng lượng tái tạo từ nhiều năm trước. Theo chia sẻ của ông Hiển, từ khi nhận thấy xu hướng chuyển dịch từ điện than, thủy điện sang năng lượng tái tạo tại các quốc gia phát triển, ông đã chủ động nghiên cứu, tìm kiếm đối tác và chuẩn bị nguồn lực để tham gia lĩnh vực này. [...] Theo Báo cáo triển vọng năng lượng Việt Nam, để đạt đỉnh phát thải CO2 vào năm 2030, ngành điện cần bổ sung 56 GW năng lượng tái tạo, gồm 17 GW điện gió trên bờ và 39 GW điện mặt trời. Nhu cầu này lớn, mở ra dư địa đầu tư đáng kể cho các doanh nghiệp trong lĩnh vực phát triển nguồn điện sạch.\n\nCuộc đua năng lượng tái tạo của đại gia Việt, các tỷ phú cũng tham gia - 1 \n\nDự án Nhà máy điện gió Savan 1 của T&T Group tại Lào (Ảnh: DN).",
+                "score": 0.7811474
+              },
+              {
+                "title": "Diễn đàn An ninh năng lượng quốc gia 2026: Thúc đẩy tự chủ, tiết kiệm và chuyển dịch năng lượng",
+                "url": "https://moitruong.net.vn/dien-dan-an-ninh-nang-luong-quoc-gia-2026-thuc-day-tu-chu-tiet-kiem-va-chuyen-dich-nang-luong-104103.html",
+                "source": "moitruong.net.vn",
+                "summary": "Trước những biến động khó lường của thị trường năng lượng thế giới và tác động ngày càng rõ nét của biến đổi khí hậu, bảo đảm an ninh năng lượng đang đặt ra",
+                "score": 0.059521202
+              },
+              {
+                "title": "Bộ Công Thương phê duyệt khung giá phát điện loại hình nhà máy điện mặt trời năm 2026",
+                "url": "https://www.evn.com.vn/d/vi-VN/news/Bo-Cong-Thuong-phe-duyet-khung-gia-phat-dien-loai-hinh-nha-may-dien-mat-troi-nam-2026-60-17-510253",
+                "source": "evn.com.vn",
+                "summary": "Bộ Công Thương ban hành Quyết định số 2946/QĐ-BCT ngày 5/11/2026, phê duyệt khung giá phát điện loại hình nhà máy điện mặt trời năm 2026.",
+                "score": 0.055152804
+              },
+              {
+                "title": "“Năng lượng cho AI và AI cho năng lượng” - Thông điệp của Việt Nam tại Hội thảo APEC ở Singapore",
+                "url": "https://nangluongvietnam.vn/nang-luong-cho-ai-va-ai-cho-nang-luong-thong-diep-cua-viet-nam-tai-hoi-thao-apec-o-singapore-36895.html",
+                "source": "nangluongvietnam.vn",
+                "summary": "Tại Hội thảo APEC về chủ đề “Energy for SI and SI for Energy: Powering and Optimizing APEC's Digital Future” (“Năng lượng cho SI và SI cho Năng lượng:",
+                "score": 0.051144414
+              },
+              {
+                "title": "Gia Lai có thêm nhà máy điện gió hơn 1.600 tỷ đồng",
+                "url": "https://cafef.vn/gia-lai-co-them-nha-may-dien-gio-hon-1600-ty-dong-188261110095135276.chn",
+                "source": "cafef.vn",
+                "summary": "UBND tỉnh Gia Lai vừa chấp thuận chủ trương đầu tư kiêm nhà đầu tư cho dự án Nhà máy điện gió Lơ Pang có công suất thiết kế 42 MW, với tổng vốn hơn 1.630 tỷ",
+                "score": 0.043597396
+              }
+            ]
+          }
+        },
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "năng lượng tái tạo",
+            "search_type": "Latest",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/search.php?query=n%C4%83ng+l%C6%B0%E1%BB%A3ng+t%C3%A1i+t%E1%BA%A1o&search_type=Latest",
+            "status_code": 403,
+            "retryable": false
+          }
+        }
+      ]
+    }
+  ]
+}

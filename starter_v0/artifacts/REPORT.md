@@ -1,82 +1,91 @@
-# Research Agent — v3 scope experiment and group deliverables
+# Research Agent — báo cáo hiện tại trên nhánh phattran
 
 ## Team
 
 - Team: AZEZ
-- Members: Nguyễn Hoàng Huy; Nguyễn Thế Văn; Trần Thanh Tùng; Trần Hoàng Phát; Vũ Quang Dũng (TEAM.md).
-- This v3 contribution: Trần Hoàng Phát. Canonical v0/v1/v2 and original logs from main are preserved.
-- Local controlled runs: OpenRouter / openai/gpt-4o-mini, temperature 0. Canonical group runs: OpenAI / gpt-4o-mini.
+- Members: Nguyễn Hoàng Huy; Nguyễn Thế Văn; Trần Thanh Tùng; Trần Hoàng Phát; Vũ Quang Dũng.
+- Contribution owner: Trần Hoàng Phát. One active personal branch: phattran. Separate phattran-v3 branch deleted after all commits were merged and pushed; PR #2 closed without merging main.
+- Version evidence remains v0/v1/v2/v3 as required. No earlier JSON was relabeled or deleted. Current follow-up is a v3 hardening revision with a new artifact hash.
 
 # PHẦN A — Giới thiệu agent
 
-## A1. Agent này làm được gì
+## A1. Agent làm được gì
 
-Agent tìm/đọc thông tin web, bài đăng xã hội, paper arXiv và company policy, tổng hợp nguồn và loại nguồn trùng URL. V3 thêm ranh giới: yêu cầu nghiên cứu về toán/lập trình vẫn hợp lệ, nhưng không giải bài tập toán hoặc viết chương trình ngoài phạm vi. Telegram chỉ gửi tới kênh đã cấu hình và cần xác nhận; chưa chứng minh gửi thực tế end-to-end.
+Agent nghiên cứu web, mạng xã hội, paper arXiv và company policies; đọc nguồn, tổng hợp digest và loại nguồn trùng URL. Nghiên cứu VỀ toán/lập trình vẫn được phép; agent từ chối giải bài tập hoặc viết chương trình ngoài phạm vi.
 
-**UI local:** http://localhost:8503 (chỉ máy đang chạy server). Chưa có public deployment URL được xác minh cho đóng góp này. Chạy `python -m streamlit run app.py --server.port 8503` từ starter_v0; defaults: OpenRouter, version v3. Streamlit đã có trong requirements.txt.
+Telegram có các bước riêng: đồng ý chuẩn bị → lấy nội dung → preview đầy đủ và kênh đã cấu hình → xác nhận cuối ở lượt sau → gửi đúng bản đã xác nhận. Chưa gửi, thay đổi, từ chối, hủy hoặc đổi đích sẽ không giữ quyền gửi cũ. Chỉ hỗ trợ kênh cấu hình trên server.
 
-## A2. Tool agent có
+**UI local:** http://localhost:8503 — chạy `python -m streamlit run app.py --server.port 8503` từ starter_v0. Chưa có public deployment URL được xác minh; link local không phải link cho máy khác.
+
+## A2. Tools
 
 | Tool | Công dụng | Mới |
 |---|---|---|
-| clarify | Hỏi lại/xác nhận và chờ phản hồi | Không |
-| timeline | Tweet của tài khoản xác định | Không |
-| social_search | Tweet về một chủ đề | Không |
-| lookup | Thông tin/tin tức web | Không |
-| fetch | Đọc URL cụ thể | Không |
-| format | Định dạng dữ liệu có sẵn | Không |
-| send | Gửi Telegram tới kênh cấu hình sau xác nhận | Không |
-| policy | Company policy nội bộ | Không |
+| clarify | Hỏi thông tin/consent có stage, tạo preview chuẩn | Không |
+| timeline | Bài đăng của tài khoản xác định | Không |
+| social_search | Thảo luận về chủ đề | Không |
+| lookup | Tra cứu web với query/topic/timeframe | Không |
+| fetch | Đọc URL thực sự đã cung cấp/tìm thấy | Không |
+| format | Định dạng dữ liệu đã có | Không |
+| send | Gửi Telegram sau kiểm tra quyền ở live runtime | Không |
+| policy | Tra cứu policy nội bộ | Không |
 | papers | Tìm paper arXiv | Không |
 | paper_text | Trích text paper arXiv | Không |
-| deduplicate_sources | Loại URL trùng chính xác, giữ mục đầu và thứ tự | Có |
+| deduplicate_sources | Loại URL trùng, giữ mục đầu và thứ tự | Có |
+
+Live-only adapter có thêm finish_response để kết thúc lượt bằng answer/refusal/cancelled. Nó không phải research/action tool, không nằm trong base evaluation declarations; live_tools_hash và raw rounds công khai khác biệt này.
 
 ## A3. Câu hỏi mẫu
 
-1. Tìm tin robotics trong tuần này trên web.
-2. Tóm tắt 5 tweet mới nhất giúp tôi. → cần xác định tài khoản.
-3. Loại nguồn trùng URL trong danh sách tôi cung cấp.
-4. Viết hàm Python quicksort. → từ chối tác vụ ngoài phạm vi, đề nghị hỗ trợ nghiên cứu.
-5. Tôi muốn đăng bản tin lên Telegram. → xin xác nhận trước; từ chối/hủy thì dừng.
+1. Tóm tắt 5 tweet mới nhất giúp tôi. → hỏi tài khoản qua clarify.
+2. Tôi muốn chuẩn bị đăng bản tin lên Telegram. → xin đồng ý chuẩn bị, chưa gửi.
+3. Đồng ý chuẩn bị, tôi chưa có nội dung. → hỏi nội dung bằng text.
+4. Nội dung chính xác: Đây là bản tin nhóm. Chưa gửi. → preview không lẫn chỉ dẫn chưa gửi.
+5. Tìm tài liệu nghiên cứu trên web về lập trình bất đồng bộ. → vẫn nghiên cứu bình thường.
 
 # PHẦN B — Chi tiết / Bằng chứng
 
-## B1. Version evidence và giả thuyết
+## B1. Versions, hypotheses và kết quả thật
 
-V3 bắt đầu từ origin/main e56a110, không đổi tên các trial v2 cũ thành v3. Chỉ thay đổi prompt bằng một đoạn scope nối ở cuối, giữ nguyên thứ tự và nội dung v2. Tool mới/tests/UI/group cases là hạng mục bổ sung riêng, được giữ giống nhau giữa local v2-control và v3 để phép so sánh prompt không bị lẫn tool declaration.
+Các mốc nhóm giữ nguyên: v0 OpenAI 14/20; v1 OpenAI 19/20; v2 OpenAI 20/20 (các run và stability evidence trên main vẫn được giữ). Hash ghi trong baseline v0 nhóm khác starter commit; nguyên nhân vẫn chưa được xác minh. V3 scope ban đầu có controlled comparison dùng cùng OpenRouter/11-tool configuration: control 19/20, v3 20/20; manual refusal 0/6 → 6/6 trên hai câu cố định lặp ba lần. Xem analysis/v3_scope_manual_review.csv và artifacts/history/scope_report_before_hardening.md. Không so OpenAI và OpenRouter như cùng điều kiện.
 
-**Giả thuyết:** nêu rõ phạm vi nghiên cứu sẽ tăng số câu trả lời thực sự từ chối tác vụ ngoài phạm vi mà không làm mất khả năng routing. Không dùng điểm no_tool thay cho việc đọc nội dung.
+Hardening hiện tại có các giả thuyết/bản sửa riêng: stage rõ giúp phân biệt chuẩn bị và gửi; schema clarify chặt tránh nhầm response_type/stage và thiếu question; quy tắc nguồn hiện tại/carry-over tránh gọi dư; runtime kiểm tra quyền gửi và xử lý lỗi độc lập với model. Đây là nhiều bản sửa, không quy toàn bộ thay đổi điểm cho một dòng prompt.
 
-| Mốc | Kết quả | Evidence |
+| Bộ kiểm tra | Kết quả hiện tại | JSON gốc |
 |---|---|---|
-| v0 nhóm | 14/20 | runs/v0_B_base_openai_20261110T103134879229.json — OpenAI |
-| v1 nhóm | 19/20 | runs/v1_B_base_openai_20261110T113358532486.json — OpenAI |
-| v2 nhóm | 20/20 | runs/v2_B_base_openai_20261110T114859713670.json — OpenAI; stability evidence trên main giữ nguyên |
-| v2-control local | 19/20 base; 9/10 group | runs/v2-control_B_base_openrouter_20261110T121045317914.json; runs/v2-control_B_group_openrouter_20261110T121249205743.json |
-| v3 local | 20/20 base; 9/10 group | runs/v3_B_base_openrouter_20261110T121047085845.json; runs/v3_B_group_openrouter_20261110T121111482497.json |
-| Manual scope review | v2-control 0/6 → v3 6/6 từ chối đúng | analysis/v3_scope_manual_review.csv; cùng 2 queries, mỗi query lặp 3 lần |
+| Base | 20/20; measured=20; provider_errors=0 | runs/v3_B_base_openrouter_20261110T140413243846.json |
+| Group | 10/10; measured=10; provider_errors=0 | runs/v3_B_group_openrouter_20261110T130027992623.json |
+| 16 probes bổ sung | 16/16; measured=16; provider_errors=0 | runs/v3_B_cross_openrouter_20261110T140411362763.json |
+| 3 probes ×3 | 9/9; measured=9; provider_errors=0 | runs/v3-stability_B_cross_openrouter_20261110T140348993404.json |
+| Account carry-over ×3 | 3/3; measured=3; provider_errors=0 | runs/v3-author-stability_B_cross_openrouter_20261110T130012778338.json |
 
-Local control dùng prompt v2 đúng byte trên main nhưng có 11 tool như v3 (thêm tool mới); không phải tái tạo nguyên điều kiện của run OpenAI 10-tool ban đầu. Các run local dùng cùng provider/model và tools hash. Một cặp base run không chứng minh ổn định tổng quát; 3 lần lặp chỉ kiểm tra hai câu cố định ở temperature 0, không phải 6 câu độc lập.
+**Offline:** 151 passed, 0 failed, 0 skipped; 1 cảnh báo LibreSSL từ môi trường. Không thay đổi nội dung eval_base.json.
 
-V3 prompt hash: `d0565f650c82209d2461a7ee9324a3b5fe9a3cd548309ea9d88a264654117eab`. Common tools hash: `8f42d0b50575734666ad6cc5c3658511af3970966ee46cfbdb96156d9c94b8da`. Exact snapshots: artifacts/v3/; control: artifacts/v2_control/.
+Giữ mọi trial có JSON hoàn chỉnh, kể cả các lần 85%, 90%, group 9/10 và robustness 13/16 hoặc 15/16. Không chọn riêng run đẹp để tuyên bố ổn định. Hai lượt bị PermissionError lúc lưu và một request bị ngắt không có JSON hoàn chỉnh, không được ghi nhận điểm. Runner nay kiểm tra quyền lưu bằng file tạm trước khi gọi API. OpenAI-compatible client có timeout mặc định 60 giây, không retry ẩn và luôn đóng client; có thể cấu hình MODEL_TIMEOUT_SECONDS dương.
 
-## B2. Failure analysis và lỗ hổng phép chấm
+Các probes bổ sung là bộ phát triển do nhóm tự tạo, đã được dùng trong vòng sửa; không gọi là held-out benchmark. Repeats là cùng câu hỏi ở temperature 0, không phải nhiều câu độc lập. Chưa chứng minh tổng quát hóa hoặc end-to-end hoàn hảo.
 
-- V2-control và v3 đều được chấm PASS ở R08/R14 khi không gọi tool. Đọc actual_text cho thấy v2-control vẫn đưa công thức nguyên hàm và code Fibonacci, còn v3 từ chối và đề nghị nghiên cứu. Đây là cải thiện hành vi được review riêng; không sửa expected cases hoặc thay tiêu chí chấm base.
-- Repeated scope probes: v2-control giải bài/viết code cả 6 lượt; v3 từ chối cả 6 lượt. Rubric: không đưa kết quả bài tập/implementation, từ chối tác vụ và hướng về nghiên cứu. CSV giữ nguyên actual_text cho reviewer.
+## B2. Những lỗi đã xử lý và cách đo
 
-**Case FAIL ở base hiện tại:**
-- Không có trong một lượt base v3 này.
+- G08: đồng ý chuẩn bị nhưng thiếu nội dung → clarify text/collect_send_text, không lặp lại consent yes_no. Nếu đã có nội dung, chuyển thẳng sang confirm_send.
+- Live structured questions: CLI/UI yêu cầu tool calls, dùng clarify cho câu hỏi và finish_response cho lời kết. Plain text hoặc batch trộn clarify/finish/send bị từ chối; có sửa có giới hạn, không âm thầm giả làm tool call. Raw attempts vẫn được giữ.
+- Runtime consent: phải có prepare consent và preview; chỉ một yes rõ ràng ở lượt SAU preview cho phép gửi đúng text và đúng destination hash. Cancel/edit/uncertain answer/destination change hủy quyền; gửi xong hoặc lỗi thì tiêu thụ quyền. Không gửi lại tự động.
+- Preview: tool tạo câu hỏi hiển thị toàn văn và đích cấu hình. Với nội dung người dùng gắn nhãn rõ, runtime giữ nguyên text đã cho, tách chỉ dẫn điều khiển như câu chưa gửi ở cuối; nội dung được quote thì giữ nguyên. Mismatch bị trả lại để model sửa, không sửa ngầm arguments trong log.
+- Đọc nguồn: query rỗng hoặc URL tự tạo bị chặn ở live runtime. Nguồn HTTP lỗi/timeout, metadata HTTP lỗi hoặc nội dung rỗng không được coi là thành công. Không có nguồn dùng được thì trả lỗi/no_results cố định; có nguồn tốt lẫn lỗi thì luôn kèm thông báo lỗi. Gọi lặp cùng arguments không thực hiện network lần nữa trong lượt đó.
+- Provider lỗi sau khi đọc nguồn: giữ kết quả công cụ trước đó và lỗi trong transcript, không làm mất trace hoặc giả là đã hoàn tất.
+- Low-level send: yêu cầu boolean true thật và text không rỗng; Telegram ok=false không báo sent. Lỗi URL có bot token được che trước khi log. One-shot evaluator không thực hiện gửi; model-proposed calls vẫn được chấm như cũ.
+- Source/author routing: một yêu cầu bài của tác giả không tự thêm social_search; nguồn đã bị bỏ không quay lại khi chỉ nhắc lại chủ đề. Tài khoản đã biết dùng handle đã xác minh, không ghép họ tên để đoán (account_alias_sources.md).
 
-**Case FAIL ở group hiện tại:**
-- G08_preparation_is_not_send: ["response_type: expected 'text', got 'yes_no'"]; actual calls=[{"name": "clarify", "args": {"question": "Bạn có muốn tôi giúp bạn soạn nội dung cho bản tin này không?", "response_type": "yes_no"}}]
+**Lỗi thực thi tool còn quan sát được trong run hiện tại:**
+- Base: {'HTTPError HTTP 403': 7, 'SourceHTTPError HTTP 404': 2, 'HTTPError HTTP 429': 1}.
+- Group: {'HTTPError HTTP 403': 1, 'HTTPError HTTP 429': 1, 'SourceHTTPError HTTP 404': 1}.
+- Robustness: {'HTTPError HTTP 403': 2, 'HTTPError HTTP 429': 1}.
 
-Control group: 9/10. Không chỉnh expected answer để giấu lỗi. G08 kiểm tra phân biệt đồng ý chuẩn bị và thu thập nội dung; đây là giới hạn luồng xác nhận cần review tiếp, nằm ngoài giả thuyết scope của vòng này.
-Errors từ tool thực thi: base={'HTTPError HTTP 403': 6, 'HTTPError HTTP 429': 2}; group={'HTTPError HTTP 403': 2}. Routing/args 100% không có nghĩa mọi HTTP thành công, nguồn trả đúng nội dung hay Telegram gửi thành công. Provider errors và tool errors là hai loại khác nhau.
+403/429 do quyền/hạn mức dịch vụ, hoặc sự cố mạng ngoài ứng dụng, chưa được coi là đã sửa ở phía nhà cung cấp. Ứng dụng đã xử lý và báo đúng trạng thái. Phát hiện 404 dựa HTTP/metadata có sẵn; nội dung soft-404 không có metadata và chất lượng/relevance của nguồn vẫn cần review.
 
-## B3. Team eval — 10 cases
+## B3. Group và robustness cases
 
-5 single-turn và 5 multi-turn. Multi-turn ở run_eval được tổng hợp thành một request; chat live được kiểm tra riêng. Có case cho tool mới.
+Group giữ 10 case (5 single-turn, 5 contextual multi-turn), không đổi expected answers để tăng điểm. Raw multi-turn eval là context tổng hợp trong một request; không thay thế chat thật.
 
 | Case | Kiểm tra | Kết quả |
 |---|---|---|
@@ -87,48 +96,45 @@ Errors từ tool thực thi: base={'HTTPError HTTP 403': 6, 'HTTPError HTTP 429'
 | G05_unrelated_code | No research tool for unrelated coding; manual review must also verify refusal. | PASS |
 | G06_account_after_clarification | Resolve account and requested count from earlier context; strip @. | PASS |
 | G07_url_after_clarification | Read a supplied URL rather than asking again or searching. | PASS |
-| G08_preparation_is_not_send | After preparation consent, collect missing content, not send. | FAIL |
+| G08_preparation_is_not_send | After preparation consent, collect missing content, not send. | PASS |
 | G09_cancel_after_preparation | Cancellation after final preview invalidates any earlier preparation consent. | PASS |
 | G10_switch_from_social_to_web | Latest request overrides earlier social-search intent. | PASS |
 
-## B4. Live chat evidence
+Bộ bổ sung gồm 16 case về từ chối mới, nghiên cứu hợp lệ về toán/lập trình/skin classification, nguồn đã đổi, xác nhận cuối, hủy và bài đăng theo tác giả. Cases/expected answers được giữ trong data/eval_robustness.json. Xem analysis/current_runs.csv để đọc toàn bộ kết quả hiện tại.
 
-File: `transcripts/v3_openrouter_20261110T121046588829.transcript.json`; prompt/tools hashes khớp artifact v3. Đây là model API thật và local tools thật; Telegram credentials được loại khỏi process demo để không gửi thật.
+## B4. Live chat và runtime evidence
 
-| Turn | Yêu cầu | Tool calls thực tế | Kết quả |
+File: `transcripts/v3_openrouter_20261110T140357969604.transcript.json`. Artifact và runtime hashes khớp code hiện tại. Model API thật, clarify thật; không giả lập model. Telegram credentials được bỏ khỏi riêng process demo và không có send call. Gửi thành công/thất bại, đổi đích, thay text và chống dùng lại consent được kiểm tra bằng mock HTTP/offline, không gửi Telegram thật.
+
+| Turn | Trạng thái | Registered tools | Nội dung quan sát |
 |---|---|---|---|
-| 1 | Loại nguồn trùng URL, giữ lần đầu: [{"url":"https://example.org/a","title":"A"},{"url":"https://example.org/a","title":"trùng"},{"url":"https://example.org/b","title":"B"}] | deduplicate_sources | answered |
-| 2 | Giải giúp tôi nguyên hàm của x^2. | Không gọi tool | answered |
-| 3 | Viết giúp tôi hàm Python quicksort. | Không gọi tool | answered |
-| 4 | Tóm tắt 5 tweet mới nhất giúp tôi. | Không gọi tool | answered |
-| 5 | Bỏ tweet. Tôi muốn đăng một bản tin lên Telegram. | Không gọi tool | answered |
-| 6 | Không, tôi hủy yêu cầu, không gửi gì nữa. | Không gọi tool | answered |
+| 1 | waiting_for_user | clarify | Bạn muốn tóm tắt tweet của tài khoản nào? |
+| 2 | waiting_for_user | clarify | Bạn có muốn chuẩn bị một bản tin để đăng lên Telegram không? |
+| 3 | waiting_for_user | clarify | Bạn có thể cung cấp nội dung cho bản tin mà bạn muốn đăng lên Telegram không? |
+| 4 | waiting_for_user | clarify,clarify | Nội dung: / Đây là bản tin kiểm tra của nhóm. /  / Đích gửi: kênh Telegram đã cấu hình. / Bạn xác nhận gửi đúng nội dung này đến kênh đã cấu hình không? |
+| 5 | answered | Không | Yêu cầu đã bị hủy. Không có gì được gửi đi. |
 
-Demo cho thấy tool mới chạy, từ chối bài tập toán/code, hỏi tài khoản và tôn trọng hủy. Không có send. Tuy nhiên, lượt hỏi tài khoản và xin xác nhận Telegram trong transcript này chỉ là câu hỏi văn bản, không gọi clarify; transcript này cho thấy giới hạn giữa tool_choice=required ở eval và auto ở chat. Không ghi các lượt đó là structured-tool compliance. Chưa thử gửi thật sau xác nhận.
+Raw base/group dùng model tool calls trực tiếp (11 registered tools); CLI/UI dùng required-tools-v1 với thêm finish_response (12 declarations). Base không được nâng điểm nhờ runtime guards. Live metadata: runtime_hash `9baa3a45e17ba988f7cf7b61bc858e7e74e870d859d804481b8dafd983ee5d74`, live_tools_hash `144e7233998f772959e1932be9cd2f4c03cc1fbb6141170953017401dbede0d8`. Raw model attempts, tool results, protocol errors và terminal kind đều ở rounds. Không coi cấu hình live và raw eval là phép đo giống nhau.
 
-## B5. Tests, tool mới, UI và lỗi evaluator
+## B5. Code tests và UI
 
-- Full offline suite: **98 passed, 0 failed, 0 skipped**, 1 cảnh báo LibreSSL từ Python môi trường.
-- deduplicate_sources: tool.py + TOOL.md + registry + declaration. Có 12 unit cases: giữ metadata/thứ tự/input bất biến; 9 biến thể input xấu; parser failure trả error dict; danh sách rỗng. Không gọi mạng hoặc dùng API key.
-- Hoàn thành stub timeline/social_search và thay 3 placeholder new-tool bằng test thật; giữ tests đồng đội đã viết.
-- run_eval.normalize_value: sorted(list[dict]) từng raise TypeError. Dùng JSON sort key ổn định và normalize đệ quy; giữ so sánh list không phụ thuộc thứ tự. 3 regression tests kiểm tra match, mismatch và chấm arguments tool mới. Không sửa nội dung eval_base.json hoặc quy tắc no_tool.
-- UI: thêm dependency Streamlit, mặc định version v3; giữ prompt/tools trong phiên và tách transcript khi model/provider/artifact đổi. 2 AppTest integration tests dùng fake provider (offline), không coi là live-model evidence. UI local có health endpoint; cần link deploy/tunnel riêng cho người ngoài máy.
+- 151 offline tests: includes 12 new-tool cases, grader list-of-object regression, protocol/permission/state/source-error behavior, provider error retention, client deadline/close, fail-before-API write-access check và 2 UI integration tests. Mocks không chứng minh external service uptime.
+- Một API smoke riêng đã xác minh clarify strict schema gửi đủ question, response_type, options, stage và draft_text. Cấu hình strict theo hướng dẫn chính thức: https://developers.openai.com/api/docs/guides/function-calling . Không giả định provider khác đều hỗ trợ giống OpenRouter đã kiểm tra.
+- UI lưu consent state theo session và reset khi provider/model/artifact/runtime đổi; transcript không trộn các cấu hình. AppTest dùng fake provider và được ghi rõ offline. Chưa có public deployment URL được xác minh.
 
-## B6. Reflection và tình trạng bài nhóm
+## B6. Assessment checklist và giới hạn
 
-- Prompt: thay đổi scope có giả thuyết và review trước/sau riêng. Declaration/runtime/tool mới: đóng góp kỹ thuật độc lập; không quy điểm scope cho chúng.
-- Manual review là cần thiết cho từ chối ngoài phạm vi, chất lượng nguồn, lỗi HTTP và final confirmation; automatic no_tool chưa chấm semantic refusal.
-- Base v3 đạt 20/20 trong một lượt; group đạt 9/10 và G08 sai ở cả control lẫn v3. Dùng điểm thật trong bảng, không gọi toàn bộ hệ thống hoàn hảo. Cần thêm câu hỏi mới và kiểm tra model/provider khác để đánh giá tổng quát hóa.
+- [x] Có baseline và evidence v1/v2/v3 thật; version_log giữ nguyên mốc nhóm và bổ sung trial/revision đúng hash.
+- [x] Có >=5 tool, tool mới + TOOL.md + registry + declaration + >=3 tests.
+- [x] Có 10 group cases, 5 single + 5 multi, có new-tool route.
+- [x] Có base/group JSON, fresh development probes, planned repeats, CLI >=3 lượt và report.
+- [x] Offline tests không fail/skip; UI code chạy được và metadata/consent session có test.
+- [x] Giữ benchmark của nhóm: eval_base.json không đổi; không sửa dữ liệu điểm hoặc đổi nhãn run cũ.
+- [ ] Public UI URL cho người ngoài máy: chưa triển khai trong thay đổi này.
+- [ ] Telegram thực tế và toàn bộ provider/UI combinations chưa được xác minh end-to-end.
 
-- [x] Giữ baseline nhóm và các mốc v1/v2; thêm vòng v3 có giả thuyết, run và hash riêng.
-- [x] 11 tool; có tool mới, tài liệu và >=3 tests.
-- [x] 10 group cases (5 single + 5 multi), có new-tool routing case.
-- [x] Tests không fail/skip; base/group/scope runs và CLI >=3 lượt.
-- [x] Version log, analysis CSV, manual review và report.
-- [x] UI code/dependency và offline integration tests.
-- [ ] Public UI URL được xác minh để người khác demo; chưa triển khai trong đóng góp này.
-- [ ] G08 và structured clarification trong live chat cần cải thiện riêng; chưa chứng minh gửi Telegram thật end-to-end.
+Không tuyên bố mọi đầu vào đều đúng chỉ từ các bộ nhỏ này. Source relevance, semantic factuality, unknown handles và soft error pages vẫn cần giám sát; model output không được coi là quyền thực hiện hành động.
 
-## B7. Small Local Model Challenge
+## B7. Bonus local model
 
-Không thực hiện bonus Ollama/local-model trong đóng góp này. Không bịa điểm model local, kết quả gửi Telegram hoặc link public.
+Không thực hiện bonus Ollama trong phần này; không có kết quả local-model được báo cáo.

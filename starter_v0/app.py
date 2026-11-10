@@ -12,6 +12,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 from chat import ARTIFACTS_DIR, ROOT, now_iso, run_model_tool_loop, safe_slug, trim_history, write_transcript
 from providers import make_provider
+from live_protocol import protocol_metadata
 from tools import load_tool_declarations, to_openai_tools
 from versioning import artifact_version_dict, build_artifact_version
 
@@ -32,9 +33,10 @@ with st.sidebar:
 
 # A transcript must use one provider/model/artifact configuration throughout.
 artifact_version = build_artifact_version(version, PROMPT_PATH, TOOLS_PATH)
-configuration = (provider_name, model, artifact_version.artifact_version, int(history_window), int(max_tool_rounds))
+live_metadata = protocol_metadata(to_openai_tools(load_tool_declarations(TOOLS_PATH)))
+configuration = (provider_name, model, artifact_version.artifact_version, live_metadata["runtime_hash"], int(history_window), int(max_tool_rounds))
 if st.session_state.get("configuration") != configuration:
-    for key in ("turns", "history", "transcript", "transcript_path", "configuration", "system_prompt", "openai_tools"):
+    for key in ("turns", "history", "transcript", "transcript_path", "configuration", "system_prompt", "openai_tools", "delivery_state"):
         st.session_state.pop(key, None)
 
 if "turns" not in st.session_state:
@@ -45,12 +47,14 @@ if "turns" not in st.session_state:
         configuration=configuration,
         system_prompt=PROMPT_PATH.read_text(encoding="utf-8"),
         openai_tools=to_openai_tools(load_tool_declarations(TOOLS_PATH)),
+        delivery_state={},
         turns=[],
         history=[],
         transcript_path=ROOT / "transcripts" / f"{transcript_id}.transcript.json",
         transcript={
             "transcript_id": transcript_id,
             **artifact_version_dict(artifact_version),
+            **live_metadata,
             "provider": provider_name,
             "model": model or getattr(provider, "default_model", None),
             "system_prompt": str(PROMPT_PATH),
@@ -97,6 +101,7 @@ if user_text:
                 tools=st.session_state.openai_tools,
                 model=transcript["model"],
                 max_tool_rounds=int(max_tool_rounds),
+                delivery_state=st.session_state.delivery_state,
             )
             turn.update(result)
             st.session_state.history += [

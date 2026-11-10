@@ -9,13 +9,15 @@ from tools._shared import TIMEOUT, err
 
 
 def send_telegram(text: str = "", confirmed: bool = False) -> dict[str, Any]:
-    if not confirmed:
+    if confirmed is not True:
         return {
             "tool": "send_telegram",
             "status": "needs_confirmation",
             "message": "Only send after the user explicitly confirms.",
         }
     try:
+        if not isinstance(text, str) or not text.strip():
+            raise ValueError("text must be a nonempty string")
         token = os.getenv("TELEGRAM_BOT_TOKEN")
         chat_id = os.getenv("TELEGRAM_CHAT_ID")
         if not token or not chat_id:
@@ -26,6 +28,8 @@ def send_telegram(text: str = "", confirmed: bool = False) -> dict[str, Any]:
             timeout=TIMEOUT,
         )
         response.raise_for_status()
+        if response.json().get("ok") is not True:
+            raise RuntimeError("Telegram did not confirm delivery")
         return {"tool": "send_telegram", "status": "sent"}
     except Exception as exc:
         return err("send_telegram", exc)

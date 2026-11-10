@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -277,6 +278,11 @@ def main() -> None:
     parser.add_argument("--runs-dir", type=Path, default=ROOT / "runs")
     args = parser.parse_args()
 
+    # Fail before spending API credits if evidence cannot be saved.
+    args.runs_dir.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryFile(dir=args.runs_dir):
+        pass
+
     system_prompt = args.system_prompt.read_text(encoding="utf-8")
     artifact_version = build_artifact_version(args.version, args.system_prompt, args.tools)
     provider = make_provider(args.provider)
@@ -345,6 +351,7 @@ def main() -> None:
         **artifact_version_dict(artifact_version),
         "phase": args.phase,
         "suite": args.suite,
+        "action_execution": "disabled; proposed calls remain graded",
         "provider": args.provider,
         "model": selected_model,
         "system_prompt": str(args.system_prompt),

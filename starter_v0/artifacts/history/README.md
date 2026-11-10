@@ -1,0 +1,1 @@
+Historical reports/snapshots describe the exact earlier revisions and are superseded for current metrics by artifacts/REPORT.md. Original raw run labels/hashes are unchanged. Deleting phattran-v3 removed only the separate branch, not the assessment-required version evidence.

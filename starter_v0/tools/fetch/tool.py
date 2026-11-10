@@ -20,8 +20,19 @@ def read_url(url: str = "") -> dict[str, Any]:
             timeout=60,
         )
         response.raise_for_status()
-        data = response.json().get("data", {})
+        payload = response.json()
+        if payload.get("success") is False:
+            raise RuntimeError("Scrape provider reported failure")
+        data = payload.get("data", {}) or {}
         meta = data.get("metadata", {}) or {}
+        status = meta.get("statusCode") or meta.get("status_code")
+        if status is not None and int(status) >= 400:
+            return {"tool": "read_url", "error": "SourceHTTPError", "status_code": int(status),
+                    "message": "The target page returned an HTTP error; content is not usable.",
+                    "retryable": int(status) == 429 or int(status) >= 500}
+        if not isinstance(data.get("markdown"), str) or not data["markdown"].strip():
+            return {"tool": "read_url", "error": "EmptyContent", "message": "No readable page content was returned.",
+                    "status_code": status, "retryable": False}
         return {"tool": "read_url", "url": url, "items": [{
             "title": meta.get("title") or url,
             "url": meta.get("sourceURL") or url,

@@ -53,6 +53,7 @@ def to_openai_tools(declarations: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "name": item["name"],
             "description": item.get("description", ""),
             "parameters": item.get("parameters", {"type": "object", "properties": {}}),
+            **({"strict": True} if item.get("strict") is True else {}),
         },
     } for item in declarations]
 

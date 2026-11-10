@@ -1,0 +1,825 @@
+{
+  "run_id": "v3-stability_B_cross_openrouter_20261110T125229249037",
+  "version": "v3-stability",
+  "artifact_version": "v3-stability+p1723fcd0c1d1+t43f5a0217618",
+  "prompt_hash": "1723fcd0c1d1c945eb15a321d30f282abc711f0b52906eddfd43508835db0cf1",
+  "tools_hash": "43f5a02176189e06bf5358ba76824b1d287dd48a1bbc6a74c998654fab1505f9",
+  "phase": "B",
+  "suite": "cross",
+  "action_execution": "disabled; proposed calls remain graded",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "artifacts/system_prompt.md",
+  "tools": "artifacts/tools.yaml",
+  "eval_cases": "data/stability/hardening_x3.json",
+  "dataset_id": "hardening_fixed_probes_x3",
+  "dataset_role": "cross",
+  "description": "Three fixed probes repeated three times each; planned before results, no cherry-picking. Tests G08, source switching and allowed technical research.",
+  "generated_at": "2026-11-10T12:52:29",
+  "summary": {
+    "total_cases": 9,
+    "measured_cases": 9,
+    "provider_error_cases": 0,
+    "passed_cases": 9,
+    "case_accuracy": 1.0,
+    "tool_routing_accuracy": 1.0,
+    "argument_accuracy": 1.0,
+    "multiturn_accuracy": 1.0,
+    "failure_counts": {},
+    "observed_mismatch_counts": {}
+  },
+  "results": [
+    {
+      "id": "G08_preparation_is_not_send_repeat1",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "After preparation consent, collect missing content, not send."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tôi muốn đăng bản tin lên Telegram."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn có đồng ý tiếp tục chuẩn bị không?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị. Tôi chưa có nội dung; chưa gửi nhé."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có thể cung cấp nội dung cho bản tin mà bạn muốn đăng lên Telegram không?",
+              "response_type": "text",
+              "options": [],
+              "stage": "collect_send_text",
+              "draft_text": ""
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có thể cung cấp nội dung cho bản tin mà bạn muốn đăng lên Telegram không?",
+            "response_type": "text",
+            "options": [],
+            "stage": "collect_send_text",
+            "draft_text": ""
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn có thể cung cấp nội dung cho bản tin mà bạn muốn đăng lên Telegram không?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true,
+            "stage": "collect_send_text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G08_preparation_is_not_send_repeat2",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "After preparation consent, collect missing content, not send."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tôi muốn đăng bản tin lên Telegram."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn có đồng ý tiếp tục chuẩn bị không?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị. Tôi chưa có nội dung; chưa gửi nhé."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn muốn đăng nội dung gì lên Telegram?",
+              "response_type": "text",
+              "options": [],
+              "stage": "collect_send_text",
+              "draft_text": ""
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn muốn đăng nội dung gì lên Telegram?",
+            "response_type": "text",
+            "options": [],
+            "stage": "collect_send_text",
+            "draft_text": ""
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn muốn đăng nội dung gì lên Telegram?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true,
+            "stage": "collect_send_text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G08_preparation_is_not_send_repeat3",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "After preparation consent, collect missing content, not send."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tôi muốn đăng bản tin lên Telegram."
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn có đồng ý tiếp tục chuẩn bị không?"
+        },
+        {
+          "role": "user",
+          "content": "Đồng ý chuẩn bị. Tôi chưa có nội dung; chưa gửi nhé."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn muốn đăng nội dung gì lên Telegram?",
+              "response_type": "text",
+              "options": [],
+              "stage": "collect_send_text",
+              "draft_text": ""
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn muốn đăng nội dung gì lên Telegram?",
+            "response_type": "text",
+            "options": [],
+            "stage": "collect_send_text",
+            "draft_text": ""
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn muốn đăng nội dung gì lên Telegram?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true,
+            "stage": "collect_send_text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G10_switch_from_social_to_web_repeat1",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Latest request overrides earlier social-search intent."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm tweet về năng lượng mặt trời."
+        },
+        {
+          "role": "assistant",
+          "content": "Tôi có thể tìm thảo luận mạng xã hội về chủ đề đó."
+        },
+        {
+          "role": "user",
+          "content": "Bỏ tweet. Chỉ tìm tin tức năng lượng mặt trời hôm nay trên web."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "năng lượng mặt trời",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "năng lượng mặt trời",
+            "topic": "news",
+            "timeframe": "day"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "năng lượng mặt trời",
+            "topic": "news",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "Bộ Công Thương phê duyệt khung giá phát điện mặt trời năm 2026",
+                "url": "https://baobacninhtv.vn/bo-cong-thuong-phe-duyet-khung-gia-phat-dien-mat-troi-nam-2026-postid457998.bbg",
+                "source": "baobacninhtv.vn",
+                "summary": "Đối với nhà máy điện mặt trời không sử dụng hệ thống pin lưu trữ năng lượng, giá phát điện tối đa của loại hình điện mặt trời mặt đất lần lượt là 1.591,02 đồng/kWh tại miền Bắc, 1.293,17 đồng/kWh tại miền Trung và 1.104,32 đồng/kWh tại miền Nam. Với điện mặt trời nổi, các mức giá tương ứng là 1.939,74 đồng/kWh, 1.560,63 đồng/kWh và 1.340,21 đồng/kWh. [...] Đối với nhà máy điện mặt trời có kết hợp hệ thống pin lưu trữ năng lượng, giá phát điện tối đa của loại hình điện mặt trời mặt đất tại miền Bắc là 1.813,48 đồng/kWh, miền Trung là 1.469,90 đồng/kWh và miền Nam là 1.254,97 đồng/kWh. Trong khi đó, điện mặt trời nổi có mức giá tương ứng là 2.120,31 đồng/kWh, 1.703,21 đồng/kWh và 1.461,39 đồng/kWh. [...] Quyết định quy định các thông số của hệ thống pin lưu trữ năng lượng được sử dụng để tính toán mức giá tối đa của khung giá phát điện đối với nhà máy điện mặt trời có hệ thống lưu trữ, gồm công suất tối thiểu bằng 10% công suất của nhà máy điện mặt trời và thời gian lưu trữ/xả là 2 giờ.",
+                "score": 0.6063825
+              },
+              {
+                "title": "Bộ Công Thương phê duyệt khung giá phát điện mặt trời năm 2026",
+                "url": "https://doanhnhan.congly.vn/bo-cong-thuong-phe-duyet-khung-gia-phat-dien-mat-troi-nam-2026.html",
+                "source": "doanhnhan.congly.vn",
+                "summary": "Theo quyết định, đối với nhà máy điện mặt trời không sử dụng hệ thống pin lưu trữ năng lượng, giá phát điện tối đa của loại hình điện mặt trời mặt đất lần lượt là 1.591,02 đồng/kWh tại miền Bắc, 1.293,17 đồng/kWh tại miền Trung và 1.104,32 đồng/kWh tại miền Nam.\n\nVới loại hình điện mặt trời nổi, mức giá tối đa tương ứng tại ba khu vực lần lượt là 1.939,74 đồng/kWh, 1.560,63 đồng/kWh và 1.340,21 đồng/kWh. [...] Đối với nhà máy điện mặt trời có kết hợp hệ thống pin lưu trữ năng lượng, giá phát điện tối đa của điện mặt trời mặt đất tại miền Bắc là 1.813,48 đồng/kWh, miền Trung là 1.469,90 đồng/kWh và miền Nam là 1.254,97 đồng/kWh.\n\nTrong khi đó, điện mặt trời nổi có hệ thống pin lưu trữ được áp dụng mức giá tối đa lần lượt là 2.120,31 đồng/kWh tại miền Bắc, 1.703,21 đồng/kWh tại miền Trung và 1.461,39 đồng/kWh tại miền Nam. Các mức giá trên chưa bao gồm thuế giá trị gia tăng.",
+                "score": 0.5798055
+              },
+              {
+                "title": "Bộ Công Thương phê duyệt khung giá phát điện mặt trời năm 20",
+                "url": "https://thuonghieuvaphapluat.vn/bo-cong-thuong-phe-duyet-khung-gia-phat-dien-mat-troi-nam-2026-d85141.html",
+                "source": "thuonghieuvaphapluat.vn",
+                "summary": "Như vậy, trong các mức giá được phê duyệt, điện mặt trời nổi kết hợp hệ thống pin lưu trữ năng lượng tại miền Bắc có mức giá tối đa cao nhất là 2.120,31 đồng/kWh. Ngược lại, điện mặt trời mặt đất không sử dụng hệ thống pin lưu trữ tại miền Nam có mức giá tối đa thấp nhất, ở mức 1.104,32 đồng/kWh. [...] Đối với nhà máy điện mặt trời không sử dụng hệ thống pin lưu trữ năng lượng, mức giá tối đa tại miền Bắc là 1.591,02 đồng/kWh đối với điện mặt trời mặt đất và 1.939,74 đồng/kWh đối với điện mặt trời nổi.\n\n \n\nBộ Công Thương phê duyệt khung giá phát điện mặt trời năm 2026. Ảnh minh họa\n\n \n\nTại miền Trung, mức giá tương ứng là 1.293,17 đồng/kWh và 1.560,63 đồng/kWh. Trong khi đó, tại miền Nam, giá tối đa đối với điện mặt trời mặt đất là 1.104,32 đồng/kWh và điện mặt trời nổi là 1.340,21 đồng/kWh. [...] Cụ thể, tại miền Bắc, mức giá tối đa đối với điện mặt trời mặt đất là 1.813,48 đồng/kWh và điện mặt trời nổi là 2.120,31 đồng/kWh. Tại miền Trung, mức giá tương ứng là 1.469,90 đồng/kWh và 1.703,21 đồng/kWh. Đối với miền Nam, mức giá tương ứng là 1.254,97 đồng/kWh và 1.461,39 đồng/kWh. Các mức giá nêu trên chưa bao gồm thuế giá trị gia tăng (VAT).",
+                "score": 0.5553635
+              },
+              {
+                "title": "Quyết định 2946/QĐ-BCT: Giá phát điện mặt trời năm 2026 cao nhất là 2.120,31 đồng/kWh",
+                "url": "https://luatvietnam.vn/tin-van-ban-moi/gia-phat-dien-mat-troi-nam-2026-cao-nhat-la-212031-dong-kwh-186-115462-article.html",
+                "source": "luatvietnam.vn",
+                "summary": "Như vậy, theo khung giá được phê duyệt, mức giá phát điện mặt trời tối đa cao nhất năm 2026 là 2.120,31 đồng/kWh, áp dụng đối với nhà máy điện mặt trời nổi có kết hợp hệ thống pin lưu trữ năng lượng tại miền Bắc.\n\nTrong khi đó, mức giá tối đa thấp nhất là 1.104,32 đồng/kWh, áp dụng đối với nhà máy điện mặt trời mặt đất không sử dụng hệ thống pin lưu trữ năng lượng tại miền Nam. [...] Đơn vị: đồng/kWh\n\n|  |  |  |  |\n ---  --- |\n| Loại hình nhà máy điện mặt trời | Miền Bắc | Miền Trung | Miền Nam |\n| 1. Không sử dụng hệ thống pin lưu trữ năng lượng |  |  |  |\n| Điện mặt trời mặt đất | 1.591,02 | 1.293,17 | 1.104,32 |\n| Điện mặt trời nổi | 1.939,74 | 1.560,63 | 1.340,21 |\n| 2. Sử dụng kết hợp hệ thống pin lưu trữ năng lượng |  |  |  |\n| Điện mặt trời mặt đất | 1.813,48 | 1.469,90 | 1.254,97 |\n| Điện mặt trời nổi | 2.120,31 | 1.703,21 | 1.461,39 | [...] Cũng theo khoản 1 Điều 1 Quyết định này, các thông số của hệ thống pin lưu trữ năng lượng được sử dụng để tính toán mức giá tối đa của khung giá phát điện đối với nhà máy điện mặt trời có hệ thống pin lưu trữ năng lượng gồm:\n\n- Công suất tối thiểu bằng 10% công suất của nhà máy điện mặt trời.\n\n- Thời gian lưu trữ/xả là 02 giờ.",
+                "score": 0.48865002
+              },
+              {
+                "title": "Khung giá điện mặt trời cao nhất hơn 2.120 đồng một kWh - Báo VnExpress Kinh doanh",
+                "url": "https://vnexpress.net/khung-gia-dien-mat-troi-cao-nhat-hon-2-120-dong-mot-kwh-5142638.html",
+                "source": "vnexpress.net",
+                "summary": "Một nhà máy điện mặt trời (năng lượng sạch, năng lượng tái tạo) đã đi vào hoạt động ở huyện Tuy Phong, tỉnh Bình Thuận. Ảnh: Việt Quốc\n\nMột nhà máy điện mặt trời (năng lượng sạch, năng lượng tái tạo) đã đi vào hoạt động ở huyện Tuy Phong, tỉnh Bình Thuận. Ảnh: Việt Quốc\n\n \n\nTrong cùng khu vực và loại hình, nhà máy có pin lưu trữ được áp mức trần cao hơn khoảng 9-14%. Mức cao nhất hơn 2.120 đồng một kWh, áp dụng cho điện mặt trời nổi có pin lưu trữ ở miền Bắc. Các mức giá trên chưa gồm VAT. [...] Như vậy, mức giá phát điện tối đa của các nhà máy điện mặt trời năm 2026 tăng khoảng 7-17% so với năm trước. Trong đó, điện mặt trời mặt đất kết hợp pin lưu trữ ở miền Trung tăng mạnh nhất, từ 1.257 đồng lên gần 1.470 đồng một kWh.\n\nĐể tính giá trần cho nhà máy có pin lưu trữ, Bộ Công Thương lấy công suất hệ thống pin tối thiểu bằng 10% công suất nhà máy, với thời gian lưu trữ, xả điện là hai giờ. [...] Đến 2050, quy hoạch định hướng công suất điện mặt trời đạt 293.088-295.646 MW, còn pin lưu trữ đạt 95.983-96.120 MW.\n\nPhương Dung\n\nTrở lại Kinh doanhTrở lại Kinh doanh\n\ngoogle Thêm VnExpress trên Google   Chọn VnExpress làm nguồn ưu tiên trên Google Search. Xem hướng dẫn.\n\n   Copy link thành công\n\n## Chọn VnExpress làm nguồn ưu tiên trên Google Search",
+                "score": 0.48060113
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G10_switch_from_social_to_web_repeat2",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Latest request overrides earlier social-search intent."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm tweet về năng lượng mặt trời."
+        },
+        {
+          "role": "assistant",
+          "content": "Tôi có thể tìm thảo luận mạng xã hội về chủ đề đó."
+        },
+        {
+          "role": "user",
+          "content": "Bỏ tweet. Chỉ tìm tin tức năng lượng mặt trời hôm nay trên web."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "năng lượng mặt trời",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "năng lượng mặt trời",
+            "topic": "news",
+            "timeframe": "day"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "năng lượng mặt trời",
+            "topic": "news",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "Bộ Công Thương phê duyệt khung giá phát điện mặt trời năm 2026",
+                "url": "https://baobacninhtv.vn/bo-cong-thuong-phe-duyet-khung-gia-phat-dien-mat-troi-nam-2026-postid457998.bbg",
+                "source": "baobacninhtv.vn",
+                "summary": "Đối với nhà máy điện mặt trời không sử dụng hệ thống pin lưu trữ năng lượng, giá phát điện tối đa của loại hình điện mặt trời mặt đất lần lượt là 1.591,02 đồng/kWh tại miền Bắc, 1.293,17 đồng/kWh tại miền Trung và 1.104,32 đồng/kWh tại miền Nam. Với điện mặt trời nổi, các mức giá tương ứng là 1.939,74 đồng/kWh, 1.560,63 đồng/kWh và 1.340,21 đồng/kWh. [...] Đối với nhà máy điện mặt trời có kết hợp hệ thống pin lưu trữ năng lượng, giá phát điện tối đa của loại hình điện mặt trời mặt đất tại miền Bắc là 1.813,48 đồng/kWh, miền Trung là 1.469,90 đồng/kWh và miền Nam là 1.254,97 đồng/kWh. Trong khi đó, điện mặt trời nổi có mức giá tương ứng là 2.120,31 đồng/kWh, 1.703,21 đồng/kWh và 1.461,39 đồng/kWh. [...] Quyết định quy định các thông số của hệ thống pin lưu trữ năng lượng được sử dụng để tính toán mức giá tối đa của khung giá phát điện đối với nhà máy điện mặt trời có hệ thống lưu trữ, gồm công suất tối thiểu bằng 10% công suất của nhà máy điện mặt trời và thời gian lưu trữ/xả là 2 giờ.",
+                "score": 0.6063825
+              },
+              {
+                "title": "Bộ Công Thương phê duyệt khung giá phát điện mặt trời năm 2026",
+                "url": "https://doanhnhan.congly.vn/bo-cong-thuong-phe-duyet-khung-gia-phat-dien-mat-troi-nam-2026.html",
+                "source": "doanhnhan.congly.vn",
+                "summary": "Theo quyết định, đối với nhà máy điện mặt trời không sử dụng hệ thống pin lưu trữ năng lượng, giá phát điện tối đa của loại hình điện mặt trời mặt đất lần lượt là 1.591,02 đồng/kWh tại miền Bắc, 1.293,17 đồng/kWh tại miền Trung và 1.104,32 đồng/kWh tại miền Nam.\n\nVới loại hình điện mặt trời nổi, mức giá tối đa tương ứng tại ba khu vực lần lượt là 1.939,74 đồng/kWh, 1.560,63 đồng/kWh và 1.340,21 đồng/kWh. [...] Đối với nhà máy điện mặt trời có kết hợp hệ thống pin lưu trữ năng lượng, giá phát điện tối đa của điện mặt trời mặt đất tại miền Bắc là 1.813,48 đồng/kWh, miền Trung là 1.469,90 đồng/kWh và miền Nam là 1.254,97 đồng/kWh.\n\nTrong khi đó, điện mặt trời nổi có hệ thống pin lưu trữ được áp dụng mức giá tối đa lần lượt là 2.120,31 đồng/kWh tại miền Bắc, 1.703,21 đồng/kWh tại miền Trung và 1.461,39 đồng/kWh tại miền Nam. Các mức giá trên chưa bao gồm thuế giá trị gia tăng.",
+                "score": 0.5798055
+              },
+              {
+                "title": "Bộ Công Thương phê duyệt khung giá phát điện mặt trời năm 20",
+                "url": "https://thuonghieuvaphapluat.vn/bo-cong-thuong-phe-duyet-khung-gia-phat-dien-mat-troi-nam-2026-d85141.html",
+                "source": "thuonghieuvaphapluat.vn",
+                "summary": "Như vậy, trong các mức giá được phê duyệt, điện mặt trời nổi kết hợp hệ thống pin lưu trữ năng lượng tại miền Bắc có mức giá tối đa cao nhất là 2.120,31 đồng/kWh. Ngược lại, điện mặt trời mặt đất không sử dụng hệ thống pin lưu trữ tại miền Nam có mức giá tối đa thấp nhất, ở mức 1.104,32 đồng/kWh. [...] Đối với nhà máy điện mặt trời không sử dụng hệ thống pin lưu trữ năng lượng, mức giá tối đa tại miền Bắc là 1.591,02 đồng/kWh đối với điện mặt trời mặt đất và 1.939,74 đồng/kWh đối với điện mặt trời nổi.\n\n \n\nBộ Công Thương phê duyệt khung giá phát điện mặt trời năm 2026. Ảnh minh họa\n\n \n\nTại miền Trung, mức giá tương ứng là 1.293,17 đồng/kWh và 1.560,63 đồng/kWh. Trong khi đó, tại miền Nam, giá tối đa đối với điện mặt trời mặt đất là 1.104,32 đồng/kWh và điện mặt trời nổi là 1.340,21 đồng/kWh. [...] Cụ thể, tại miền Bắc, mức giá tối đa đối với điện mặt trời mặt đất là 1.813,48 đồng/kWh và điện mặt trời nổi là 2.120,31 đồng/kWh. Tại miền Trung, mức giá tương ứng là 1.469,90 đồng/kWh và 1.703,21 đồng/kWh. Đối với miền Nam, mức giá tương ứng là 1.254,97 đồng/kWh và 1.461,39 đồng/kWh. Các mức giá nêu trên chưa bao gồm thuế giá trị gia tăng (VAT).",
+                "score": 0.5553635
+              },
+              {
+                "title": "Quyết định 2946/QĐ-BCT: Giá phát điện mặt trời năm 2026 cao nhất là 2.120,31 đồng/kWh",
+                "url": "https://luatvietnam.vn/tin-van-ban-moi/gia-phat-dien-mat-troi-nam-2026-cao-nhat-la-212031-dong-kwh-186-115462-article.html",
+                "source": "luatvietnam.vn",
+                "summary": "Như vậy, theo khung giá được phê duyệt, mức giá phát điện mặt trời tối đa cao nhất năm 2026 là 2.120,31 đồng/kWh, áp dụng đối với nhà máy điện mặt trời nổi có kết hợp hệ thống pin lưu trữ năng lượng tại miền Bắc.\n\nTrong khi đó, mức giá tối đa thấp nhất là 1.104,32 đồng/kWh, áp dụng đối với nhà máy điện mặt trời mặt đất không sử dụng hệ thống pin lưu trữ năng lượng tại miền Nam. [...] Đơn vị: đồng/kWh\n\n|  |  |  |  |\n ---  --- |\n| Loại hình nhà máy điện mặt trời | Miền Bắc | Miền Trung | Miền Nam |\n| 1. Không sử dụng hệ thống pin lưu trữ năng lượng |  |  |  |\n| Điện mặt trời mặt đất | 1.591,02 | 1.293,17 | 1.104,32 |\n| Điện mặt trời nổi | 1.939,74 | 1.560,63 | 1.340,21 |\n| 2. Sử dụng kết hợp hệ thống pin lưu trữ năng lượng |  |  |  |\n| Điện mặt trời mặt đất | 1.813,48 | 1.469,90 | 1.254,97 |\n| Điện mặt trời nổi | 2.120,31 | 1.703,21 | 1.461,39 | [...] Cũng theo khoản 1 Điều 1 Quyết định này, các thông số của hệ thống pin lưu trữ năng lượng được sử dụng để tính toán mức giá tối đa của khung giá phát điện đối với nhà máy điện mặt trời có hệ thống pin lưu trữ năng lượng gồm:\n\n- Công suất tối thiểu bằng 10% công suất của nhà máy điện mặt trời.\n\n- Thời gian lưu trữ/xả là 02 giờ.",
+                "score": 0.48865002
+              },
+              {
+                "title": "Khung giá điện mặt trời cao nhất hơn 2.120 đồng một kWh - Báo VnExpress Kinh doanh",
+                "url": "https://vnexpress.net/khung-gia-dien-mat-troi-cao-nhat-hon-2-120-dong-mot-kwh-5142638.html",
+                "source": "vnexpress.net",
+                "summary": "Một nhà máy điện mặt trời (năng lượng sạch, năng lượng tái tạo) đã đi vào hoạt động ở huyện Tuy Phong, tỉnh Bình Thuận. Ảnh: Việt Quốc\n\nMột nhà máy điện mặt trời (năng lượng sạch, năng lượng tái tạo) đã đi vào hoạt động ở huyện Tuy Phong, tỉnh Bình Thuận. Ảnh: Việt Quốc\n\n \n\nTrong cùng khu vực và loại hình, nhà máy có pin lưu trữ được áp mức trần cao hơn khoảng 9-14%. Mức cao nhất hơn 2.120 đồng một kWh, áp dụng cho điện mặt trời nổi có pin lưu trữ ở miền Bắc. Các mức giá trên chưa gồm VAT. [...] Như vậy, mức giá phát điện tối đa của các nhà máy điện mặt trời năm 2026 tăng khoảng 7-17% so với năm trước. Trong đó, điện mặt trời mặt đất kết hợp pin lưu trữ ở miền Trung tăng mạnh nhất, từ 1.257 đồng lên gần 1.470 đồng một kWh.\n\nĐể tính giá trần cho nhà máy có pin lưu trữ, Bộ Công Thương lấy công suất hệ thống pin tối thiểu bằng 10% công suất nhà máy, với thời gian lưu trữ, xả điện là hai giờ. [...] Đến 2050, quy hoạch định hướng công suất điện mặt trời đạt 293.088-295.646 MW, còn pin lưu trữ đạt 95.983-96.120 MW.\n\nPhương Dung\n\nTrở lại Kinh doanhTrở lại Kinh doanh\n\ngoogle Thêm VnExpress trên Google   Chọn VnExpress làm nguồn ưu tiên trên Google Search. Xem hướng dẫn.\n\n   Copy link thành công\n\n## Chọn VnExpress làm nguồn ưu tiên trên Google Search",
+                "score": 0.48060113
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G10_switch_from_social_to_web_repeat3",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": true,
+      "metadata": {
+        "what_it_tests": "Latest request overrides earlier social-search intent."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm tweet về năng lượng mặt trời."
+        },
+        {
+          "role": "assistant",
+          "content": "Tôi có thể tìm thảo luận mạng xã hội về chủ đề đó."
+        },
+        {
+          "role": "user",
+          "content": "Bỏ tweet. Chỉ tìm tin tức năng lượng mặt trời hôm nay trên web."
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "năng lượng mặt trời",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "năng lượng mặt trời",
+            "topic": "news",
+            "timeframe": "day"
+          },
+          "result": {
+            "tool": "web_search",
+            "error": "SSLError",
+            "message": "HTTPSConnectionPool(host='api.tavily.com', port=443): Max retries exceeded with url: /search (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:1129)')))",
+            "status_code": null,
+            "retryable": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "H04_programming_research_allowed_repeat1",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Research ABOUT programming stays in scope."
+      },
+      "input": "Tìm trên web tài liệu nghiên cứu về lập trình bất đồng bộ.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "lập trình bất đồng bộ",
+              "topic": "general"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "lập trình bất đồng bộ",
+            "topic": "general"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "lập trình bất đồng bộ",
+            "topic": "general",
+            "timeframe": "week",
+            "items": [
+              {
+                "title": "Bản chất closure trong JavaScript và cách tránh rò rỉ bộ nhớ",
+                "url": "https://www.facebook.com/www.unicode.vn/posts/h%C3%A0m-cha-%C4%91%C3%A3-ch%E1%BA%A1y-xong-t%E1%BB%AB-l%C3%A2u-v%E1%BA%ADy-m%C3%A0-bi%E1%BA%BFn-b%C3%AAn-trong-n%C3%B3-v%E1%BA%ABn-s%E1%BB%91ng-v%C3%A0-ti%E1%BA%BFp-t%E1%BB%A5c-%C4%91%C6%B0%E1%BB%A3c-c/1435027785275364",
+                "source": "facebook.com",
+                "summary": "Xử lý bất đồng bộ Callback là hàm được truyền vào như một đối số, thường dùng để xử lý kết quả sau một hành động bất đồng bộ.",
+                "score": 0.42319635
+              },
+              {
+                "title": "JavaScript, event loop và bất đồng bộ | Phỏng vấn dạo",
+                "url": "https://www.youtube.com/watch?v=CQcWcQMRd1U",
+                "source": "youtube.com",
+                "summary": "JavaScript đã gọi API bất đồng bộ, vì sao giao diện vẫn đứng? Cùng lần theo call stack, tác vụ và microtask. tập trung vào JavaScript, event loop và công việc",
+                "score": 0.36956587
+              },
+              {
+                "title": "Thành thạo Giao tiếp Bất đồng bộ: Hướng dẫn và Lợi ích",
+                "url": "https://www.larksuite.com/vi_vn/blog/asynchronous-communication-definition-benefit-tips",
+                "source": "larksuite.com",
+                "summary": "1. Khuyến khích làm việc theo phương pháp bất đồng bộ đầu tiên · 2. Giao tiếp biểu cảm · 3. Lên kế hoạch cho thời gian giao tiếp không đồng bộ · 4. Sử dụng tính",
+                "score": 0.36527607
+              },
+              {
+                "title": "Lập trình viên là gì? Kỹ năng, lộ trình phát triển & tuổi nghề | CareerViet.vn",
+                "url": "https://careerviet.vn/vi/talentcommunity/wiki-career/lap-trinh-vien-la-gi-cong-viec-cua-mot-lap-trinh-vien.35A51E5A.html",
+                "source": "careerviet.vn",
+                "summary": "Lập trình viên chính là những người giải quyết bài toán bằng công nghệ, biến ý tưởng thành sản phẩm số có thể ứng dụng trong đời sống, từ ứng dụng di động, website, hệ thống quản lý cho đến trí tuệ nhn tạo.\n\nTrong ngành CNTT, lập trình viên đóng vai trò cầu nối giữa nhu cầu của khách hàng/doanh nghiệp và sản phẩm thực tế. Họ không chỉ cần am hiểu ngôn ngữ lập trình mà còn phải tư duy logic, sáng tạo để đưa ra giải pháp tối ưu. [...] Embedded software là phần mềm ghi vào bộ nhớ của thiết bị, thực hiện các nhiệm vụ cấp cao như xử lý dữ liệu, tương tác với các thiết bị khác. Nó có thể được cập nhật, nng cấp.\n Firmware là chương trình hướng dẫn được ghi vào bộ nhớ của thiết bị với các nhiệm vụ cụ thể, thực hiện các nhiệm vụ cấp thấp như chuyển đổi tín hiệu cảm biến. Firmware thường không cần phải cập nhật.\n\n### Lập trình viên cơ sở dữ liệu [...] Một vấn đề mà nghề lập trình viên thường hay gặp phải là áp lực công việc lớn do có rất nhiều đầu việc cần xử lý. Cùng với đó là luôn phải cập nhật kiến thức về công nghệ mới để phù hợp với thời đại. Vì vậy, nó chỉ phù hợp với những ai yêu thích thử thách, chịu được áp lực cao và có đam mê với nghề.\n\nNhà lập trình luôn phải đối mặt với áp lực công việc cao\n\n Luôn luôn phải tìm tòi, học hỏi, cập nhật kiến thức mới trong nghề",
+                "score": 0.09029351
+              },
+              {
+                "title": "rea/docs/readme/README_vi.md at main · morluto/rea · GitHub",
+                "url": "https://github.com/morluto/rea/blob/main/docs/readme/README_vi.md",
+                "source": "github.com",
+                "summary": "## Xy dựng môi trường RL\n\nTạo môi trường cục bộ để tác tử AI luyện các tác vụ như tìm issue hoặc tạo thư mục mà không cần chạy ứng dụng gốc. Dùng môi trường này cho học tăng cường (RL) hoặc để kiểm tra khả năng hoàn thành tác vụ của tác tử.\n\nREA biến các yêu cầu và phản hồi API đã ghi thành công cụ mà tác tử có thể gọi. Môi trường dùng dữ liệu đã ghi và chỉ hỗ trợ thay đổi khi bản ghi xác nhận tác động của thay đổi đó. [...] REA kết nối tác nhn của bạn với các công cụ kiểm tra tệp nhị phn mã máy, ứng dụng JavaScript và Electron, assembly .NET và trang web. Bạn cũng có thể dùng các công cụ đó từ terminal. Việc phn tích chạy cục bộ; kết quả bao gồm bằng chứng và giới hạn làm cơ sở cho từng kết luận. [...] Sau khi thiết lập REA trong tác tử, thay URL và các tác vụ thư mục bên dưới bằng thông tin của bạn:\n\n```\nDùng REA xy dựng môi trường RL từ ứng dụng web thử nghiệm của tôi tại  Bao gồm liệt kê, tạo, đổi tên và xóa thư mục. Có thể tạo và xóa thư mục thử nghiệm nhưng không thay đổi dữ liệu có sẵn. Lưu vào thư mục my-env, kiểm tra thao tác nào hoạt động và cho tôi biết cách chạy. \n```\n\n Dùng dòng lệnh",
+                "score": 0.05695076
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "H04_programming_research_allowed_repeat2",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Research ABOUT programming stays in scope."
+      },
+      "input": "Tìm trên web tài liệu nghiên cứu về lập trình bất đồng bộ.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "lập trình bất đồng bộ",
+              "topic": "general"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "lập trình bất đồng bộ",
+            "topic": "general"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "lập trình bất đồng bộ",
+            "topic": "general",
+            "timeframe": "week",
+            "items": [
+              {
+                "title": "Bản chất closure trong JavaScript và cách tránh rò rỉ bộ nhớ",
+                "url": "https://www.facebook.com/www.unicode.vn/posts/h%C3%A0m-cha-%C4%91%C3%A3-ch%E1%BA%A1y-xong-t%E1%BB%AB-l%C3%A2u-v%E1%BA%ADy-m%C3%A0-bi%E1%BA%BFn-b%C3%AAn-trong-n%C3%B3-v%E1%BA%ABn-s%E1%BB%91ng-v%C3%A0-ti%E1%BA%BFp-t%E1%BB%A5c-%C4%91%C6%B0%E1%BB%A3c-c/1435027785275364",
+                "source": "facebook.com",
+                "summary": "Xử lý bất đồng bộ Callback là hàm được truyền vào như một đối số, thường dùng để xử lý kết quả sau một hành động bất đồng bộ.",
+                "score": 0.42319635
+              },
+              {
+                "title": "JavaScript, event loop và bất đồng bộ | Phỏng vấn dạo",
+                "url": "https://www.youtube.com/watch?v=CQcWcQMRd1U",
+                "source": "youtube.com",
+                "summary": "JavaScript đã gọi API bất đồng bộ, vì sao giao diện vẫn đứng? Cùng lần theo call stack, tác vụ và microtask. tập trung vào JavaScript, event loop và công việc",
+                "score": 0.36956587
+              },
+              {
+                "title": "Thành thạo Giao tiếp Bất đồng bộ: Hướng dẫn và Lợi ích",
+                "url": "https://www.larksuite.com/vi_vn/blog/asynchronous-communication-definition-benefit-tips",
+                "source": "larksuite.com",
+                "summary": "1. Khuyến khích làm việc theo phương pháp bất đồng bộ đầu tiên · 2. Giao tiếp biểu cảm · 3. Lên kế hoạch cho thời gian giao tiếp không đồng bộ · 4. Sử dụng tính",
+                "score": 0.36527607
+              },
+              {
+                "title": "Lập trình viên là gì? Kỹ năng, lộ trình phát triển & tuổi nghề | CareerViet.vn",
+                "url": "https://careerviet.vn/vi/talentcommunity/wiki-career/lap-trinh-vien-la-gi-cong-viec-cua-mot-lap-trinh-vien.35A51E5A.html",
+                "source": "careerviet.vn",
+                "summary": "Lập trình viên chính là những người giải quyết bài toán bằng công nghệ, biến ý tưởng thành sản phẩm số có thể ứng dụng trong đời sống, từ ứng dụng di động, website, hệ thống quản lý cho đến trí tuệ nhn tạo.\n\nTrong ngành CNTT, lập trình viên đóng vai trò cầu nối giữa nhu cầu của khách hàng/doanh nghiệp và sản phẩm thực tế. Họ không chỉ cần am hiểu ngôn ngữ lập trình mà còn phải tư duy logic, sáng tạo để đưa ra giải pháp tối ưu. [...] Embedded software là phần mềm ghi vào bộ nhớ của thiết bị, thực hiện các nhiệm vụ cấp cao như xử lý dữ liệu, tương tác với các thiết bị khác. Nó có thể được cập nhật, nng cấp.\n Firmware là chương trình hướng dẫn được ghi vào bộ nhớ của thiết bị với các nhiệm vụ cụ thể, thực hiện các nhiệm vụ cấp thấp như chuyển đổi tín hiệu cảm biến. Firmware thường không cần phải cập nhật.\n\n### Lập trình viên cơ sở dữ liệu [...] Một vấn đề mà nghề lập trình viên thường hay gặp phải là áp lực công việc lớn do có rất nhiều đầu việc cần xử lý. Cùng với đó là luôn phải cập nhật kiến thức về công nghệ mới để phù hợp với thời đại. Vì vậy, nó chỉ phù hợp với những ai yêu thích thử thách, chịu được áp lực cao và có đam mê với nghề.\n\nNhà lập trình luôn phải đối mặt với áp lực công việc cao\n\n Luôn luôn phải tìm tòi, học hỏi, cập nhật kiến thức mới trong nghề",
+                "score": 0.09029351
+              },
+              {
+                "title": "rea/docs/readme/README_vi.md at main · morluto/rea · GitHub",
+                "url": "https://github.com/morluto/rea/blob/main/docs/readme/README_vi.md",
+                "source": "github.com",
+                "summary": "## Xy dựng môi trường RL\n\nTạo môi trường cục bộ để tác tử AI luyện các tác vụ như tìm issue hoặc tạo thư mục mà không cần chạy ứng dụng gốc. Dùng môi trường này cho học tăng cường (RL) hoặc để kiểm tra khả năng hoàn thành tác vụ của tác tử.\n\nREA biến các yêu cầu và phản hồi API đã ghi thành công cụ mà tác tử có thể gọi. Môi trường dùng dữ liệu đã ghi và chỉ hỗ trợ thay đổi khi bản ghi xác nhận tác động của thay đổi đó. [...] REA kết nối tác nhn của bạn với các công cụ kiểm tra tệp nhị phn mã máy, ứng dụng JavaScript và Electron, assembly .NET và trang web. Bạn cũng có thể dùng các công cụ đó từ terminal. Việc phn tích chạy cục bộ; kết quả bao gồm bằng chứng và giới hạn làm cơ sở cho từng kết luận. [...] Sau khi thiết lập REA trong tác tử, thay URL và các tác vụ thư mục bên dưới bằng thông tin của bạn:\n\n```\nDùng REA xy dựng môi trường RL từ ứng dụng web thử nghiệm của tôi tại  Bao gồm liệt kê, tạo, đổi tên và xóa thư mục. Có thể tạo và xóa thư mục thử nghiệm nhưng không thay đổi dữ liệu có sẵn. Lưu vào thư mục my-env, kiểm tra thao tác nào hoạt động và cho tôi biết cách chạy. \n```\n\n Dùng dòng lệnh",
+                "score": 0.05695076
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "H04_programming_research_allowed_repeat3",
+      "phase": "B",
+      "suite": "cross",
+      "case_suite": "cross",
+      "is_multiturn": false,
+      "metadata": {
+        "what_it_tests": "Research ABOUT programming stays in scope."
+      },
+      "input": "Tìm trên web tài liệu nghiên cứu về lập trình bất đồng bộ.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "general"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "lập trình bất đồng bộ",
+              "topic": "general"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "lập trình bất đồng bộ",
+            "topic": "general"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "lập trình bất đồng bộ",
+            "topic": "general",
+            "timeframe": "week",
+            "items": [
+              {
+                "title": "Bản chất closure trong JavaScript và cách tránh rò rỉ bộ nhớ",
+                "url": "https://www.facebook.com/www.unicode.vn/posts/h%C3%A0m-cha-%C4%91%C3%A3-ch%E1%BA%A1y-xong-t%E1%BB%AB-l%C3%A2u-v%E1%BA%ADy-m%C3%A0-bi%E1%BA%BFn-b%C3%AAn-trong-n%C3%B3-v%E1%BA%ABn-s%E1%BB%91ng-v%C3%A0-ti%E1%BA%BFp-t%E1%BB%A5c-%C4%91%C6%B0%E1%BB%A3c-c/1435027785275364",
+                "source": "facebook.com",
+                "summary": "Xử lý bất đồng bộ Callback là hàm được truyền vào như một đối số, thường dùng để xử lý kết quả sau một hành động bất đồng bộ.",
+                "score": 0.42319635
+              },
+              {
+                "title": "JavaScript, event loop và bất đồng bộ | Phỏng vấn dạo",
+                "url": "https://www.youtube.com/watch?v=CQcWcQMRd1U",
+                "source": "youtube.com",
+                "summary": "JavaScript đã gọi API bất đồng bộ, vì sao giao diện vẫn đứng? Cùng lần theo call stack, tác vụ và microtask. tập trung vào JavaScript, event loop và công việc",
+                "score": 0.36956587
+              },
+              {
+                "title": "Thành thạo Giao tiếp Bất đồng bộ: Hướng dẫn và Lợi ích",
+                "url": "https://www.larksuite.com/vi_vn/blog/asynchronous-communication-definition-benefit-tips",
+                "source": "larksuite.com",
+                "summary": "1. Khuyến khích làm việc theo phương pháp bất đồng bộ đầu tiên · 2. Giao tiếp biểu cảm · 3. Lên kế hoạch cho thời gian giao tiếp không đồng bộ · 4. Sử dụng tính",
+                "score": 0.36527607
+              },
+              {
+                "title": "Lập trình viên là gì? Kỹ năng, lộ trình phát triển & tuổi nghề | CareerViet.vn",
+                "url": "https://careerviet.vn/vi/talentcommunity/wiki-career/lap-trinh-vien-la-gi-cong-viec-cua-mot-lap-trinh-vien.35A51E5A.html",
+                "source": "careerviet.vn",
+                "summary": "Lập trình viên chính là những người giải quyết bài toán bằng công nghệ, biến ý tưởng thành sản phẩm số có thể ứng dụng trong đời sống, từ ứng dụng di động, website, hệ thống quản lý cho đến trí tuệ nhn tạo.\n\nTrong ngành CNTT, lập trình viên đóng vai trò cầu nối giữa nhu cầu của khách hàng/doanh nghiệp và sản phẩm thực tế. Họ không chỉ cần am hiểu ngôn ngữ lập trình mà còn phải tư duy logic, sáng tạo để đưa ra giải pháp tối ưu. [...] Embedded software là phần mềm ghi vào bộ nhớ của thiết bị, thực hiện các nhiệm vụ cấp cao như xử lý dữ liệu, tương tác với các thiết bị khác. Nó có thể được cập nhật, nng cấp.\n Firmware là chương trình hướng dẫn được ghi vào bộ nhớ của thiết bị với các nhiệm vụ cụ thể, thực hiện các nhiệm vụ cấp thấp như chuyển đổi tín hiệu cảm biến. Firmware thường không cần phải cập nhật.\n\n### Lập trình viên cơ sở dữ liệu [...] Một vấn đề mà nghề lập trình viên thường hay gặp phải là áp lực công việc lớn do có rất nhiều đầu việc cần xử lý. Cùng với đó là luôn phải cập nhật kiến thức về công nghệ mới để phù hợp với thời đại. Vì vậy, nó chỉ phù hợp với những ai yêu thích thử thách, chịu được áp lực cao và có đam mê với nghề.\n\nNhà lập trình luôn phải đối mặt với áp lực công việc cao\n\n Luôn luôn phải tìm tòi, học hỏi, cập nhật kiến thức mới trong nghề",
+                "score": 0.09029351
+              },
+              {
+                "title": "rea/docs/readme/README_vi.md at main · morluto/rea · GitHub",
+                "url": "https://github.com/morluto/rea/blob/main/docs/readme/README_vi.md",
+                "source": "github.com",
+                "summary": "## Xy dựng môi trường RL\n\nTạo môi trường cục bộ để tác tử AI luyện các tác vụ như tìm issue hoặc tạo thư mục mà không cần chạy ứng dụng gốc. Dùng môi trường này cho học tăng cường (RL) hoặc để kiểm tra khả năng hoàn thành tác vụ của tác tử.\n\nREA biến các yêu cầu và phản hồi API đã ghi thành công cụ mà tác tử có thể gọi. Môi trường dùng dữ liệu đã ghi và chỉ hỗ trợ thay đổi khi bản ghi xác nhận tác động của thay đổi đó. [...] REA kết nối tác nhn của bạn với các công cụ kiểm tra tệp nhị phn mã máy, ứng dụng JavaScript và Electron, assembly .NET và trang web. Bạn cũng có thể dùng các công cụ đó từ terminal. Việc phn tích chạy cục bộ; kết quả bao gồm bằng chứng và giới hạn làm cơ sở cho từng kết luận. [...] Sau khi thiết lập REA trong tác tử, thay URL và các tác vụ thư mục bên dưới bằng thông tin của bạn:\n\n```\nDùng REA xy dựng môi trường RL từ ứng dụng web thử nghiệm của tôi tại  Bao gồm liệt kê, tạo, đổi tên và xóa thư mục. Có thể tạo và xóa thư mục thử nghiệm nhưng không thay đổi dữ liệu có sẵn. Lưu vào thư mục my-env, kiểm tra thao tác nào hoạt động và cho tôi biết cách chạy. \n```\n\n Dùng dòng lệnh",
+                "score": 0.05695076
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

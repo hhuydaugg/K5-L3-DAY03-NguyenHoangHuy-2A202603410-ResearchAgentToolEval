@@ -11,8 +11,8 @@ class ClarifyThenCancelProvider:
     default_model = "offline-ui-test"
 
     def complete(self, messages, tools=None, **kwargs):
-        if "hủy" in messages[-1]["content"].lower():
-            return ModelResponse(text="Đã hủy yêu cầu; không gửi gì.", tool_calls=[])
+        if "hủy" in next(m["content"] for m in reversed(messages) if m["role"] == "user").lower():
+            return ModelResponse(text=None, tool_calls=[ToolCall("finish_response", {"text": "Đã hủy yêu cầu; không gửi gì.", "kind": "cancelled"})])
         return ModelResponse(text=None, tool_calls=[ToolCall("clarify", {
             "question": "Bạn muốn xem tài khoản nào?", "response_type": "text"
         })])
