@@ -108,6 +108,7 @@ starter_v0/
   company_policy/             # local markdown KB for bonus policy tool
   providers/                  # OpenRouter/OpenAI/Anthropic/Gemini/Ollama (local) adapters
   scripts/preflight_provider.py
+  samples/                    # mock format examples (transcript, run-analysis, version_log)
 ```
 
 ## Tool Tracks

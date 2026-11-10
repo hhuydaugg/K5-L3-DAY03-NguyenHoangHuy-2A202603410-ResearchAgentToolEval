@@ -47,7 +47,7 @@ Live-only adapter có thêm finish_response để kết thúc lượt bằng ans
 
 ## B1. Versions, hypotheses và kết quả thật
 
-Các mốc nhóm giữ nguyên: v0 OpenAI 14/20; v1 OpenAI 19/20; v2 OpenAI 20/20 (giữ các run mốc chính và v2 stability thành công; các run stability thất bại cũ nằm trong bảng lịch sử). Đã xác minh hash baseline v0 nhóm khác starter do CRLF so với LF: chuyển hai file starter từ commit 73bf0f556ed8 sang CRLF khớp cả prompt_hash và tools_hash gốc; nội dung không khác. V3 scope ban đầu có controlled comparison dùng cùng OpenRouter/11-tool configuration: control 19/20, v3 20/20; manual refusal 0/6 → 6/6 trên hai câu cố định lặp ba lần. Xem analysis/v3_scope_manual_review.csv. Không so OpenAI và OpenRouter như cùng điều kiện.
+Các mốc nhóm giữ nguyên: v0 OpenAI 14/20; v1 OpenAI 19/20; v2 OpenAI 20/20 (giữ các run mốc chính và v2 stability thành công; toàn bộ raw run nhóm trước PR #3 được bảo toàn, gồm stability/rejected trials). Đã xác minh hash baseline v0 nhóm khác starter do CRLF so với LF: chuyển hai file starter từ commit 73bf0f556ed8 sang CRLF khớp cả prompt_hash và tools_hash gốc; nội dung không khác. V3 scope ban đầu có controlled comparison dùng cùng OpenRouter/11-tool configuration: control 19/20, v3 20/20; manual refusal 0/6 → 6/6 trên hai câu cố định lặp ba lần. Xem analysis/v3_scope_manual_review.csv. Không so OpenAI và OpenRouter như cùng điều kiện.
 
 Hardening hiện tại có các giả thuyết/bản sửa riêng: stage rõ giúp phân biệt chuẩn bị và gửi; schema clarify chặt tránh nhầm response_type/stage và thiếu question; quy tắc nguồn hiện tại/carry-over tránh gọi dư; runtime kiểm tra quyền gửi và xử lý lỗi độc lập với model. Đây là nhiều bản sửa, không quy toàn bộ thay đổi điểm cho một dòng prompt.
 
@@ -56,12 +56,10 @@ Hardening hiện tại có các giả thuyết/bản sửa riêng: stage rõ gi�
 | Base | 20/20; measured=20; provider_errors=0 | runs/v3_B_base_openrouter_20261110T140413243846.json |
 | Group | 10/10; measured=10; provider_errors=0 | runs/v3_B_group_openrouter_20261110T130027992623.json |
 | 16 probes bổ sung | 16/16; measured=16; provider_errors=0 | runs/v3_B_cross_openrouter_20261110T140411362763.json |
-| 3 probes ×3 | 9/9; measured=9; provider_errors=0 | runs/v3-stability_B_cross_openrouter_20261110T140348993404.json |
-| Account carry-over ×3 | 3/3; measured=3; provider_errors=0 | runs/v3-author-stability_B_cross_openrouter_20261110T130012778338.json |
 
 **Offline:** 151 passed, 0 failed, 0 skipped; 1 cảnh báo LibreSSL từ môi trường. Không thay đổi nội dung eval_base.json.
 
-Hồ sơ gọn giữ 18 raw run cần cho baseline, các mốc nhóm, đối chứng và stability; 3 transcript cần cho UI/lịch sử/live hiện tại. Các trial trung gian được bỏ khỏi working tree theo yêu cầu dọn repo; toàn bộ metric và SHA-256 vẫn có trong analysis/experiment_history.csv, kể cả các lần 85%, 90%, group 9/10 và robustness 13/16 hoặc 15/16. Bản raw cũ có thể khôi phục từ Git trước commit dọn dẹp; file chưa commit có bản backup ngoài repo. Không dùng tập file đã rút gọn để tuyên bố ổn định hoặc chỉ có kết quả tốt. Hai lượt bị PermissionError lúc lưu và một request bị ngắt không có JSON hoàn chỉnh, không được ghi nhận điểm. Runner nay kiểm tra quyền lưu bằng file tạm trước khi gọi API. OpenAI-compatible client có timeout mặc định 60 giây, không retry ẩn và luôn đóng client; có thể cấu hình MODEL_TIMEOUT_SECONDS dương.
+Hồ sơ giữ 21 raw run và 4 transcript: bảo toàn nguyên 11 run/3 transcript của nhóm trước PR #3; phần cá nhân giữ 10 run và 1 transcript phục vụ replay, v3 cuối, robustness và đối chứng. Các trial cá nhân trung gian được bỏ khỏi working tree theo yêu cầu dọn repo; toàn bộ metric và SHA-256 vẫn có trong analysis/experiment_history.csv, kể cả các lần 85%, 90%, group 9/10 và robustness 13/16 hoặc 15/16. Bản raw cũ có thể khôi phục từ Git trước commit dọn dẹp; file chưa commit có bản backup ngoài repo. Không dùng tập file đã rút gọn để tuyên bố ổn định hoặc chỉ có kết quả tốt. Hai lượt bị PermissionError lúc lưu và một request bị ngắt không có JSON hoàn chỉnh, không được ghi nhận điểm. Runner nay kiểm tra quyền lưu bằng file tạm trước khi gọi API. OpenAI-compatible client có timeout mặc định 60 giây, không retry ẩn và luôn đóng client; có thể cấu hình MODEL_TIMEOUT_SECONDS dương.
 
 Các probes bổ sung là bộ phát triển do nhóm tự tạo, đã được dùng trong vòng sửa; không gọi là held-out benchmark. Repeats là cùng câu hỏi ở temperature 0, không phải nhiều câu độc lập. Chưa chứng minh tổng quát hóa hoặc end-to-end hoàn hảo.
 
@@ -129,7 +127,7 @@ Raw base/group dùng model tool calls trực tiếp (11 registered tools); CLI/U
 - [x] Có baseline và evidence v1/v2/v3 thật; version_log giữ nguyên mốc nhóm và bổ sung trial/revision đúng hash.
 - [x] Có >=5 tool, tool mới + TOOL.md + registry + declaration + >=3 tests.
 - [x] Có 10 group cases, 5 single + 5 multi, có new-tool route.
-- [x] Có base/group JSON, fresh development probes, planned repeats, CLI >=3 lượt và report.
+- [x] Có base/group JSON, development probes, CLI >=3 lượt và report; các repeats bổ sung không bắt buộc được rút gọn, metric lịch sử vẫn được giữ.
 - [x] Offline tests không fail/skip; UI code chạy được và metadata/consent session có test.
 - [x] Giữ benchmark của nhóm: eval_base.json không đổi; không sửa dữ liệu điểm hoặc đổi nhãn run cũ.
 - [ ] Public UI URL cho người ngoài máy: chưa triển khai trong thay đổi này.
@@ -143,7 +141,7 @@ Không thực hiện bonus Ollama trong phần này; không có kết quả loca
 
 ## B8. Hồ sơ tối giản và kiểm tra trước nộp
 
-Chỉ giữ code chạy agent/UI, tests, data, report, version log và bằng chứng cần đối chiếu. Đã bỏ hướng dẫn/checklist phụ, script audit phụ, poster lịch sử, snapshot active trùng file gốc, snapshot local v2 đã thay thế và báo cáo lịch sử trùng. Các snapshot v0/v1/v2 lấy từ lịch sử main dùng cho replay; v2_control/v3 phục vụ đối chứng scope.
+Chỉ giữ code chạy agent/UI, tests, data, report, version log và bằng chứng cần đối chiếu. Đã bỏ hướng dẫn/checklist phụ, script audit phụ, snapshot active trùng file gốc, snapshot local v2 đã thay thế và báo cáo cá nhân lịch sử trùng. Các file đã có trước PR #3 được giữ lại, gồm cả poster lịch sử, samples và bảng phân tích nhóm; chúng không đại diện cấu hình active hiện tại. Các snapshot v0/v1/v2 lấy từ lịch sử main dùng cho replay; v2_control/v3 phục vụ đối chứng scope.
 
 Còn phải hoàn thiện public UI URL, descriptions policy/paper_text và timeframe, provider frontmatter của tool mới, và trình bày giới hạn thí nghiệm nhiều thay đổi. Không coi điểm routing 100% là xác nhận dịch vụ nguồn hoặc gửi Telegram end-to-end.
 
@@ -158,3 +156,13 @@ Các snapshot artifacts/v0, artifacts/v1, artifacts/v2 lấy nguyên từ các c
 V3 hiện có: 20/20 tại runs/v3_B_base_openrouter_20261110T140413243846.json; không chạy lại v3 trong đợt này. Run v3 đó không áp output cap 512 của replay, nên chưa gọi cả v0–v3 là so sánh đồng nhất hoàn toàn. Các mốc OpenAI 14/20, 19/20, 20/20 là bằng chứng nhóm cũ, không thay bằng điểm OpenRouter mới. Chất lượng thực thi nguồn vẫn phải đọc tool_results; không suy ra end-to-end thành công từ routing score.
 
 Truy xuất v0: source LF prompt SHA f0c107a9d7a14032c948d642d7c36f2a85cb6d69a099530093a874c94d472446 và tools SHA 8db0ba629f52ad1ec171bae4e4e84472c12f950fa1a6db5e1d27bad6e749b740. Chỉ chuyển LF sang CRLF sẽ khớp prompt SHA eb1c8179815bd79d34de7d326420bb99b3072e6e8ae96464c02d4411f905fc68 và tools SHA 5b22a2476d41b989d5dc1e54f24ce7890e781909deb2f7afafb856ab53a6d7c0 của baseline nhóm. Vì vậy đã xác minh khác biệt byte do xuống dòng, không phải thay nội dung.
+
+## B10. Bộ bằng chứng được chọn cho bài nộp
+
+Giữ nguyên từng byte 11 run và 3 transcript tồn tại trước PR #3 để không xóa bằng chứng nhóm. Đây là lịch sử cần được phân biệt với phần cá nhân; việc một run có FAIL không có nghĩa được loại khỏi bài so sánh.
+
+Phần cá nhân giữ 10 run: 3 replay v0/v1/v2; v3 active base/group/robustness; 2 run base v2-control/v3 scope và 2 run scope repeats đối chứng. Giữ 1 live transcript v3 active 5 lượt. Các cặp đối chứng có config khác active và chỉ dùng cho kết luận scope tương ứng, không gộp thành điểm active.
+
+Bỏ 2 run scope group cũ (v2-control 9/10 và v3 scope 9/10), 2 run lặp hardening/account bổ sung và transcript scope cũ. Chúng không còn cần để chứng minh kết quả bản nộp. Không thay score JSON còn giữ; điểm của run đã bỏ vẫn ở analysis/experiment_history.csv. Bản raw cũ có thể khôi phục từ Git history. Run mới thấp điểm vẫn giữ vì là baseline/so sánh, không chỉ chọn JSON đạt 100%.
+
+Quy tắc bảo toàn sau rà soát: không xóa file có trước PR #3. Các run/transcript nhóm, bảng phân tích nhóm, version_changes.html và samples được khôi phục từ đúng bản trước merge, không chỉnh nội dung để phù hợp điểm mới. Chỉ rút gọn phần cá nhân thêm trong PR #3 hoặc sau đó. Không tự động đồng bộ việc dọn local vào main. Bộ file chọn để nộp dùng các đường dẫn trong report/version log; giữ nguyên cấu trúc nhóm để không gây xáo trộn.
