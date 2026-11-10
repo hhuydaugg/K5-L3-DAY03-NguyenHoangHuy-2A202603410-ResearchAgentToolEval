@@ -1,4 +1,4 @@
-# Research Agent — báo cáo đóng góp cá nhân và nhóm (Trần Thanh Tùng - 2A202603418)
+# Research Agent — báo cáo đóng góp cá nhân và nhóm
 
 ## Team
 
