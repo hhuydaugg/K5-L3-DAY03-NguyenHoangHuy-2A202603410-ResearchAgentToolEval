@@ -5,7 +5,7 @@
 - Team: AZEZ
 - Members: Nguyễn Hoàng Huy; Nguyễn Thế Văn; Trần Thanh Tùng; Trần Hoàng Phát; Vũ Quang Dũng.
 - Contribution owner: Trần Hoàng Phát. One active personal branch: phattran. Separate phattran-v3 branch deleted after all commits were merged and pushed; PR #2 closed without merging main.
-- Version evidence remains v0/v1/v2/v3 as required. No earlier JSON was relabeled or deleted. Current follow-up is a v3 hardening revision with a new artifact hash.
+- Version evidence remains v0/v1/v2/v3 as required. Raw JSON labels are unchanged. Superseded trial files were removed from this branch during submission cleanup; all run metrics/hashes remain in analysis/experiment_history.csv and originals are recoverable from Git history or the external pre-cleanup backup. Current follow-up is a v3 hardening revision with a new artifact hash.
 
 # PHẦN A — Giới thiệu agent
 
@@ -61,11 +61,13 @@ Hardening hiện tại có các giả thuyết/bản sửa riêng: stage rõ gi�
 
 **Offline:** 151 passed, 0 failed, 0 skipped; 1 cảnh báo LibreSSL từ môi trường. Không thay đổi nội dung eval_base.json.
 
-Giữ mọi trial có JSON hoàn chỉnh, kể cả các lần 85%, 90%, group 9/10 và robustness 13/16 hoặc 15/16. Không chọn riêng run đẹp để tuyên bố ổn định. Hai lượt bị PermissionError lúc lưu và một request bị ngắt không có JSON hoàn chỉnh, không được ghi nhận điểm. Runner nay kiểm tra quyền lưu bằng file tạm trước khi gọi API. OpenAI-compatible client có timeout mặc định 60 giây, không retry ẩn và luôn đóng client; có thể cấu hình MODEL_TIMEOUT_SECONDS dương.
+Hồ sơ gọn giữ 24 raw run cần cho baseline, các mốc nhóm/local, đối chứng, rejected trials và stability; 6 transcript cần cho UI/lịch sử/live hiện tại. Các trial trung gian được bỏ khỏi working tree theo yêu cầu dọn repo; toàn bộ metric và SHA-256 vẫn có trong analysis/experiment_history.csv, kể cả các lần 85%, 90%, group 9/10 và robustness 13/16 hoặc 15/16. Bản raw cũ có thể khôi phục từ Git trước commit dọn dẹp; file chưa commit có bản backup ngoài repo. Không dùng tập file đã rút gọn để tuyên bố ổn định hoặc chỉ có kết quả tốt. Hai lượt bị PermissionError lúc lưu và một request bị ngắt không có JSON hoàn chỉnh, không được ghi nhận điểm. Runner nay kiểm tra quyền lưu bằng file tạm trước khi gọi API. OpenAI-compatible client có timeout mặc định 60 giây, không retry ẩn và luôn đóng client; có thể cấu hình MODEL_TIMEOUT_SECONDS dương.
 
 Các probes bổ sung là bộ phát triển do nhóm tự tạo, đã được dùng trong vòng sửa; không gọi là held-out benchmark. Repeats là cùng câu hỏi ở temperature 0, không phải nhiều câu độc lập. Chưa chứng minh tổng quát hóa hoặc end-to-end hoàn hảo.
 
 ## B2. Những lỗi đã xử lý và cách đo
+
+**Đối chiếu baseline v0:** `analysis/baseline_failure_review.csv` liệt kê đủ 6 case FAIL gốc cùng kỳ vọng/call thực tế và bản sửa. R08/R14: out_of_scope nhưng gọi send; R10: thiếu tài khoản nhưng tự chọn sama; R11: thiếu URL nhưng tạo example.com/article; R12: gửi khi chưa xác nhận; R13: chọn đúng hai tool nhưng sai query và thiếu topic=news. R13 mang nhãn dataset `wrong_tool`, trong khi observed mismatch là `wrong_arg_value`; không sửa nhãn gốc. Đã đọc actual_text của R08/R14 trong latest base và xác nhận có lời từ chối, không chỉ căn cứ PASS no-tool.
 
 - G08: đồng ý chuẩn bị nhưng thiếu nội dung → clarify text/collect_send_text, không lặp lại consent yes_no. Nếu đã có nội dung, chuyển thẳng sang confirm_send.
 - Live structured questions: CLI/UI yêu cầu tool calls, dùng clarify cho câu hỏi và finish_response cho lời kết. Plain text hoặc batch trộn clarify/finish/send bị từ chối; có sửa có giới hạn, không âm thầm giả làm tool call. Raw attempts vẫn được giữ.
@@ -138,3 +140,11 @@ Không tuyên bố mọi đầu vào đều đúng chỉ từ các bộ nhỏ n�
 ## B7. Bonus local model
 
 Không thực hiện bonus Ollama trong phần này; không có kết quả local-model được báo cáo.
+
+## B8. Audit nộp bài tại local
+
+Xem `artifacts/SUBMISSION_CHECKLIST.md` để đối chiếu từng yêu cầu và `artifacts/DEMO_GUIDE.md` để chạy UI, demo, kiểm tra evidence, đóng gói. Script `scripts/audit_submission.py` kiểm tra đường dẫn, số case và hash offline; pass script không có nghĩa tất cả tiêu chí chấm bài đã hoàn thành.
+
+Các điểm còn mở: public UI URL, mô tả when/when-not của policy/paper_text và convention timeframe ở active declarations, cách tính vòng đơn thay đổi của v1 kế thừa từ nhóm, cùng deadline demo lịch sử. Lần thử bổ sung description bị HTTP 402: measured=0, provider_errors=20/10; các run đó chỉ được lưu trong bảng lịch sử/backup, không diễn giải 0% thành chất lượng agent giảm. Preflight cùng đợt cũng bị HTTP 402. Active prompt/tools vẫn nguyên hash đã kiểm chứng, không áp điểm 20/20 và 10/10 cho thay đổi chưa kiểm chứng.
+
+Dọn hồ sơ trên nhánh phattran: bỏ trial/transcript trung gian, bảng parse trùng, samples, bản đề xuất chưa áp dụng và công cụ/biên bản đóng gói phụ. Giữ code, tests, data, hồ sơ v0–v3, đối chứng, stability, screenshot demo và bằng chứng hiện tại. .env/.venv chỉ giữ local, tiếp tục được Git ignore; không sửa main.

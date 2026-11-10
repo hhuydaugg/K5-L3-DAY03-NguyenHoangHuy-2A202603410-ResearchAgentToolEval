@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-11-10T07:41:21.692984+00:00",
+  "command": "python -m streamlit run app.py --server.address 127.0.0.1 --server.port 8503 --server.headless true --browser.gatherUsageStats false",
+  "base_url": "http://127.0.0.1:8503",
+  "public_url_verified": false,
+  "model_api_tested_by_this_smoke": false,
+  "/_stcore/health": {
+    "http_status": 200,
+    "expected_content": true
+  },
+  "/": {
+    "http_status": 200,
+    "expected_content": true
+  }
+}
