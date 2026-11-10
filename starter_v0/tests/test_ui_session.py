@@ -31,7 +31,7 @@ def test_ui_logs_clarification_and_cancellation_without_send(monkeypatch, tmp_pa
     assert not app.exception
     paths = list((tmp_path / "transcripts").glob("*.json"))
     assert len(paths) == 1
-    transcript = json.loads(paths[0].read_text())
+    transcript = json.loads(paths[0].read_text(encoding="utf-8"))
     assert transcript["version"] == "v3"
     assert len(transcript["turns"]) == 2
     assert transcript["turns"][0]["status"] == "waiting_for_user"
@@ -53,4 +53,4 @@ def test_ui_configuration_change_starts_a_separate_transcript(monkeypatch, tmp_p
     assert app.session_state["transcript_path"] != original
     assert app.session_state["history"] == []
     assert app.session_state["transcript"]["model"] == "different-model"
-    assert json.loads(original.read_text())["model"] == "offline-ui-test"
+    assert json.loads(original.read_text(encoding="utf-8"))["model"] == "offline-ui-test"
