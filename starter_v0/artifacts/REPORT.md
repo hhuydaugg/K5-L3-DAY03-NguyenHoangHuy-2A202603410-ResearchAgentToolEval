@@ -1,11 +1,13 @@
 
-## Báo cáo Đánh giá & Đóng góp Cá nhân
+## Báo cáo nhóm AZEZ — Research Agent Tool Eval
 
-**Thông tin nhóm & Tác giả:**
+**Thông tin nhóm:**
 - **Nhóm:** AZEZ
-- **Thành viên:** Nguyễn Hoàng Huy (Lead), Nguyễn Thế Văn, **Trần Thanh Tùng (MSSV: 2A202603418)**, Trần Hoàng Phát, Vũ Quang Dũng.
-- **Nhánh thực hiện:** `tranthanhtung`
-- **Môi trường & Model:** OpenRouter (`gpt-4o-mini`) / OpenAI API
+- **Thành viên:** Nguyễn Hoàng Huy (Lead, 2A202603410), Nguyễn Thế Văn (2A202603474), Trần Thanh Tùng (2A202603418), Trần Hoàng Phát (2A202603536), Vũ Quang Dũng (2A202603486).
+- **Bản tổng hợp:** `main`, tiếp nhận đóng góp từ các nhánh cá nhân qua PR.
+- **Môi trường & Model:** OpenAI (`gpt-4o-mini`) và OpenRouter (`openai/gpt-4o-mini`); provider của từng phép đo được phân biệt ở phần B1.
+
+Phần A/B mô tả sản phẩm và kết quả chung của nhóm. Tên người biên tập báo cáo không đại diện cho toàn bộ tác giả của code hoặc thực nghiệm. Đóng góp cá nhân được ghi riêng ở B8, kèm commit/PR và bằng chứng để nhóm cùng đối chiếu, bổ sung.
 
 ---
 
@@ -16,6 +18,7 @@
 Research Agent của nhóm AZEZ là hệ thống trợ lý nghiên cứu đa kênh tự động: hỗ trợ thu thập dữ liệu song song từ mạng xã hội (Twitter/X), tin tức web thời gian thực, cơ sở dữ liệu bài báo khoa học arXiv và chính sách bảo mật nội bộ; đồng thời tích hợp bộ lọc loại bỏ trùng lặp nguồn (deduplication) và cơ chế chốt chặn an toàn nhiều bước (Multi-stage Consent) bắt buộc người dùng xác nhận bản xem trước (preview) trước khi xuất bản tin lên Telegram.
 
 * **Giao diện tương tác:** Streamlit Web UI (`app.py`, chạy cổng local `8501` hoặc `8503`).
+* **Link dùng thử ngoài máy:** Chưa có public UI URL được xác minh trong bộ bằng chứng hiện tại.
 
 ## A2. Bảng danh mục công cụ (Tools)
 
@@ -45,7 +48,7 @@ Research Agent của nhóm AZEZ là hệ thống trợ lý nghiên cứu đa kê
 
 ---
 
-# PHẦN B — Chi tiết Thực nghiệm & Đóng góp Cá nhân
+# PHẦN B — Chi tiết Thực nghiệm & Đóng góp của nhóm
 
 ## B1. Lịch sử tiến hóa các phiên bản & Bằng chứng thực nghiệm
 
@@ -58,7 +61,9 @@ Nhóm AZEZ tuân thủ quy trình lặp dựa trên dữ liệu (Evidence-driven
 | **v2** | Đưa quy tắc xác nhận `send` lên mức ưu tiên cao nhất trong prompt, giải quyết triệt để ca R12 | **20/20** (100%) | `runs/v2_B_base_openai_20261110T114859713670.json` |
 | **v3 & Hardening** | Tích hợp tool `deduplicate_sources`; thiết lập quy trình xác nhận 2 giai đoạn (chuẩn bị $\rightarrow$ preview $\rightarrow$ gửi); kiểm soát ranh giới scope toán/code; chống gọi lặp tool | **20/20 Base**<br>**10/10 Group**<br>**16/16 Probes** | `runs/v3_B_base_openrouter_20261110T140413243846.json`<br>`runs/v3_B_group_openrouter_20261110T130027992623.json` |
 
-* **Độ ổn định (Stability Tests):** Chạy lặp lại x3 trên các kịch bản khó (Hardening probes: 9/9, Account carry-over: 3/3).
+Các run v0–v2 trong bảng dùng OpenAI; v3 dùng OpenRouter. Không diễn giải đây là phép so sánh cùng điều kiện hoặc quy toàn bộ cải thiện cho prompt. Điểm base/group/probes đo chọn tool và tham số, không chứng minh các dịch vụ nguồn hoặc Telegram thực thi thành công end-to-end. Raw probes v3: `runs/v3_B_cross_openrouter_20261110T140411362763.json`.
+
+* **Các lượt lặp bổ sung trong lịch sử:** Metric được giữ ở `analysis/experiment_history.csv`. Hai raw run hardening 9/9 và account carry-over 3/3 đã được rút khỏi hồ sơ gọn; không dùng chúng như bằng chứng raw hiện có để khẳng định độ ổn định của bản nộp.
 * **Kiểm thử Offline:** Toàn bộ **151/151 unit tests đều PASS** (`0 failed, 0 skipped`).
 
 ## B2. Phân tích lỗi thực tế & Biện pháp khắc phục
@@ -100,14 +105,14 @@ Trích xuất trực tiếp từ transcript thực nghiệm: `transcripts/v3_ope
 * **Lượt 2:** Yêu cầu đăng bài lên Telegram $\rightarrow$ Agent gọi `clarify` xin phép chuẩn bị bản tin.
 * **Lượt 3:** Người dùng đồng ý chuẩn bị nhưng báo chưa có text $\rightarrow$ Agent gọi `clarify` xin nội dung chi tiết.
 * **Lượt 4:** Người dùng cung cấp nội dung $\rightarrow$ Agent xuất bản preview đầy đủ và hỏi xác nhận lần cuối.
-* **Lượt 5:** Người dùng gõ *"Hủy không gửi nữa"* $\rightarrow$ Agent lập tức dừng lại, trả về thông báo: *"Yêu cầu đã bị hủy. Không có gì được gửi đi."* (Trạng thái an toàn tuyệt đối).
+* **Lượt 5:** Người dùng gõ *"Hủy không gửi nữa"* $\rightarrow$ Agent dừng lại, trả về thông báo: *"Yêu cầu đã bị hủy. Không có gì được gửi đi."* Không có send call trong kịch bản này; kết quả không chứng minh an toàn với mọi đầu vào.
 
 ## B5. Kiểm chứng Unit Tests & Giao diện người dùng
 
 * **Hệ thống 151 Unit Tests (`pytest`):** Đạt tỷ lệ thành công 100% (**151 passed, 0 failed**). Bộ test kiểm chứng:
   * Tính toàn vẹn của hợp đồng JSON Schema giữa `tools.yaml` và code Python (`test_tool_contract.py`).
   * Hoạt động của tool mới `deduplicate_sources` (giữ nguyên mục đầu tiên, loại bỏ URL trùng lặp, bảo toàn thứ tự).
-  * Kiểm soát rủi ro quyền gửi Telegram ở tầng runtime (`test_live_guard.py`), đảm bảo không thể bypass xác nhận bằng cách chèn text lách luật.
+  * Kiểm soát rủi ro quyền gửi Telegram ở tầng runtime (`test_live_guard.py`): kiểm tra các trường hợp xác nhận, hủy, thay nội dung và đổi đích. Các phép thử HTTP gửi dùng mock, không chứng minh giao tin Telegram thật.
 * **Giao diện Streamlit UI (`app.py`):**
   * Hỗ trợ chuyển đổi linh hoạt giữa các nhà cung cấp mô hình (OpenRouter, OpenAI, Gemini).
   * Hiển thị bảng điều khiển trực quan: khung xem chi tiết tham số tool calls (dạng JSON expandable) và theo dõi trạng thái consent session độc lập cho từng người dùng.
@@ -116,7 +121,7 @@ Trích xuất trực tiếp từ transcript thực nghiệm: `transcripts/v3_ope
 
 1. **Ranh giới giữa `system_prompt.md` và `tools.yaml`:**
    * Các **quy tắc ưu tiên hành vi và ranh giới an toàn** (ví dụ: xác nhận gửi phải ưu tiên hơn hỏi thông tin thiếu; không đoán mò dữ liệu) bắt buộc phải nằm trong `system_prompt.md`.
-   * Các **ràng buộc kỹ thuật về kiểu dữ liệu và tham số bắt buộc** (như `required: [question, response_type]`, định nghĩa enum `text`/`yes_no`) phải được chuẩn hóa trong `tools.yaml`. Khi schema chặt chẽ, mô hình sẽ tự động sinh arguments chính xác mà không tốn token mô tả dài dòng trong prompt.
+   * Các **ràng buộc kỹ thuật về kiểu dữ liệu và tham số bắt buộc** (như `required: [question, response_type]`, định nghĩa enum `text`/`yes_no`) phải được chuẩn hóa trong `tools.yaml`. Schema rõ giúp giảm lỗi tham số; vẫn cần mô tả routing, đọc raw model calls và chạy eval để kiểm chứng.
 2. **Những lỗi bắt buộc phải có sự đánh giá của con người (Manual Review):**
    * Các bài test tự động chỉ chấm được việc model có gọi đúng tên tool và đúng tham số hay không. Tuy nhiên, tính phù hợp ngữ nghĩa (Semantic Relevance), giọng điệu lịch sự, sự tự nhiên của câu hỏi trong `clarify`, và việc kiểm tra xem nội dung cào về có phải là trang lỗi giả dạng (soft-404) hay không... bắt buộc phải có sự kiểm tra thực tế từ con người.
 3. **Định hướng tối ưu hóa tiếp theo:**
@@ -126,3 +131,30 @@ Trích xuất trực tiếp từ transcript thực nghiệm: `transcripts/v3_ope
 ## B7. Thử thách Mô hình cục bộ (Local Model)
 
 Nhóm tập trung tối ưu hóa chuyên sâu chất lượng và độ an toàn trên nền tảng cloud model (OpenRouter / OpenAI) để đạt độ chính xác tối đa trên cả 3 bộ eval (Base, Group, Probes); do đó không thực hiện phần thử nghiệm mở rộng với Ollama local model trong phạm vi bài nộp này.
+
+## B8. Ghi nhận đóng góp thành viên
+
+Các mốc v0/v1/v2, UI và code có sẵn được kế thừa từ công việc chung của nhóm. Mục dưới đây bổ sung phần có bằng chứng trên nhánh cá nhân; không thay thế hoặc nhận phần việc của thành viên khác. Các thành viên cùng bổ sung nhiệm vụ của mình và commit/PR tương ứng tại mục này để báo cáo phản ánh đầy đủ đóng góp của cả nhóm, không suy ra tỷ lệ đóng góp chỉ từ số commit hoặc số file.
+
+### Trần Hoàng Phát — MSSV 2A202603536
+
+**Nhánh cá nhân:** `phattran`; **GitHub:** `phattoohigh`.
+
+Các nhiệm vụ thực hiện và lưu bằng chứng trên nhánh:
+
+1. **Tool mới:** triển khai `tools/deduplicate_sources/`, đăng ký trong `tools/__init__.py` và `artifacts/tools.yaml`; bổ sung 12 test cases sau parameterization cho đường chạy thành công, input không hợp lệ và lỗi parser. Tool giữ URL đầu tiên, thứ tự và metadata, không mutate input.
+2. **V3 scope và hợp đồng công cụ:** bổ sung quy tắc từ chối giải toán/viết code ngoài phạm vi nhưng vẫn hỗ trợ nghiên cứu về các chủ đề đó; thực hiện cặp control có cùng provider/tool configuration để kiểm chứng thay đổi scope. Xem `analysis/v3_scope_manual_review.csv`; các lượt v3 scope cũ được ghi nhãn `v3-draft-scope` trong version log.
+3. **Hội thoại và consent:** phát triển các stage chuẩn bị, thu thập nội dung, preview và xác nhận cuối; kiểm tra hủy/thay đổi nội dung, đổi đích và ngăn dùng lại quyền gửi. Transcript v3 ở B4 ghi nhận kịch bản 5 lượt, không gửi thật.
+4. **Runtime và kiểm thử hồi quy:** xử lý query rỗng/URL tự tạo trong live flow, nguồn lỗi/rỗng, gọi tool lặp và provider lỗi; sửa lỗi grader với list chứa object và bổ sung regression tests; kiểm tra consent/session của UI. One-shot evaluator ghi nhận proposed send nhưng không gửi. Không nhận toàn bộ 151 test là do cá nhân viết; đây là tổng suite của nhóm.
+5. **Eval và bằng chứng:** bổ sung 10 group cases (5 single-turn, 5 contextual multi-turn), development probes và chạy v3 đạt base 20/20, group 10/10, probes 16/16 theo các JSON ở B1. Probes là bộ phát triển đã dùng trong quá trình sửa, không phải held-out benchmark.
+6. **Replay và truy xuất nguồn:** lấy nguyên cấu hình v0/v1/v2 từ lịch sử main, chạy tuần tự qua OpenRouter và lưu raw JSON; xác minh hash v0 nhóm khác bản source LF do xuống dòng CRLF trên Windows. Dọn riêng trial cá nhân đã được thay thế, bảo toàn file nhóm có trước PR #3.
+
+**Kết quả replay cá nhân, không phải vòng tối ưu mới:** cùng `openai/gpt-4o-mini` qua OpenRouter, temperature=0, max_tokens=512; mỗi lượt measured=20, provider_errors=0:
+
+- `v0-openrouter-replay`: 13/20 (65%) — `runs/v0_B_base_openrouter_20261110T155117759410.json`.
+- `v1-openrouter-replay`: 19/20 (95%) — `runs/v1_B_base_openrouter_20261110T155220687009.json`.
+- `v2-openrouter-replay`: 20/20 (100%) — `runs/v2_B_base_openrouter_20261110T155320532977.json`.
+
+V3 ở B1 là run trước đó, chưa áp cùng output cap 512; không coi cả bốn mốc là một phép so sánh đồng nhất hoàn toàn. Các thay đổi hardening gộp nhiều bản sửa được tách khỏi thí nghiệm scope đơn yếu tố, không quy mọi cải thiện cho một dòng prompt.
+
+**Dấu vết đóng góp:** [PR #3](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/pull/3), [PR #5](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/pull/5) đã merge; commit tiêu biểu `ab7195d` (tool/group cases/tests), `57b3177` (scope có đối chứng), `a204ee8` (hardening), `8238631` (replay), `ac7c3a2` (bảo toàn bằng chứng nhóm). Tác giả các run còn được ghi trong `artifacts/version_log.csv`.
