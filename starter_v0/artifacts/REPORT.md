@@ -9,6 +9,8 @@
 
 Phần A/B mô tả sản phẩm và kết quả chung của nhóm. Tên người biên tập báo cáo không đại diện cho toàn bộ tác giả của code hoặc thực nghiệm. Đóng góp cá nhân được ghi riêng ở B8, kèm commit/PR và bằng chứng để nhóm cùng đối chiếu, bổ sung.
 
+**Cách làm việc của nhóm (theo thống nhất của nhóm):** Mỗi thành viên đều xây dựng và thử nghiệm các phiên bản v0–v3 ở local hoặc trên nhánh cá nhân. Các thành viên trình bày kết quả, thảo luận ưu/nhược điểm và bảo vệ quan điểm bằng lý do kỹ thuật cùng bằng chứng thực nghiệm. Sau khi trao đổi, nhóm chọn phương án có kết quả và lập luận phù hợp để tích hợp, phát triển tiếp. Vì vậy, `main` là bản tổng hợp đã được chọn, không đại diện cho toàn bộ thử nghiệm của từng người; việc chọn một phương án không thay thế việc ghi nhận đóng góp của các thành viên khác. Quy trình này do nhóm xác nhận; bằng chứng đã tập trung lên Git và tình trạng tích hợp của từng phần được phân biệt ở B8.
+
 ---
 
 # PHẦN A — Giới thiệu Agent
@@ -136,6 +138,27 @@ Nhóm tập trung tối ưu hóa chuyên sâu chất lượng và độ an toàn
 
 Các mốc v0/v1/v2, UI và code có sẵn được kế thừa từ công việc chung của nhóm. Mục dưới đây bổ sung phần có bằng chứng trên nhánh cá nhân; không thay thế hoặc nhận phần việc của thành viên khác. Các thành viên cùng bổ sung nhiệm vụ của mình và commit/PR tương ứng tại mục này để báo cáo phản ánh đầy đủ đóng góp của cả nhóm, không suy ra tỷ lệ đóng góp chỉ từ số commit hoặc số file.
 
+Các mục dưới đây tổng hợp phần truy xuất được từ các nhánh/commit tại thời điểm cập nhật. Nhánh cá nhân có thể còn các thử nghiệm chưa được chọn vào `main`; công việc ngoài Git do thành viên và nhóm xác nhận thêm. Không cộng kết quả của các provider hoặc cấu hình khác nhau thành một phép so sánh chung.
+
+### Nguyễn Hoàng Huy — MSSV 2A202603410
+
+- Chuẩn bị và lưu baseline v0 OpenAI cùng UI Streamlit ban đầu, bảng phân tích và transcript UI: commit `05e7f9e`.
+- Phát triển thay đổi v2 ưu tiên xác nhận gửi trước hỏi thông tin thiếu: commit `e56a110`; bổ sung tests cho các tool có sẵn: commit `340ae98`.
+- Chuẩn hóa xuống dòng để hash nhất quán giữa Windows/macOS (`0e7b344`), sửa test đọc UTF-8 trên Windows (`5ab43c6`) và chuẩn hóa nhãn version trong log (`0e61e1e`).
+- **Bằng chứng:** run baseline/v2 OpenAI ở B1 và lịch sử commit trên `main`. Đây là các phần đã được tích hợp vào bản nhóm.
+
+### Nguyễn Thế Văn — MSSV 2A202603474
+
+- Tối ưu prompt để hỏi lại khi thiếu thông tin, làm rõ xác nhận gửi và thay các chỉ dẫn đoán/ép hoàn thành một bước của starter.
+- Điều chỉnh declaration `clarify`, yêu cầu rõ `response_type` và ghi lại các lượt thử, phân tích và version log: commit `1fd06e6`.
+- **Bằng chứng:** [PR #1](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/pull/1), các dòng v1/v1-step trong `artifacts/version_log.csv` và run v1 OpenAI ở B1. Phần này đã vào `main`; nhãn version lịch sử được nhóm chuẩn hóa lại trong quá trình tích hợp.
+
+### Trần Thanh Tùng — MSSV 2A202603418
+
+- Biên soạn và cập nhật `REPORT.md`: giới thiệu agent/tool, kịch bản thử, bảng phiên bản và phân tích lỗi.
+- Tổng hợp phần trình bày kết quả v3, group cases, live chat, unit tests và reflection dựa trên bằng chứng chung của nhóm.
+- **Bằng chứng:** commit `1061d66`, `09a767a`, `734ff0e` trên nhánh `thanhtung` và [PR #6](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/pull/6) đã merge vào `main`.
+
 ### Trần Hoàng Phát — MSSV 2A202603536
 
 **Nhánh cá nhân:** `phattran`; **GitHub:** `phattoohigh`.
@@ -158,3 +181,10 @@ Các nhiệm vụ thực hiện và lưu bằng chứng trên nhánh:
 V3 ở B1 là run trước đó, chưa áp cùng output cap 512; không coi cả bốn mốc là một phép so sánh đồng nhất hoàn toàn. Các thay đổi hardening gộp nhiều bản sửa được tách khỏi thí nghiệm scope đơn yếu tố, không quy mọi cải thiện cho một dòng prompt.
 
 **Dấu vết đóng góp:** [PR #3](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/pull/3), [PR #5](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/pull/5) đã merge; commit tiêu biểu `ab7195d` (tool/group cases/tests), `57b3177` (scope có đối chứng), `a204ee8` (hardening), `8238631` (replay), `ac7c3a2` (bảo toàn bằng chứng nhóm). Tác giả các run còn được ghi trong `artifacts/version_log.csv`.
+
+### Vũ Quang Dũng — MSSV 2A202603486
+
+- Phát triển phương án riêng trên nhánh `QuangDung`: bổ sung các tool `filter`, `rank`, `sources`, đăng ký tool, tests và group cases; cập nhật prompt/declaration và chat/encoding cho quá trình thử nghiệm.
+- Lưu các lượt eval và transcript Gemini. Các JSON trên nhánh riêng ghi nhận base v1 13/20, v2 15/20, v3 20/20 và group v3 10/10; các lượt này đo đủ số case và không lỗi provider. Đây là kết quả của phương án Gemini, không thay các kết quả OpenAI/OpenRouter ở B1.
+- **Bằng chứng nhánh riêng:** commit `5a09a9f`, `fd66227`, `fec8aa0`; [nhánh QuangDung](https://github.com/hhuydaugg/K5-L3-DAY03-NguyenHoangHuy-2A202603410-ResearchAgentToolEval/tree/QuangDung). Các file base v1/v2/v3 Gemini có timestamp lần lượt `20261110T122013639908`, `20261110T122431453288`, `20261110T123228953059`; group v3 là `20261110T123423722288`.
+- **Tình trạng tích hợp:** các commit/tool trên nhánh riêng này chưa được merge vào `main` tại thời điểm đối chiếu. Cần review và kiểm tra tương thích trước khi tích hợp; không tính chúng là các tool đang chạy trong bản main hoặc tự động cộng vào số tool mới của bản nộp hiện tại.
