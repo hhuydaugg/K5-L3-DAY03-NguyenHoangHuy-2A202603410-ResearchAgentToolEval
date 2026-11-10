@@ -20,7 +20,7 @@ Nguồn yêu cầu: README.md ở root, mục Scope, TODO Checklist, Step 2 và 
 
 1. **Link UI dùng thử từ máy khác.** Chưa có public URL đã xác minh. `localhost` không đáp ứng mục link dùng thử. Có hướng dẫn tunnel trong DEMO_GUIDE; cần mở demo, thử từ máy khác rồi ghi URL/thời điểm vào report. Không tạo link giả.
 2. **Description cho mọi tool.** Active `policy`, `paper_text` chưa nêu rõ when/when-not; `timeframe` còn chung chung. Lần thử sửa description bị HTTP 402 và measured_cases=0; proposal chưa áp dụng đã được bỏ khỏi hồ sơ gọn. Khi sửa lại phải có bằng chứng khớp hash mới; không áp điểm 100% cũ cho thay đổi mới.
-3. **“Mỗi vòng một thay đổi/một giả thuyết”.** V3 scope có controlled comparison một đoạn prompt; hardening nhiều thay đổi được tách mô tả. Canonical v1 kế thừa từ nhóm gộp sửa prompt và clarify schema; version log có các bước trung gian nhưng không phải tất cả đều cùng provider. Nêu minh bạch và để nhóm/giảng viên xác nhận cách tính vòng; không tái tạo baseline giả hay sửa lịch sử để đủ tiêu chí.
+3. **“Mỗi vòng một thay đổi/một giả thuyết”.** V3 scope có controlled comparison một đoạn prompt; hardening nhiều thay đổi được tách mô tả. Canonical v1 kế thừa từ nhóm gộp sửa prompt và clarify schema; bảng lịch sử có các bước trung gian nhưng không phải tất cả đều cùng provider. Nêu minh bạch và để nhóm/giảng viên xác nhận cách tính vòng; không tái tạo baseline giả hay sửa lịch sử để đủ tiêu chí.
 4. **Provider hiện tại:** preflight và hai run đề xuất bị HTTP 402 (ngân sách/token mặc định), chưa phải model sai. Cần xử lý hạn mức hoặc bổ sung giới hạn output token có kiểm thử trước khi demo/chạy mới. Không tiếp tục retry hàng loạt khi lỗi này còn tồn tại.
 
 ## Bonus — không phải phần bắt buộc còn thiếu
@@ -32,4 +32,6 @@ Nguồn yêu cầu: README.md ở root, mục Scope, TODO Checklist, Step 2 và 
 
 ## Dọn dẹp và bảo toàn
 
-Đã bỏ các run/transcript trung gian được thay thế, bảng parse trùng, samples, proposal chưa áp dụng và hồ sơ đóng gói phụ. Giữ 24 raw run, 6 transcript và bảng analysis/experiment_history.csv với toàn bộ metric/hash của các lần thử, kể cả fail. Giữ .env/.venv ở local và ignore trên Git. Dọn bằng commit thường trên phattran, không rewrite history hoặc thay main. Các file cũ đã commit có thể khôi phục từ lịch sử Git; có backup ngoài repo cho cả file chưa commit.
+Đã bỏ các run/transcript trung gian được thay thế, bảng parse trùng, samples, proposal chưa áp dụng và hồ sơ đóng gói phụ. Giữ 15 raw run, 3 transcript và bảng analysis/experiment_history.csv với toàn bộ metric/hash của các lần thử, kể cả fail. Giữ .env/.venv ở local và ignore trên Git. Dọn bằng commit thường trên phattran, không rewrite history hoặc thay main. Các file cũ đã commit có thể khôi phục từ lịch sử Git; có backup ngoài repo cho cả file chưa commit.
+
+Đợt dọn tiếp: xóa toàn bộ raw trong runs/rejected, stability v1 thất bại, baseline OpenRouter trùng, các bước v1 trung gian và run/transcript local v2 đã được thay thế; giữ raw baseline v0, mốc v1 chung và đối chứng v2-control dù có case FAIL vì cần cho so sánh. Transcript từ chối tác vụ ngoài phạm vi hoặc xác nhận hủy đúng yêu cầu không được coi là thất bại.
