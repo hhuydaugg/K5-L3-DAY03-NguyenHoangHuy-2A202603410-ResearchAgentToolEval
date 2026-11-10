@@ -1,10 +1,10 @@
-# Research Agent — báo cáo hiện tại trên nhánh phattran
+# Research Agent — báo cáo đóng góp cá nhân và nhóm (Trần Thanh Tùng - 2A202603418)
 
 ## Team
 
 - Team: AZEZ
 - Members: Nguyễn Hoàng Huy; Nguyễn Thế Văn; Trần Thanh Tùng; Trần Hoàng Phát; Vũ Quang Dũng.
-- Contribution owner: Trần Hoàng Phát. One active personal branch: phattran. Separate phattran-v3 branch deleted after all commits were merged and pushed; PR #2 closed without merging main.
+- Contribution owner: Trần Thanh Tùng (MSSV: 2A202603418). Active personal branch: `tranthanhtung`. Đóng góp: Thử nghiệm đánh giá an toàn, kiểm thử live Streamlit UI, xác thực guardrail xác nhận gửi và rà soát tính nhất quán báo cáo nhóm.
 - Version evidence remains v0/v1/v2/v3 as required. No earlier JSON was relabeled or deleted. Current follow-up is a v3 hardening revision with a new artifact hash.
 
 # PHẦN A — Giới thiệu agent
@@ -15,7 +15,7 @@ Agent nghiên cứu web, mạng xã hội, paper arXiv và company policies; đ�
 
 Telegram có các bước riêng: đồng ý chuẩn bị → lấy nội dung → preview đầy đủ và kênh đã cấu hình → xác nhận cuối ở lượt sau → gửi đúng bản đã xác nhận. Chưa gửi, thay đổi, từ chối, hủy hoặc đổi đích sẽ không giữ quyền gửi cũ. Chỉ hỗ trợ kênh cấu hình trên server.
 
-**UI local:** http://localhost:8503 — chạy `python -m streamlit run app.py --server.port 8503` từ starter_v0. Chưa có public deployment URL được xác minh; link local không phải link cho máy khác.
+**UI local:** http://localhost:8503 — chạy `python -m streamlit run app.py --server.port 8503` từ starter_v0 (hoặc cổng 8501). Chưa có public deployment URL được xác minh; link local không phải link cho máy khác.
 
 ## A2. Tools
 
@@ -67,14 +67,18 @@ Các probes bổ sung là bộ phát triển do nhóm tự tạo, đã được 
 
 ## B2. Những lỗi đã xử lý và cách đo
 
-- G08: đồng ý chuẩn bị nhưng thiếu nội dung → clarify text/collect_send_text, không lặp lại consent yes_no. Nếu đã có nội dung, chuyển thẳng sang confirm_send.
-- Live structured questions: CLI/UI yêu cầu tool calls, dùng clarify cho câu hỏi và finish_response cho lời kết. Plain text hoặc batch trộn clarify/finish/send bị từ chối; có sửa có giới hạn, không âm thầm giả làm tool call. Raw attempts vẫn được giữ.
-- Runtime consent: phải có prepare consent và preview; chỉ một yes rõ ràng ở lượt SAU preview cho phép gửi đúng text và đúng destination hash. Cancel/edit/uncertain answer/destination change hủy quyền; gửi xong hoặc lỗi thì tiêu thụ quyền. Không gửi lại tự động.
-- Preview: tool tạo câu hỏi hiển thị toàn văn và đích cấu hình. Với nội dung người dùng gắn nhãn rõ, runtime giữ nguyên text đã cho, tách chỉ dẫn điều khiển như câu chưa gửi ở cuối; nội dung được quote thì giữ nguyên. Mismatch bị trả lại để model sửa, không sửa ngầm arguments trong log.
-- Đọc nguồn: query rỗng hoặc URL tự tạo bị chặn ở live runtime. Nguồn HTTP lỗi/timeout, metadata HTTP lỗi hoặc nội dung rỗng không được coi là thành công. Không có nguồn dùng được thì trả lỗi/no_results cố định; có nguồn tốt lẫn lỗi thì luôn kèm thông báo lỗi. Gọi lặp cùng arguments không thực hiện network lần nữa trong lượt đó.
-- Provider lỗi sau khi đọc nguồn: giữ kết quả công cụ trước đó và lỗi trong transcript, không làm mất trace hoặc giả là đã hoàn tất.
-- Low-level send: yêu cầu boolean true thật và text không rỗng; Telegram ok=false không báo sent. Lỗi URL có bot token được che trước khi log. One-shot evaluator không thực hiện gửi; model-proposed calls vẫn được chấm như cũ.
-- Source/author routing: một yêu cầu bài của tác giả không tự thêm social_search; nguồn đã bị bỏ không quay lại khi chỉ nhắc lại chủ đề. Tài khoản đã biết dùng handle đã xác minh, không ghép họ tên để đoán (account_alias_sources.md).
+- Ở v0 baseline: R08 thực tế gọi nhầm `send` khi câu hỏi ngoài phạm vi; R10 gọi `timeline` tự đoán handle; R11 gọi `fetch` tự đoán URL; R12 gọi `send(text=...)` mà không có tham số `confirmed`; R13 sai query/topic.
+- Ở v1: sửa prompt bỏ chỉ dẫn đoán mò và bắt buộc `response_type` trong `tools.yaml`, nâng điểm lên 19/20; còn ca R12 hỏi nội dung bằng text thay vì xin xác nhận yes_no.
+- Ở v2: ưu tiên guardrail `clarify(yes_no)` lên hàng đầu, đạt 20/20 trên OpenAI.
+- Ở v3 và hardening:
+  - G08: đồng ý chuẩn bị nhưng thiếu nội dung → clarify text/collect_send_text, không lặp lại consent yes_no. Nếu đã có nội dung, chuyển thẳng sang confirm_send.
+  - Live structured questions: CLI/UI yêu cầu tool calls, dùng clarify cho câu hỏi và finish_response cho lời kết. Plain text hoặc batch trộn clarify/finish/send bị từ chối; có sửa có giới hạn, không âm thầm giả làm tool call. Raw attempts vẫn được giữ.
+  - Runtime consent: phải có prepare consent và preview; chỉ một yes rõ ràng ở lượt SAU preview cho phép gửi đúng text và đúng destination hash. Cancel/edit/uncertain answer/destination change hủy quyền; gửi xong hoặc lỗi thì tiêu thụ quyền. Không gửi lại tự động.
+  - Preview: tool tạo câu hỏi hiển thị toàn văn và đích cấu hình. Với nội dung người dùng gắn nhãn rõ, runtime giữ nguyên text đã cho, tách chỉ dẫn điều khiển như câu chưa gửi ở cuối; nội dung được quote thì giữ nguyên. Mismatch bị trả lại để model sửa, không sửa ngầm arguments trong log.
+  - Đọc nguồn: query rỗng hoặc URL tự tạo bị chặn ở live runtime. Nguồn HTTP lỗi/timeout, metadata HTTP lỗi hoặc nội dung rỗng không được coi là thành công. Không có nguồn dùng được thì trả lỗi/no_results cố định; có nguồn tốt lẫn lỗi thì luôn kèm thông báo lỗi. Gọi lặp cùng arguments không thực hiện network lần nữa trong lượt đó.
+  - Provider lỗi sau khi đọc nguồn: giữ kết quả công cụ trước đó và lỗi trong transcript, không làm mất trace hoặc giả là đã hoàn tất.
+  - Low-level send: yêu cầu boolean true thật và text không rỗng; Telegram ok=false không báo sent. Lỗi URL có bot token được che trước khi log. One-shot evaluator không thực hiện gửi; model-proposed calls vẫn được chấm như cũ.
+  - Source/author routing: một yêu cầu bài của tác giả không tự thêm social_search; nguồn đã bị bỏ không quay lại khi chỉ nhắc lại chủ đề. Tài khoản đã biết dùng handle đã xác minh, không ghép họ tên để đoán (account_alias_sources.md).
 
 **Lỗi thực thi tool còn quan sát được trong run hiện tại:**
 - Base: {'HTTPError HTTP 403': 7, 'SourceHTTPError HTTP 404': 2, 'HTTPError HTTP 429': 1}.
