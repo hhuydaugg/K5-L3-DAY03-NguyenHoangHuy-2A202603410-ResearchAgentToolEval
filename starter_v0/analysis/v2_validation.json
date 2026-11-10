@@ -1,0 +1,13 @@
+{
+  "command": "python -m pytest -q",
+  "passed": 98,
+  "failed": 0,
+  "skipped": 0,
+  "warnings": [
+    "urllib3 NotOpenSSLWarning: Python 3.9.6 uses LibreSSL 2.8.3"
+  ],
+  "provider_preflight": "openrouter/openai/gpt-4o-mini returned structured timeline tool call",
+  "ui_health": "http://localhost:8503/_stcore/health returned HTTP 200 ok",
+  "ui_integration_tests": "2 AppTest tests with fake provider; not live model evidence",
+  "base_eval_unchanged": true
+}
